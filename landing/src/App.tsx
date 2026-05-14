@@ -5,7 +5,7 @@ import {
   Menu, X, Download, ArrowRight, Play, Check,
   AppWindow, Sparkles, Lock, Rocket, Cpu, Eye, Star,
   Package, Plug, Terminal, CheckCircle, RefreshCw, Zap as ZapIcon,
-  CheckSquare, BarChart2, Lightbulb
+  CheckSquare, BarChart2, Lightbulb, ChevronUp
 } from "lucide-react";
 import "./App.css";
 
@@ -337,7 +337,12 @@ function AmbientBackground() {
    APP
    ═══════════════════════════════════════════ */
 export default function App() {
+  const [showTop, setShowTop] = useState(false);
+
   useEffect(() => {
+    const handleScroll = () => setShowTop(window.scrollY > 400);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -356,6 +361,7 @@ export default function App() {
     requestAnimationFrame(raf);
 
     return () => {
+      window.removeEventListener("scroll", handleScroll);
       lenis.destroy();
     };
   }, []);
@@ -374,6 +380,22 @@ export default function App() {
         <CTA />
       </main>
       <Footer />
+
+      <AnimatePresence>
+        {showTop && (
+          <motion.button 
+            className="scroll-top"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            initial={{ opacity: 0, y: 20, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.8 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            aria-label="Scroll to top"
+          >
+            <ChevronUp size={24} strokeWidth={2} />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </>
   );
 }

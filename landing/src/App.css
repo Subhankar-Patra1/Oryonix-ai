@@ -2,7 +2,7 @@
    NAVBAR
    ═══════════════════════════════════════════ */
 .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 16px 0; transition: all 0.3s ease; }
-.nav--scrolled { background: rgba(15,15,15,0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.04); padding: 12px 0; }
+.nav--scrolled { background: rgba(15,15,15,0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: none; padding: 12px 0; }
 .nav__inner { display: flex; align-items: center; justify-content: space-between; gap: 32px; }
 .nav__logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.15rem; flex-shrink: 0; }
 .nav__logo-icon { font-size: 1.4rem; filter: drop-shadow(0 0 8px rgba(249,115,22,0.5)); }
@@ -243,4 +243,42 @@
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   opacity: 0.025;
   mix-blend-mode: overlay;
+}
+
+/* ═══════════════════════════════════════════
+   SCROLL TOP BUTTON
+   ═══════════════════════════════════════════ */
+.scroll-top {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  width: 48px;
+  height: 48px;
+  background: rgba(249, 115, 22, 0.12);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(249, 115, 22, 0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-accent-primary);
+  cursor: pointer;
+  z-index: 99;
+  box-shadow: 0 4px 24px rgba(249, 115, 22, 0.15);
+  transition: all 0.3s var(--ease-out-expo);
+}
+.scroll-top:hover {
+  background: rgba(249, 115, 22, 0.2);
+  border: 1px solid rgba(249, 115, 22, 0.5);
+  box-shadow: 0 8px 32px rgba(249, 115, 22, 0.25);
+  transform: translateY(-4px);
+}
+
+@media (max-width: 768px) {
+  .scroll-top {
+    bottom: 24px;
+    right: 24px;
+    width: 40px;
+    height: 40px;
+  }
 }
