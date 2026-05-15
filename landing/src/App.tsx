@@ -59,20 +59,76 @@ const stagger = { show: { transition: { staggerChildren: 0.1 } } };
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    setActiveSection(href.substring(1));
+    const target = document.querySelector(href);
+    if (target) {
+      if ((window as any).lenis) {
+        (window as any).lenis.scrollTo(target, { 
+          offset: -80,
+          duration: 1.5,
+          easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+        });
+      } else {
+        const y = target.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top: y, behavior: "smooth" });
+      }
+    }
+    setOpen(false);
+  };
 
   useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", fn, { passive: true });
-    return () => window.removeEventListener("scroll", fn);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+      
+      const sections = NAV.map(n => n.href.substring(1));
+      let current = "";
+      for (const section of sections) {
+        const el = document.getElementById(section);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= 200 && rect.bottom >= 200) {
+            current = section;
+            break;
+          }
+        }
+      }
+      if (window.scrollY < 100) current = "";
+      setActiveSection(current);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <header className={`nav ${scrolled ? "nav--scrolled" : ""}`}>
       <nav className="container nav__inner">
         <a href="/" className="nav__logo"><span className="nav__logo-icon">⚡</span><span className="accent-text">Oryonix AI</span></a>
-        <ul className="nav__links">
-          {NAV.map(n => <li key={n.href}><a href={n.href} className="nav__link">{n.label}</a></li>)}
-        </ul>
+        
+        <div className="nav__links-wrapper">
+          <ul className="nav__links">
+            {NAV.map(n => {
+              const isActive = activeSection === n.href.substring(1);
+              return (
+                <li key={n.href}>
+                  <a 
+                    href={n.href} 
+                    className={`nav__link ${isActive ? "nav__link--active" : ""}`}
+                    onClick={(e) => handleNavClick(e, n.href)}
+                  >
+                    {n.label}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
         <a href={SITE.chrome} className="btn btn--primary btn--sm nav__cta">Install Free</a>
         <button className="nav__burger" onClick={() => setOpen(!open)} aria-label="Toggle menu">
           {open ? <X size={22} /> : <Menu size={22} />}
@@ -80,7 +136,7 @@ function Navbar() {
         <AnimatePresence>
           {open && (
             <motion.div className="nav__mobile" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-              {NAV.map(n => <a key={n.href} href={n.href} className="nav__mobile-link" onClick={() => setOpen(false)}>{n.label}</a>)}
+              {NAV.map(n => <a key={n.href} href={n.href} className="nav__mobile-link" onClick={(e) => handleNavClick(e, n.href)}>{n.label}</a>)}
               <a href={SITE.chrome} className="btn btn--primary">Install Free</a>
             </motion.div>
           )}
@@ -353,16 +409,21 @@ export default function App() {
       touchMultiplier: 2,
     });
 
+    (window as any).lenis = lenis;
+
+    let rafId: number;
     function raf(time: number) {
       lenis.raf(time);
-      requestAnimationFrame(raf);
+      rafId = requestAnimationFrame(raf);
     }
 
-    requestAnimationFrame(raf);
+    rafId = requestAnimationFrame(raf);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      cancelAnimationFrame(rafId);
       lenis.destroy();
+      delete (window as any).lenis;
     };
   }, []);
 
@@ -385,7 +446,13 @@ export default function App() {
         {showTop && (
           <motion.button 
             className="scroll-top"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            onClick={() => {
+              if ((window as any).lenis) {
+                (window as any).lenis.scrollTo(0);
+              } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
             initial={{ opacity: 0, y: 20, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.8 }}

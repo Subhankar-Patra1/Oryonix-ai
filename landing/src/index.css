@@ -63,7 +63,7 @@
   scrollbar-color: var(--color-accent-primary) var(--color-bg-primary);
 }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: auto; }
 body {
   font-family: var(--font-family);
   color: var(--color-text-primary);
