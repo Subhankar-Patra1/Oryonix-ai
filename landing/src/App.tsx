@@ -5,7 +5,7 @@ import { motion, AnimatePresence, useMotionValue, useMotionTemplate, useScroll, 
 import {
   Menu, X, Download, ArrowRight, Play, Check,
   AppWindow, Sparkles, Lock, Rocket, Cpu, Eye, Star,
-  Package, Plug, Terminal, CheckCircle, RefreshCw, Zap as ZapIcon,
+  Package, Plug, Terminal, CheckCircle, RefreshCw,
   CheckSquare, BarChart2, Lightbulb, ChevronUp
 } from "lucide-react";
 import "./App.css";
@@ -184,7 +184,7 @@ function Hero() {
 }
 
 /* ═══════════ FEATURES ═══════════ */
-const FeatureCard = ({ f, i, progress, range, targetScale, total }: { f: any, i: number, progress: any, range: number[], targetScale: number, total: number }) => {
+const FeatureCard = ({ f, i, progress, range, targetScale }: { f: any, i: number, progress: any, range: number[], targetScale: number }) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -205,7 +205,7 @@ const FeatureCard = ({ f, i, progress, range, targetScale, total }: { f: any, i:
         top: `calc(100px + ${i * 32}px)`,
         zIndex: i + 1,
         // The magic padding that creates scroll space for the sticky effect to be visible
-        marginBottom: i === total - 1 ? "0" : "40vh" 
+        marginBottom: i === 5 ? "0" : "40vh" 
       }}
     >
       <motion.div
@@ -273,7 +273,6 @@ function Features() {
                 progress={scrollYProgress}
                 range={range}
                 targetScale={targetScale}
-                total={FEATURES.length}
               />
             );
           })}
