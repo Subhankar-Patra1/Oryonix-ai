@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Lenis from "lenis";
+// Added useScroll and useTransform for the stacking scroll effect
 import { motion, AnimatePresence, useMotionValue, useMotionTemplate, useScroll, useTransform } from "framer-motion";
 import {
   Menu, X, Download, ArrowRight, Play, Check,
@@ -187,6 +188,7 @@ const FeatureCard = ({ f, i, progress, range, targetScale, total }: { f: any, i:
     mouseY.set(clientY - top);
   }
 
+  // Smoothly scale down as user scrolls past this specific card
   const scale = useTransform(progress, range, [1, targetScale]);
 
   return (
@@ -194,11 +196,10 @@ const FeatureCard = ({ f, i, progress, range, targetScale, total }: { f: any, i:
       className="stack-card-container" 
       style={{
         position: "sticky",
-        top: `calc(10vh + ${i * 32}px)`, // Adjusted slightly for square cards
+        top: `calc(100px + ${i * 32}px)`,
         zIndex: i + 1,
-        marginBottom: i === total - 1 ? "0" : "40vh",
-        display: "flex",          // Added flex to center the card horizontally
-        justifyContent: "center"  // Centers the square card in the container
+        // The magic padding that creates scroll space for the sticky effect to be visible
+        marginBottom: i === total - 1 ? "0" : "40vh" 
       }}
     >
       <motion.div
@@ -207,14 +208,6 @@ const FeatureCard = ({ f, i, progress, range, targetScale, total }: { f: any, i:
         style={{
           scale,
           transformOrigin: "top center",
-          width: "100%",
-          maxWidth: "700px",      // Increased horizontal size
-          height: "320px",        // Reduced whole size (height)
-          display: "flex",        // Flexbox inside the card
-          flexDirection: "row",   // Horizontal layout
-          alignItems: "center",   // Centers content vertically
-          textAlign: "left",      // Left align text for horizontal look
-          padding: "40px"
         }}
       >
         <motion.div
@@ -229,13 +222,13 @@ const FeatureCard = ({ f, i, progress, range, targetScale, total }: { f: any, i:
             `,
           }}
         />
-        <div className="stack-card-inner" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '40px', width: '100%' }}>
-          <div className="card__icon" style={{ width: '80px', height: '80px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 0 }}>
-            <f.Icon size={40} strokeWidth={1.5} />
+        <div className="stack-card-inner">
+          <div className="card__icon" style={{ width: '64px', height: '64px' }}>
+            <f.Icon size={32} strokeWidth={1.5} />
           </div>
-          <div className="stack-card-text" style={{ flex: 1 }}>
-            <h3 className="card__title" style={{ fontSize: '1.75rem', marginBottom: '12px' }}>{f.title}</h3>
-            <p className="card__desc" style={{ fontSize: '1rem', margin: 0, maxWidth: '400px' }}>{f.desc}</p>
+          <div className="stack-card-text">
+            <h3 className="card__title" style={{ fontSize: '2rem', marginBottom: '16px' }}>{f.title}</h3>
+            <p className="card__desc" style={{ fontSize: '1.1rem', maxWidth: '600px' }}>{f.desc}</p>
           </div>
         </div>
       </motion.div>
@@ -246,6 +239,7 @@ const FeatureCard = ({ f, i, progress, range, targetScale, total }: { f: any, i:
 function Features() {
   const containerRef = useRef<HTMLDivElement>(null);
   
+  // Track scroll progress purely within the Features section
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
@@ -260,7 +254,9 @@ function Features() {
         </div>
         <div className="features-stack-wrapper">
           {FEATURES.map((f, i) => {
+            // Calculate dynamic targets so earlier cards scale down more as others pile up
             const targetScale = 1 - ((FEATURES.length - 1 - i) * 0.05); 
+            // Calculate specific scroll segment [0 to 1] where this card should scale
             const range = [i * (1 / FEATURES.length), 1];
             
             return (
