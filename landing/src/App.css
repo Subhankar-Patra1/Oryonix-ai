@@ -58,9 +58,11 @@
   color: #fff;
 }
 
-.nav__logo-icon {
-  font-size: 1.25rem;
-  filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.5));
+.nav__logo-img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 12px rgba(249, 115, 22, 0.3));
 }
 
 .nav__links-wrapper {
@@ -444,9 +446,11 @@ button:focus {
   font-size: 14px;
 }
 
-.mockup__panel-icon {
-  font-size: 18px;
-  filter: drop-shadow(0 0 6px rgba(249, 115, 22, 0.5));
+.mockup__panel-logo {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 6px rgba(249, 115, 22, 0.4));
 }
 
 .mockup__input {

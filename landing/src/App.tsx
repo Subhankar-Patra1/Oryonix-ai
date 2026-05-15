@@ -48,7 +48,7 @@ const FOOTER_COLS = [
 /* ─── SVG Icons ─── */
 const GithubIcon = ({ size = 20 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
   </svg>
 );
 
@@ -74,7 +74,7 @@ function Navbar({ visible, activeSection, onNavClick }: { visible: boolean, acti
   return (
     <AnimatePresence>
       {visible && (
-        <motion.header 
+        <motion.header
           className={`nav ${scrolled ? "nav--scrolled" : ""}`}
           initial={{ y: -100, x: "-50%", opacity: 0 }}
           animate={{ y: 0, x: "-50%", opacity: 1 }}
@@ -82,16 +82,19 @@ function Navbar({ visible, activeSection, onNavClick }: { visible: boolean, acti
           transition={{ duration: 0.3, ease: "easeOut" }}
         >
           <nav className="container nav__inner">
-            <a href="/" className="nav__logo"><span className="nav__logo-icon">⚡</span><span className="accent-text">Oryonix AI</span></a>
-            
+            <a href="/" className="nav__logo">
+              <img src="/Oryonix AI (final).svg" alt="Oryonix AI Logo" className="nav__logo-img" />
+              <span className="accent-text">Oryonix AI</span>
+            </a>
+
             <div className="nav__links-wrapper">
               <ul className="nav__links">
                 {NAV.map(n => {
                   const isActive = activeSection === n.href.substring(1);
                   return (
                     <li key={n.href}>
-                      <a 
-                        href={n.href} 
+                      <a
+                        href={n.href}
                         className={`nav__link ${isActive ? "nav__link--active" : ""}`}
                         onClick={(e) => onNavClick(e, n.href)}
                       >
@@ -102,7 +105,7 @@ function Navbar({ visible, activeSection, onNavClick }: { visible: boolean, acti
                 })}
               </ul>
             </div>
-    
+
             <a href={SITE.chrome} className="btn btn--primary btn--sm nav__cta">Install Free</a>
             <button className="nav__burger" onClick={() => setOpen(!open)} aria-label="Toggle menu">
               {open ? <X size={22} /> : <Menu size={22} />}
@@ -149,13 +152,16 @@ function Hero() {
             </div>
             <div className="mockup__body">
               <div className="mockup__panel">
-                <div className="mockup__panel-head"><span className="mockup__panel-icon"><ZapIcon size={16} strokeWidth={2} fill="currentColor" /></span>Oryonix AI</div>
+                <div className="mockup__panel-head">
+                  <img src="/Oryonix AI (final).svg" alt="Oryonix AI Logo" className="mockup__panel-logo" />
+                  Oryonix AI
+                </div>
                 <div className="mockup__input"><span>Book a flight to NYC for next Friday...</span><span className="mockup__cursor" /></div>
                 <div className="mockup__status"><span className="mockup__status-dot" />Agent is working...</div>
                 <div className="mockup__steps">
-                  <div className="mockup__step mockup__step--done"><Check size={16} strokeWidth={2} style={{display:'inline', marginRight:'6px'}} /> Opened Google Flights</div>
-                  <div className="mockup__step mockup__step--done"><Check size={16} strokeWidth={2} style={{display:'inline', marginRight:'6px'}} /> Entered destination: NYC</div>
-                  <div className="mockup__step mockup__step--active"><RefreshCw size={16} strokeWidth={2} className="animate-spin" style={{display:'inline', marginRight:'6px'}} /> Selecting date...</div>
+                  <div className="mockup__step mockup__step--done"><Check size={16} strokeWidth={2} style={{ display: 'inline', marginRight: '6px' }} /> Opened Google Flights</div>
+                  <div className="mockup__step mockup__step--done"><Check size={16} strokeWidth={2} style={{ display: 'inline', marginRight: '6px' }} /> Entered destination: NYC</div>
+                  <div className="mockup__step mockup__step--active"><RefreshCw size={16} strokeWidth={2} className="animate-spin" style={{ display: 'inline', marginRight: '6px' }} /> Selecting date...</div>
                 </div>
               </div>
               <div className="mockup__page">
@@ -192,8 +198,8 @@ const FeatureCard = ({ f, i, progress, range, targetScale, total }: { f: any, i:
   const scale = useTransform(progress, range, [1, targetScale]);
 
   return (
-    <div 
-      className="stack-card-container" 
+    <div
+      className="stack-card-container"
       style={{
         position: "sticky",
         top: `calc(100px + ${i * 32}px)`,
@@ -238,7 +244,7 @@ const FeatureCard = ({ f, i, progress, range, targetScale, total }: { f: any, i:
 
 function Features() {
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   // Track scroll progress purely within the Features section
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -255,19 +261,19 @@ function Features() {
         <div className="features-stack-wrapper">
           {FEATURES.map((f, i) => {
             // Calculate dynamic targets so earlier cards scale down more as others pile up
-            const targetScale = 1 - ((FEATURES.length - 1 - i) * 0.05); 
+            const targetScale = 1 - ((FEATURES.length - 1 - i) * 0.05);
             // Calculate specific scroll segment [0 to 1] where this card should scale
             const range = [i * (1 / FEATURES.length), 1];
-            
+
             return (
-              <FeatureCard 
-                key={f.title} 
-                f={f} 
-                i={i} 
-                progress={scrollYProgress} 
-                range={range} 
-                targetScale={targetScale} 
-                total={FEATURES.length} 
+              <FeatureCard
+                key={f.title}
+                f={f}
+                i={i}
+                progress={scrollYProgress}
+                range={range}
+                targetScale={targetScale}
+                total={FEATURES.length}
               />
             );
           })}
@@ -286,15 +292,15 @@ function Demo() {
           <h2>See it <span className="accent-text">in action</span></h2>
           <p>Watch the agent complete real tasks — autonomously.</p>
         </div>
-        <motion.div className="demo" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.6, ease: [0.16,1,0.3,1] }}>
+        <motion.div className="demo" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}>
           <div className="demo__player">
             <div className="demo__overlay"><button className="demo__play" aria-label="Play demo"><Play size={32} fill="currentColor" /></button><p className="demo__play-text">Watch 60s Demo</p></div>
             <div className="demo__terminal">
               <div className="term__line"><span className="term__prompt">$</span> Tell the agent: "Compare prices for AirPods on Amazon and Best Buy"</div>
-              <div className="term__line term__out"><CheckSquare size={16} strokeWidth={2} className="text-success" style={{display:'inline', marginRight:'8px', verticalAlign:'text-bottom'}} /> Opened Amazon.com — searching for AirPods Pro...</div>
-              <div className="term__line term__out"><CheckSquare size={16} strokeWidth={2} className="text-success" style={{display:'inline', marginRight:'8px', verticalAlign:'text-bottom'}} /> Opened BestBuy.com — searching for AirPods Pro...</div>
-              <div className="term__line term__out"><BarChart2 size={16} strokeWidth={2} className="text-accent" style={{display:'inline', marginRight:'8px', verticalAlign:'text-bottom'}} /> Amazon: $199.99 | Best Buy: $189.99</div>
-              <div className="term__line term__result"><Lightbulb size={16} strokeWidth={2} className="text-accent" style={{display:'inline', marginRight:'8px', verticalAlign:'text-bottom'}} /> Best Buy is $10 cheaper. Task complete.</div>
+              <div className="term__line term__out"><CheckSquare size={16} strokeWidth={2} className="text-success" style={{ display: 'inline', marginRight: '8px', verticalAlign: 'text-bottom' }} /> Opened Amazon.com — searching for AirPods Pro...</div>
+              <div className="term__line term__out"><CheckSquare size={16} strokeWidth={2} className="text-success" style={{ display: 'inline', marginRight: '8px', verticalAlign: 'text-bottom' }} /> Opened BestBuy.com — searching for AirPods Pro...</div>
+              <div className="term__line term__out"><BarChart2 size={16} strokeWidth={2} className="text-accent" style={{ display: 'inline', marginRight: '8px', verticalAlign: 'text-bottom' }} /> Amazon: $199.99 | Best Buy: $189.99</div>
+              <div className="term__line term__result"><Lightbulb size={16} strokeWidth={2} className="text-accent" style={{ display: 'inline', marginRight: '8px', verticalAlign: 'text-bottom' }} /> Best Buy is $10 cheaper. Task complete.</div>
             </div>
           </div>
           <div className="demo__tags">
@@ -317,7 +323,7 @@ function HowItWorks() {
         </div>
         <motion.div className="steps" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
           {STEPS.map((s, i) => (
-            <motion.div key={s.n} className="step-card" variants={fadeUp} transition={{ duration: 0.5, ease: [0.16,1,0.3,1] }}>
+            <motion.div key={s.n} className="step-card" variants={fadeUp} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}>
               <div className="step-card__num">{s.n}</div>
               <span className="step-card__icon"><s.Icon size={28} strokeWidth={1.5} /></span>
               <h3 className="step-card__title">{s.title}</h3>
@@ -340,7 +346,7 @@ function OpenSource() {
           <h2>Free forever. <span className="accent-text">Open source always.</span></h2>
           <p>No paywalls. No telemetry. No vendor lock-in. MIT licensed.</p>
         </div>
-        <motion.div className="os-card" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, ease: [0.16,1,0.3,1] }}>
+        <motion.div className="os-card" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}>
           <div className="os-card__features">
             {OS_FEATURES.map(f => <div key={f} className="os-card__feat"><Check size={18} className="os-card__check" /><span>{f}</span></div>)}
           </div>
@@ -372,7 +378,7 @@ function Testimonials() {
         </div>
         <motion.div className="test-grid" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
           {TESTIMONIALS.map(t => (
-            <motion.div key={t.name} className="test-card" variants={fadeUp} transition={{ duration: 0.5, ease: [0.16,1,0.3,1] }}>
+            <motion.div key={t.name} className="test-card" variants={fadeUp} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}>
               <p className="test-card__quote">&ldquo;{t.q}&rdquo;</p>
               <div className="test-card__author">
                 <div className="test-card__avatar">{t.av}</div>
@@ -392,7 +398,7 @@ function CTA() {
     <section className="section cta-section">
       <div className="cta-glow" />
       <div className="container">
-        <motion.div className="cta-card" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, ease: [0.16,1,0.3,1] }}>
+        <motion.div className="cta-card" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}>
           <h2>Ready to put your browser on <span className="accent-text">autopilot?</span></h2>
           <p>Install in seconds. Start automating immediately. No account required.</p>
           <div className="cta-card__actions">
@@ -411,7 +417,10 @@ function Footer() {
     <footer className="footer">
       <div className="container footer__inner">
         <div className="footer__brand">
-          <a href="/" className="nav__logo"><span className="nav__logo-icon">⚡</span><span className="accent-text">Oryonix AI</span></a>
+          <a href="/" className="nav__logo">
+            <img src="/Oryonix AI (final).svg" alt="Oryonix AI Logo" className="nav__logo-img" />
+            <span className="accent-text">Oryonix AI</span>
+          </a>
           <p className="footer__desc">AI-powered browser automation.<br />Open source & privacy-first.</p>
         </div>
         <div className="footer__cols">
@@ -458,15 +467,15 @@ export default function App() {
       window.open(href, "_blank", "noopener,noreferrer");
       return;
     }
-    
+
     setActiveSection(href.substring(1));
     isScrollingRef.current = true;
     setVisibleDock(true); // Force visible on click
-    
+
     const target = document.querySelector(href);
     if (target) {
       if ((window as any).lenis) {
-        (window as any).lenis.scrollTo(target, { 
+        (window as any).lenis.scrollTo(target, {
           offset: -80,
           duration: 1.5,
           onComplete: () => {
@@ -495,7 +504,7 @@ export default function App() {
           setVisibleDock(true);
         }
       }
-      
+
       lastScrollY.current = currentScrollY;
 
       // Scroll Spy Logic
@@ -573,7 +582,7 @@ export default function App() {
       {/* Mobile Bottom Dock */}
       <AnimatePresence>
         {visibleDock && (
-          <motion.div 
+          <motion.div
             className="mobile-dock"
             initial={{ y: 100, x: "-50%", opacity: 0 }}
             animate={{ y: 0, x: "-50%", opacity: 1 }}
@@ -581,26 +590,26 @@ export default function App() {
             transition={{ duration: 0.3, ease: "easeOut" }}
           >
             <div className="mobile-dock__inner">
-              <a 
-                href="#features" 
+              <a
+                href="#features"
                 className={`mobile-dock__item ${activeSection === "features" ? "mobile-dock__item--active" : ""}`}
                 onClick={(e) => handleNavClick(e, "#features")}
               >
                 <ZapIcon size={20} />
                 <span>Features</span>
               </a>
-              <a 
-                href="#demo" 
+              <a
+                href="#demo"
                 className={`mobile-dock__item ${activeSection === "demo" ? "mobile-dock__item--active" : ""}`}
                 onClick={(e) => handleNavClick(e, "#demo")}
               >
                 <Play size={20} />
                 <span>Demo</span>
               </a>
-              <a 
-                href={SITE.github} 
-                className="mobile-dock__item" 
-                target="_blank" 
+              <a
+                href={SITE.github}
+                className="mobile-dock__item"
+                target="_blank"
                 rel="noopener noreferrer"
               >
                 <GithubIcon size={20} />
@@ -618,7 +627,7 @@ export default function App() {
 
       <AnimatePresence>
         {showTop && (
-          <motion.button 
+          <motion.button
             className="scroll-top"
             onClick={() => {
               if ((window as any).lenis) {
