@@ -44,6 +44,14 @@ export function HistoryPanel({ onClose, onRestore }: HistoryPanelProps) {
     }
   };
 
+  const getSnippet = (text: string) => {
+    // Basic markdown strip
+    let stripped = text.replace(/[*_#`~>]/g, '').replace(/\[(.*?)\]\(.*?\)/g, '$1');
+    // Remove extra newlines and spaces
+    stripped = stripped.replace(/\s+/g, ' ').trim();
+    return stripped;
+  };
+
   if (loading) {
     return <div className="history-panel-container"><div className="status-spinner"></div></div>;
   }
@@ -77,8 +85,8 @@ export function HistoryPanel({ onClose, onRestore }: HistoryPanelProps) {
               <div className="history-item-task">
                 <strong>Task:</strong> {item.task}
               </div>
-              <div className="history-item-summary markdown-body">
-                <ReactMarkdown>{item.summary}</ReactMarkdown>
+              <div className="history-item-summary">
+                {getSnippet(item.summary)}
               </div>
             </div>
           ))}

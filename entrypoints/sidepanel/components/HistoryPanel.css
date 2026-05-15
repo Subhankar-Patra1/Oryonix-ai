@@ -123,6 +123,20 @@
   background: rgba(0, 0, 0, 0.2);
   padding: 12px;
   border-radius: 8px;
+  
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  
+  /* Prevent nested markdown elements from expanding the container unnecessarily */
+  margin: 0;
+}
+
+.history-item-summary p {
+  margin: 0;
+  display: inline;
 }
 
 .history-actions {

@@ -1,19 +1,27 @@
 /* Obsidian Ember Theme overrides for Page Agent Controller Overlays */
 
-/* 1. Searching Window / Bounding Boxes */
-#playwright-highlight-container > div:not(.playwright-highlight-label) {
-  border-color: #f97316 !important;
-  background-color: rgba(249, 115, 22, 0.1) !important;
+/* 1. Searching Window / Bounding Boxes - HIDDEN AS REQUESTED */
+#playwright-highlight-container {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
 }
 
-#playwright-highlight-container > .playwright-highlight-label {
-  background-color: #ea580c !important;
-  color: #fff !important;
+/* 2. Custom Agentic Cursor (Unique Hand Tool) */
+#page-agent-runtime_simulator-mask [class*="_cursorBorder_"],
+#page-agent-runtime_simulator-mask [class*="_cursorFilling_"] {
+    display: none !important;
 }
 
-/* 2. Cursor Overlay */
-#page-agent-runtime_simulator-mask [class*="_cursorBorder_"] {
-	background: linear-gradient(45deg, #f97316, #ea580c) !important;
+#page-agent-runtime_simulator-mask div:has(> [class*="_cursorRipple_"]) {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='36' height='36'%3E%3Cpath fill='%23f97316' stroke='%23ffffff' stroke-width='1.5' stroke-linejoin='round' d='M10 2.5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v7.51h1.03c.8 0 1.57.34 2.11.94l2.95 3.32c.56.63.88 1.45.88 2.3v.53c0 2.21-1.79 4-4 4h-6.42c-1.39 0-2.73-.61-3.66-1.67l-2.88-3.26c-.73-.83-.69-2.11.08-2.9.72-.74 1.91-.77 2.68-.07l1.73 1.57V8.5c0-1.38 1.12-2.5 2.5-2.5h.5v-1.5z'/%3E%3C/svg%3E") !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    width: 36px !important;
+    height: 36px !important;
+    margin-left: -18px !important; /* Align finger tip hotspot */
+    margin-top: 0px !important;
+    filter: drop-shadow(0px 4px 6px rgba(249, 115, 22, 0.4));
 }
 
 #page-agent-runtime_simulator-mask [class*="_cursorRipple_"]::after {
