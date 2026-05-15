@@ -155,6 +155,7 @@ body {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden; /* STRICTLY PREVENT HORIZONTAL SCROLLBAR */
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -168,6 +169,8 @@ body {
   font-size: 14px;
   line-height: 1.5;
   word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: anywhere; /* Force long URLs to break and wrap instead of causing horizontal scroll */
 }
 
 .user-bubble {
