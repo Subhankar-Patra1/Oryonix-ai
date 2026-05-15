@@ -57,6 +57,42 @@ export default function App() {
       </header>
       
       <div className="popup-chat-area">
+        {!currentTask && !finalSummary && status === 'idle' && (
+          <div className="landing-state">
+            <div className="landing-hero-icon">
+              <img src="/Oryonix AI 2.png" alt="Oryonix AI Logo" />
+            </div>
+            <h1 className="landing-title accent-text">Oryonix AI</h1>
+            <p className="landing-subtitle">
+              Your autonomous browser copilot. I can navigate pages, analyze visual context, and execute complex workflows directly in your browser.
+            </p>
+            
+            <div className="landing-features">
+              <div className="feature-item">
+                <span className="feature-icon">✨</span>
+                <div className="feature-text">
+                  <strong>Autonomous Execution</strong>
+                  <span>Give me a goal and watch me navigate.</span>
+                </div>
+              </div>
+              <div className="feature-item">
+                <span className="feature-icon">👁️</span>
+                <div className="feature-text">
+                  <strong>Visual DOM Perception</strong>
+                  <span>Advanced spatial understanding of web layouts.</span>
+                </div>
+              </div>
+              <div className="feature-item">
+                <span className="feature-icon">⚡</span>
+                <div className="feature-text">
+                  <strong>Intelligent Summarization</strong>
+                  <span>Concise insights and actionable results.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {currentTask && (
           <div className="chat-bubble user-bubble">
             {currentTask}
@@ -67,7 +103,7 @@ export default function App() {
           <div className="chat-status-bar">
             <div className="status-spinner"></div>
             <span className="status-text">
-              {activity ? (activity.type === 'executing' ? `Executing ${activity.tool}...` : `Oryonix is ${activity.type}...`) : 'Thinking...'}
+              {activity ? (activity.type === 'executing' ? `Executing ${(activity as any).tool}...` : `Oryonix is ${activity.type}...`) : 'Thinking...'}
             </span>
           </div>
         )}
