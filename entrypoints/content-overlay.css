@@ -28,15 +28,67 @@
 	border-color: #f97316 !important;
 }
 
-/* 3. Global Agent Active Glow (Orange & Black Theme) */
-:root {
-  /* Override Page Agent UI variables globally */
+/* 3. Global Color Variable Overrides to kill Rainbow Glow */
+/* We target ANY class that might contain the page-agent UI to force our theme */
+:root,
+body,
+[class*="_wrapper_"], 
+[class*="gtdpc"],
+[id*="page-agent"] {
   --color-1: #f97316 !important; /* Ember Primary (Orange) */
   --color-2: #0a0604 !important; /* Ember Background (Black) */
+  --color-3: #ea580c !important; /* Ember Hover */
+  --color-4: #f97316 !important; 
 }
 
-/* Fallback for hardcoded rgb gradients in SimulatorMask */
-#page-agent-runtime_simulator-mask [class*="_cursorBorder_"],
-#page-agent-runtime_simulator-mask [style*="rgb(57, 182, 255)"] {
-  background: linear-gradient(45deg, #f97316, #0a0604) !important;
+/* Force override any hardcoded linear-gradients in the UI injected by libraries */
+[class*="_background_"]::before,
+[class*="_background_"]::after,
+[class*="_cursorBorder_"] {
+    background-image: linear-gradient(to bottom left, #f97316, #ea580c, #f97316) !important;
+}
+
+/* 5. Nuke the @page-agent Motion Canvas Overlay (Source of the Rainbow) */
+#page-agent-runtime_simulator-mask canvas,
+#page-agent-runtime_simulator-mask svg,
+#page-agent-runtime_simulator-mask > div:not([class*="_cursor_"]):not([class*="cursor"]) {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+/* 4. Professional Agent Active Glow (Minimalist & Sleek) */
+#page-agent-runtime_simulator-mask {
+    /* Clean, professional breathing border */
+    box-shadow: inset 0 0 0 2px rgba(249, 115, 22, 0.4), inset 0 0 20px rgba(249, 115, 22, 0.1) !important;
+    pointer-events: none !important;
+    animation: professionalBreathe 4s ease-in-out infinite !important;
+    z-index: 2147483640 !important;
+    background: transparent !important; /* Ensure no background colors sneak in */
+}
+
+/* Sleek top scanning indicator */
+#page-agent-runtime_simulator-mask::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 3px !important;
+    background: linear-gradient(90deg, transparent, #f97316, #fb923c, #f97316, transparent) !important;
+    background-size: 200% 100% !important;
+    opacity: 0.9 !important;
+    animation: professionalScanBar 2s linear infinite !important;
+    box-shadow: 0 2px 10px rgba(249, 115, 22, 0.5) !important;
+}
+
+@keyframes professionalBreathe {
+    0%, 100% { box-shadow: inset 0 0 0 2px rgba(249, 115, 22, 0.2), inset 0 0 15px rgba(249, 115, 22, 0.05); }
+    50% { box-shadow: inset 0 0 0 2px rgba(249, 115, 22, 0.6), inset 0 0 30px rgba(249, 115, 22, 0.15); }
+}
+
+@keyframes professionalScanBar {
+    0% { background-position: 100% 0; }
+    100% { background-position: -100% 0; }
 }

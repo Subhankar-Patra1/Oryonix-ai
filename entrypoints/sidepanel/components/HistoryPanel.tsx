@@ -53,14 +53,6 @@ export function HistoryPanel({ onClose, onRestore, status }: HistoryPanelProps) 
     return stripped;
   };
 
-  const getSnippet = (text: string) => {
-    // Basic markdown strip
-    let stripped = text.replace(/[*_#`~>]/g, '').replace(/\[(.*?)\]\(.*?\)/g, '$1');
-    // Remove extra newlines and spaces
-    stripped = stripped.replace(/\s+/g, ' ').trim();
-    return stripped;
-  };
-
   if (loading) {
     return <div className="history-panel-container"><div className="status-spinner"></div></div>;
   }
