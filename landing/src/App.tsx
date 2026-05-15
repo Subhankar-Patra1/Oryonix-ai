@@ -5,7 +5,7 @@ import { motion, AnimatePresence, useMotionValue, useMotionTemplate, useScroll, 
 import {
   Menu, X, Download, ArrowRight, Play, Check,
   AppWindow, Sparkles, Lock, Rocket, Cpu, Eye, Star,
-  Package, Plug, Terminal, CheckCircle, RefreshCw, Zap as ZapIcon,
+  Package, Plug, Terminal, CheckCircle, RefreshCw,
   CheckSquare, BarChart2, Lightbulb, ChevronUp
 } from "lucide-react";
 import "./App.css";
@@ -83,7 +83,7 @@ function Navbar({ visible, activeSection, onNavClick }: { visible: boolean, acti
         >
           <nav className="container nav__inner">
             <a href="/" className="nav__logo">
-              <img src="/Oryonix AI (final).svg" alt="Oryonix AI Logo" className="nav__logo-img" />
+              <img src="/logo.svg" alt="Oryonix AI Logo" className="nav__logo-img" />
               <span className="accent-text">Oryonix AI</span>
             </a>
 
@@ -153,7 +153,7 @@ function Hero() {
             <div className="mockup__body">
               <div className="mockup__panel">
                 <div className="mockup__panel-head">
-                  <img src="/Oryonix AI (final).svg" alt="Oryonix AI Logo" className="mockup__panel-logo" />
+                  <img src="/logo.svg" alt="Oryonix AI Logo" className="mockup__panel-logo" />
                   Oryonix AI
                 </div>
                 <div className="mockup__input"><span>Book a flight to NYC for next Friday...</span><span className="mockup__cursor" /></div>
@@ -184,7 +184,7 @@ function Hero() {
 }
 
 /* ═══════════ FEATURES ═══════════ */
-const FeatureCard = ({ f, i, progress, range, targetScale, total }: { f: any, i: number, progress: any, range: number[], targetScale: number, total: number }) => {
+const FeatureCard = ({ f, i, progress, range, targetScale }: { f: any, i: number, progress: any, range: number[], targetScale: number }) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -205,7 +205,7 @@ const FeatureCard = ({ f, i, progress, range, targetScale, total }: { f: any, i:
         top: `calc(100px + ${i * 32}px)`,
         zIndex: i + 1,
         // The magic padding that creates scroll space for the sticky effect to be visible
-        marginBottom: i === total - 1 ? "0" : "40vh" 
+        marginBottom: i === 5 ? "0" : "40vh" 
       }}
     >
       <motion.div
@@ -273,7 +273,6 @@ function Features() {
                 progress={scrollYProgress}
                 range={range}
                 targetScale={targetScale}
-                total={FEATURES.length}
               />
             );
           })}
@@ -418,7 +417,7 @@ function Footer() {
       <div className="container footer__inner">
         <div className="footer__brand">
           <a href="/" className="nav__logo">
-            <img src="/Oryonix AI (final).svg" alt="Oryonix AI Logo" className="nav__logo-img" />
+            <img src="/logo.svg" alt="Oryonix AI Logo" className="nav__logo-img" />
             <span className="accent-text">Oryonix AI</span>
           </a>
           <p className="footer__desc">AI-powered browser automation.<br />Open source & privacy-first.</p>
@@ -595,7 +594,7 @@ export default function App() {
                 className={`mobile-dock__item ${activeSection === "features" ? "mobile-dock__item--active" : ""}`}
                 onClick={(e) => handleNavClick(e, "#features")}
               >
-                <ZapIcon size={20} />
+                <img src="/logo.svg" alt="Oryonix AI" className="mobile-dock__logo" />
                 <span>Features</span>
               </a>
               <a

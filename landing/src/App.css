@@ -1596,9 +1596,11 @@ button:focus {
     opacity: 0.8;
   }
 
-  .mobile-dock__item svg {
+  .mobile-dock__item svg,
+  .mobile-dock__logo {
     width: 18px;
     height: 18px;
+    object-fit: contain;
   }
 
   .mobile-dock__item:active {
