@@ -9,9 +9,7 @@
 .nav__links-wrapper { background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 9999px; padding: 6px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
 .nav__links { display: flex; align-items: center; gap: 4px; list-style: none; }
 .nav__link { display: inline-flex; align-items: center; justify-content: center; padding: 8px 20px; font-size: 0.9rem; font-weight: 500; letter-spacing: 0.02em; color: rgba(255, 255, 255, 0.65); position: relative; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); border-radius: 9999px; border: 1px solid transparent; }
-.nav__link::after { content: ""; position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); width: 0; height: 2px; background: var(--color-accent-primary); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); border-radius: 2px; opacity: 0; }
 .nav__link:hover { color: var(--color-text-primary); text-shadow: 0 0 12px rgba(249, 115, 22, 0.4); background: rgba(255, 255, 255, 0.04); transform: scale(0.96); }
-.nav__link:hover::after { width: calc(100% - 40px); opacity: 1; }
 .nav__link--active { color: var(--color-text-primary); background: rgba(249, 115, 22, 0.12); border: 1px solid rgba(249, 115, 22, 0.08); text-shadow: 0 0 16px rgba(249, 115, 22, 0.3); }
 .nav__link--active:hover { background: rgba(249, 115, 22, 0.16); transform: scale(1); }
 .nav__burger { display: none; color: var(--color-text-primary); padding: 8px; border-radius: 8px; }
