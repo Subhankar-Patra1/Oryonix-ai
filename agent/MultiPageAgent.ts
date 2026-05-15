@@ -61,7 +61,7 @@ export class MultiPageAgent extends PageAgentCore {
 					chrome.storage.local.set({
 						agentHeartbeat: Date.now(),
 					})
-				}, 1_000)
+				}, 1_000) as any
 
 				await chrome.storage.local.set({
 					isAgentRunning: true,

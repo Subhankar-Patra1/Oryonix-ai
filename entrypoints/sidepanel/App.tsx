@@ -125,8 +125,8 @@ export default function App() {
             <div className="ai-bubble-icon">
               <img src="/Oryonix AI 2.png" alt="AI" />
             </div>
-            <div className="ai-bubble-content">
-              <ReactMarkdown className="markdown-body">{finalSummary}</ReactMarkdown>
+            <div className="ai-bubble-content markdown-body">
+              <ReactMarkdown>{finalSummary}</ReactMarkdown>
             </div>
           </div>
         )}

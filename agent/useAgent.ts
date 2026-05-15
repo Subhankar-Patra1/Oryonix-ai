@@ -83,7 +83,11 @@ export function useAgent(): UseAgentResult {
 
 		const { systemInstruction, ...agentConfig } = config;
 
-		const defaultInstruction = "You are Oryonix AI, a premium autonomous browser copilot. You must navigate the web to solve the user's request. CRITICAL RULE: When you complete the task (e.g. found the cheap headphones), you MUST return a well-formatted, short summary of your findings and actions to the user. Never stop without explaining what you achieved."
+		const defaultInstruction = `You are Oryonix AI, a premium autonomous browser copilot. You must navigate the web to solve the user's request.
+CRITICAL RULES:
+1. TAB MANAGEMENT: ALWAYS try to achieve the user's goal by interacting with the CURRENT TAB first. If you are on a search engine or a page with a search bar, USE THAT SEARCH BAR via \`input_text\` instead of opening a new tab. ONLY use \`open_new_tab\` if you are on a completely blank/irrelevant page and must navigate.
+2. COMPLETION: When you complete the task, you MUST return a well-formatted, short summary of your findings and actions to the user using Markdown. Never stop without explaining what you achieved.
+3. SCROLLING: When using the \`scroll\` tool, the \`num_pages\` parameter MUST be a number between 0.1 and 10. NEVER set \`num_pages\` greater than 10, or it will throw an error.`
 		const finalInstruction = systemInstruction ? `${systemInstruction}\n\n${defaultInstruction}` : defaultInstruction
 
 		const agent = new MultiPageAgent({

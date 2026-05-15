@@ -113,8 +113,8 @@ export class BackgroundAgentManager {
 			// Execute
 			const result = await this.agent.execute(task)
 
-			if (result.error) {
-				this.updateState({ error: result.error.message || 'Execution failed' })
+			if (!result.success) {
+				this.updateState({ error: result.data || 'Execution failed' })
 			}
 		} catch (error: any) {
 			console.error('Agent execution failed', error)
@@ -125,7 +125,7 @@ export class BackgroundAgentManager {
 			
 			// If not error/done explicitly, mark done
 			if (this.state.status === 'running') {
-				this.updateState({ status: 'done' })
+				this.updateState({ status: 'completed' as any })
 			}
 		}
 	}
