@@ -33,7 +33,9 @@
 
 .nav--scrolled {
   top: 16px;
-  background: rgba(10, 6, 4, 0.85);
+  background: rgba(10, 6, 4, 0.7) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
   border-color: rgba(255, 255, 255, 0.15);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
 }
@@ -1644,26 +1646,30 @@ button:focus {
   }
 
   /* Stabilized Top Navbar - Locked */
-  .nav {
+  .nav { 
     position: fixed !important;
-    padding: 0 20px !important;
-    width: fit-content !important;
-    left: 50% !important;
+    padding: 0 20px !important; 
+    width: fit-content !important; 
+    left: 50% !important; 
     right: auto !important;
-    transform: translateX(-50%) !important;
-    border-radius: 999px !important;
+    transform: translateX(-50%) !important; 
+    border-radius: 999px !important; 
     top: 16px !important;
     height: 48px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    background: rgba(15, 12, 10, 0.4) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
     border: 1px solid rgba(255, 255, 255, 0.12) !important;
     transition: background 0.3s, backdrop-filter 0.3s !important;
   }
 
   .nav--scrolled {
-    background: rgba(15, 12, 10, 0.9) !important;
-    backdrop-filter: blur(20px) !important;
+    background: rgba(15, 12, 10, 0.7) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
   }
 
   .nav__inner {
