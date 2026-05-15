@@ -81,10 +81,14 @@ export function useAgent(): UseAgentResult {
 	useEffect(() => {
 		if (!config) return
 
-		const { systemInstruction, ...agentConfig } = config
+		const { systemInstruction, ...agentConfig } = config;
+
+		const defaultInstruction = "You are Oryonix AI, a premium autonomous browser copilot. You must navigate the web to solve the user's request. CRITICAL RULE: When you complete the task (e.g. found the cheap headphones), you MUST return a well-formatted, short summary of your findings and actions to the user. Never stop without explaining what you achieved."
+		const finalInstruction = systemInstruction ? `${systemInstruction}\n\n${defaultInstruction}` : defaultInstruction
+
 		const agent = new MultiPageAgent({
 			...agentConfig,
-			instructions: systemInstruction ? { system: systemInstruction } : undefined,
+			instructions: { system: finalInstruction },
 		})
 		agentRef.current = agent
 

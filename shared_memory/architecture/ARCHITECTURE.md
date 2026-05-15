@@ -1,5 +1,5 @@
 {
-  "architecture": "Oryonix V2 is a Hybrid Edge-Agent architecture. It splits execution between a lightweight WXT Chrome Extension (using WASM for low-latency DOM processing) and a robust Local Daemon (utilizing CUDA for Gemma 4 Multimodal Vision inference). Communication occurs over local WebSockets to ensure zero external network data transmission. Background task orchestration relies on the `chrome.offscreen` API to bypass Chrome tab throttling.",
+  "architecture": "Oryonix AI is a Hybrid Edge-Agent architecture. It splits execution between a lightweight WXT Chrome Extension (using WASM for low-latency DOM processing) and a robust Local Daemon (utilizing CUDA for Gemma 4 Multimodal Vision inference). Communication occurs over local WebSockets to ensure zero external network data transmission. Background task orchestration relies on the `chrome.offscreen` API to bypass Chrome tab throttling.",
   "microservices": [
     {
       "name": "Oryonix Local Daemon",

@@ -1,23 +1,41 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAgent } from '../../agent/useAgent';
 import { AgentStatusGlow } from './components/AgentStatusGlow';
-import { MacroRecorderControl } from './components/MacroRecorderControl';
-import { VisionFallbackToggle } from './components/VisionFallbackToggle';
 import './App.css';
 
 export default function App() {
   const [task, setTask] = useState('');
-  const [visionEnabled, setVisionEnabled] = useState(true);
-  const { status, history, activity, currentTask, execute, stop } = useAgent();
+  const [finalSummary, setFinalSummary] = useState<string | null>(null);
+  const { status, activity, history, currentTask, execute, stop } = useAgent();
 
   const handleRun = async () => {
     if (!task) return;
+    setFinalSummary(null);
     try {
-      await execute(task);
-    } catch (e) {
+      const result: any = await execute(task);
+      const outputText = result?.message || result?.output || result?.answer;
+      if (outputText) {
+        setFinalSummary(outputText);
+      }
+    } catch (e: any) {
       console.error(e);
+      setFinalSummary(`Error: ${e?.message || 'Execution failed'}`);
     }
   };
+
+  useEffect(() => {
+    if (status === 'idle' && history.length > 0 && !finalSummary) {
+      // Find the last event that has a message (likely the AI's final answer)
+      const lastMessageEvent = [...history].reverse().find(e => (e as any).message && e.type !== 'error');
+      if (lastMessageEvent) {
+        setFinalSummary((lastMessageEvent as any).message);
+      } else if (history[history.length - 1].type === 'error') {
+        setFinalSummary(`Error: ${(history[history.length - 1] as any).error?.message || 'Execution failed'}`);
+      } else {
+        setFinalSummary("Task completed, but no summary was provided by the AI.");
+      }
+    }
+  }, [status, history, finalSummary]);
 
   const mapStatus = () => {
     if (status === 'running') {
@@ -28,78 +46,64 @@ export default function App() {
     return 'idle';
   };
 
-  const handleMacroStart = () => {
-    console.log("Macro recording started");
-  };
-
-  const handleMacroStop = (macroName: string) => {
-    console.log(`Macro ${macroName} saved`);
-  };
-
   return (
     <div className="popup-container theme-dark">
       <header className="popup-header">
-        <h2 className="popup-title">Oryonix V2</h2>
+        <div className="popup-brand">
+          <img src="/Oryonix AI 2.png" alt="Oryonix AI Logo" className="popup-logo" />
+          <h2 className="popup-title">Oryonix AI</h2>
+        </div>
         <AgentStatusGlow status={mapStatus()} />
       </header>
       
-      <div className="popup-input-group">
-        <input 
-          type="text" 
-          value={task}
-          onChange={(e) => setTask(e.target.value)}
-          placeholder="What do you want me to do?"
-          disabled={status === 'running'}
-          className="popup-input"
-        />
-        <button 
-          onClick={handleRun} 
-          disabled={status === 'running' || !task}
-          className="popup-btn popup-btn-run"
-        >
-          Run
-        </button>
-        {status === 'running' && (
-          <button 
-            onClick={stop} 
-            className="popup-btn popup-btn-stop"
-          >
-            Stop
-          </button>
+      <div className="popup-chat-area">
+        {currentTask && (
+          <div className="chat-bubble user-bubble">
+            {currentTask}
+          </div>
+        )}
+
+        {(status === 'running' || activity) && (
+          <div className="chat-status-bar">
+            <div className="status-spinner"></div>
+            <span className="status-text">
+              {activity ? (activity.type === 'executing' ? `Executing ${activity.tool}...` : `Oryonix is ${activity.type}...`) : 'Thinking...'}
+            </span>
+          </div>
+        )}
+
+        {status !== 'running' && finalSummary && (
+          <div className="chat-bubble ai-bubble">
+            <div className="ai-bubble-icon">
+              <img src="/Oryonix AI 2.png" alt="AI" />
+            </div>
+            <div className="ai-bubble-content">
+              {finalSummary}
+            </div>
+          </div>
         )}
       </div>
 
-      <div className="controls-section">
-        <VisionFallbackToggle 
-          isEnabled={visionEnabled} 
-          vramAvailable={16} // Mocked hardware limit check
-          onToggle={setVisionEnabled} 
-        />
-        
-        <MacroRecorderControl 
-          onStart={handleMacroStart} 
-          onStop={handleMacroStop} 
-        />
+      <div className="popup-input-area">
+        <div className="popup-input-group">
+          <input 
+            type="text" 
+            value={task}
+            onChange={(e) => setTask(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') handleRun(); }}
+            placeholder="What do you want me to do?"
+            disabled={status === 'running'}
+            className="popup-input"
+          />
+          <button 
+            onClick={status === 'running' ? stop : handleRun} 
+            disabled={(!task && status !== 'running')}
+            className={`popup-btn ${status === 'running' ? 'popup-btn-stop' : 'popup-btn-run'}`}
+          >
+            {status === 'running' ? 'Stop' : 'Run'}
+          </button>
+        </div>
       </div>
-
-      {activity && (
-        <div className="popup-activity">
-          <strong>Activity:</strong> {activity.type === 'executing' ? `Executing ${activity.tool}...` : activity.type}
-        </div>
-      )}
-
-      {history.length > 0 && (
-        <div className="popup-history">
-          <h3 className="popup-history-title">Execution Log</h3>
-          {history.map((event, index) => (
-            <div key={index} className="popup-history-item">
-              <strong>Step {index + 1}:</strong> {event.type}
-              <br/>
-              <span className="popup-history-msg">{(event as any).message || (event.type === 'error' ? (event as any).error?.message : 'No additional message')}</span>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
