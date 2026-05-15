@@ -76,10 +76,11 @@ function Navbar({ visible, activeSection, onNavClick }: { visible: boolean, acti
       {visible && (
         <motion.header
           className={`nav ${scrolled ? "nav--scrolled" : ""}`}
-          initial={{ y: -100, x: "-50%", opacity: 0 }}
-          animate={{ y: 0, x: "-50%", opacity: 1 }}
-          exit={{ y: -100, x: "-50%", opacity: 0 }}
+          initial={{ y: -100, x: "-50%" }}
+          animate={{ y: 0, x: "-50%" }}
+          exit={{ y: -100, x: "-50%" }}
           transition={{ duration: 0.3, ease: "easeOut" }}
+          style={{ willChange: "auto" }}
         >
           <nav className="container nav__inner">
             <a href="/" className="nav__logo">
@@ -205,7 +206,7 @@ const FeatureCard = ({ f, i, progress, range, targetScale }: { f: any, i: number
         top: `calc(100px + ${i * 32}px)`,
         zIndex: i + 1,
         // The magic padding that creates scroll space for the sticky effect to be visible
-        marginBottom: i === 5 ? "0" : "40vh" 
+        marginBottom: "40vh"
       }}
     >
       <motion.div
@@ -258,7 +259,7 @@ function Features() {
           <h2>Everything you need to <span className="accent-text">automate the web</span></h2>
           <p>No coding. No cloud. Just natural language.</p>
         </div>
-        <div className="features-stack-wrapper">
+        <div className="features-stack-wrapper" style={{ paddingBottom: "40vh" }}>
           {FEATURES.map((f, i) => {
             // Calculate dynamic targets so earlier cards scale down more as others pile up
             const targetScale = 1 - ((FEATURES.length - 1 - i) * 0.05);
