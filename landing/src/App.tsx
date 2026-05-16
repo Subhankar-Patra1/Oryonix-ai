@@ -206,7 +206,7 @@ const FeatureCard = ({ f, i, progress, range, targetScale }: { f: any, i: number
         top: `calc(100px + ${i * 32}px)`,
         zIndex: i + 1,
         // The magic padding that creates scroll space for the sticky effect to be visible
-        marginBottom: "40vh"
+        marginBottom: i === 5 ? "0" : "40vh" 
       }}
     >
       <motion.div
@@ -259,7 +259,7 @@ function Features() {
           <h2>Everything you need to <span className="accent-text">automate the web</span></h2>
           <p>No coding. No cloud. Just natural language.</p>
         </div>
-        <div className="features-stack-wrapper" style={{ paddingBottom: "40vh" }}>
+        <div className="features-stack-wrapper">
           {FEATURES.map((f, i) => {
             // Calculate dynamic targets so earlier cards scale down more as others pile up
             const targetScale = 1 - ((FEATURES.length - 1 - i) * 0.05);
