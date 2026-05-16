@@ -70,7 +70,7 @@ function Navbar({ visible, activeSection, onNavClick }: { visible: boolean, acti
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
+  return (
     <>
       <header
         className={`nav ${scrolled ? "nav--scrolled" : ""} ${visible ? "nav--visible" : ""}`}
