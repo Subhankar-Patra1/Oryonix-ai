@@ -222,8 +222,8 @@ body {
 }
 
 .loader {
-  width: 20px;
-  min-width: 20px;
+  width: 16px;
+  min-width: 16px;
   flex-shrink: 0;
   aspect-ratio: 1.154;
   position: relative;
@@ -253,7 +253,7 @@ body {
 
 @keyframes l27-1 {
   0% { transform: rotate(calc(var(--s,1)*120deg)) translate(0); }
-  30%,70% { transform: rotate(calc(var(--s,1)*120deg)) translate(calc(var(--s,1)*-2px), 4px); }
+  30%,70% { transform: rotate(calc(var(--s,1)*120deg)) translate(calc(var(--s,1)*-1.6px), 3px); }
   100% { transform: rotate(calc(var(--s,1)*120deg)) translate(0); }
 }
 
