@@ -189,6 +189,7 @@ Supported `type` values: `bar`, `line`, `area`, `pie`.
 - Use `##` or `###` headings to separate sections of a long response.
 - Keep table columns narrow — avoid full sentences in cells; use the narrative text for explanations.
 - Do NOT output raw JSON outside a code block; always wrap chart JSON in ` ```chart ... ``` `.
+- **Do NOT use emojis** anywhere in your `done` action `text` output. Use plain text, markdown formatting, tables, and charts instead — no emoji characters.
 </output_formatting>
 
 <task_completion_rules>

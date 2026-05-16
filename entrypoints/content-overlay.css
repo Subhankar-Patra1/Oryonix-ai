@@ -16,7 +16,7 @@
 /* ── 3. Kill Motion Canvas / rainbow overlay ─────────────────── */
 #page-agent-runtime_simulator-mask canvas,
 #page-agent-runtime_simulator-mask svg,
-#page-agent-runtime_simulator-mask > div:not([class*="_cursor_"]):not([class*="cursor"]) {
+#page-agent-runtime_simulator-mask>div:not([class*="_cursor_"]):not([class*="cursor"]) {
   display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
@@ -41,114 +41,66 @@ body,
   background-image: linear-gradient(to bottom left, #f97316, #ea580c, #f97316) !important;
 }
 
-/* ── 5. Animated border angle property ───────────────────────── */
+/* ── 5. Animations for Rolling Border ─────────── */
 @property --border-angle {
   syntax: '<angle>';
   initial-value: 0deg;
   inherits: false;
 }
 
-/* ── 6. Mask container — inward glow only ────────────────────── */
+@keyframes borderSpin {
+  0%   { --border-angle: 0deg; }
+  100% { --border-angle: 360deg; }
+}
+
+/* ── 6. Mask container — base ────────────────────────────────── */
 #page-agent-runtime_simulator-mask {
   pointer-events: none !important;
   z-index: 2147483640 !important;
   background: transparent !important;
-  /* Soft inward glow that pulses gently */
-  animation: innerAura 4s ease-in-out infinite !important;
+  position: fixed !important;
+  inset: 0 !important;
+  border-radius: 12px !important;
+  
+  /* Lighter, static inward glow (using double layer for thickness) */
+  box-shadow: 
+    inset 0 0 25px rgba(253, 186, 116, 0.8),
+    inset 0 0 80px rgba(251, 146, 60, 0.5) !important;
 }
 
-@keyframes innerAura {
-  0%, 100% {
-    box-shadow:
-      inset 0 0 60px  rgba(249, 115, 22, 0.15),
-      inset 0 0 120px rgba(249, 115, 22, 0.08),
-      inset 0 0 200px rgba(249, 115, 22, 0.04);
-  }
-  50% {
-    box-shadow:
-      inset 0 0 80px  rgba(249, 115, 22, 0.25),
-      inset 0 0 160px rgba(249, 115, 22, 0.14),
-      inset 0 0 260px rgba(249, 115, 22, 0.06);
-  }
-}
-
-/* ── 7. Spinning conic-gradient border (::after) ─────────────── */
-/*
-   Thin 4px frame using clip-path with a rotating conic gradient.
-   Colors: Obsidian Ember palette (deep rust → orange → peach → back).
-   Glow is inward via the blurred ::before behind this layer.
-*/
+/* ── 7. Rolling Border (::after) ──────────────────── */
 #page-agent-runtime_simulator-mask::after {
   content: "" !important;
   position: absolute !important;
   inset: 0 !important;
   pointer-events: none !important;
   z-index: 2147483641 !important;
+  border-radius: inherit !important;
 
+  /* Lighter orange rolling gradient with a bright white-hot peak */
   background: conic-gradient(
     from var(--border-angle),
-    #431407,
-    #7c2d12,
     #ea580c,
-    #f97316,
     #fb923c,
-    #f97316,
-    #ea580c,
-    #7c2d12,
-    #431407
+    #fdba74,
+    #ffffff,
+    #fdba74,
+    #fb923c,
+    #ea580c
   ) !important;
 
-  /* Rounded hollow frame using mask compositing */
-  padding: 2px !important; /* border thickness */
-  border-radius: 16px !important; /* rounded corners */
-  -webkit-mask: 
-    linear-gradient(#fff 0 0) content-box, 
-    linear-gradient(#fff 0 0) !important;
-  -webkit-mask-composite: xor !important;
-  mask-composite: exclude !important;
-
-  animation: borderSpin 8s linear infinite !important;
-}
-
-/* ── 8. Inward glow layer (::before) — blurred copy behind border ── */
-#page-agent-runtime_simulator-mask::before {
-  content: "" !important;
-  position: absolute !important;
-  inset: 0 !important;
-  pointer-events: none !important;
-  z-index: 2147483639 !important;
-
-  background: conic-gradient(
-    from var(--border-angle),
-    #431407,
-    #7c2d12,
-    #ea580c,
-    #f97316,
-    #fb923c,
-    #f97316,
-    #ea580c,
-    #7c2d12,
-    #431407
-  ) !important;
-
-  /* Same rounded mask for the glow layer */
+  /* 2px hollow frame via mask-composite */
   padding: 2px !important;
-  border-radius: 16px !important;
-  -webkit-mask: 
-    linear-gradient(#fff 0 0) content-box, 
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0) !important;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0) !important;
   -webkit-mask-composite: xor !important;
   mask-composite: exclude !important;
 
-  /* Strong blur creates a prominent inward glow halo */
-  filter: blur(40px) !important;
-  opacity: 0.95 !important;
-  animation: borderSpin 8s linear infinite !important;
-}
-
-@keyframes borderSpin {
-  0%   { --border-angle: 0deg; }
-  100% { --border-angle: 360deg; }
+  animation: borderSpin 4s linear infinite !important;
 }
 
 /* ── 9. Normal arrow cursor ───────────────────────────────────── */
@@ -161,9 +113,7 @@ body,
   margin-left: -5px !important;
   margin-top: -3px !important;
   filter:
-    drop-shadow(0 0 1px rgba(0, 0, 0, 0.55))
-    drop-shadow(0 2px 6px rgba(249, 115, 22, 0.5))
-    drop-shadow(0 0 10px rgba(249, 115, 22, 0.3)) !important;
+    drop-shadow(0 0 1px rgba(0, 0, 0, 0.55)) drop-shadow(0 2px 6px rgba(249, 115, 22, 0.5)) drop-shadow(0 0 10px rgba(249, 115, 22, 0.3)) !important;
 }
 
 #page-agent-runtime_simulator-mask [class*="_cursorRipple_"]::after {
@@ -192,8 +142,6 @@ body,
   margin-left: -18px !important;
   margin-top: -1px !important;
   filter:
-    drop-shadow(0 0 1px rgba(0, 0, 0, 0.6))
-    drop-shadow(0 2px 8px  rgba(249, 115, 22, 0.75))
-    drop-shadow(0 0 18px rgba(249, 115, 22, 0.55)) !important;
+    drop-shadow(0 0 1px rgba(0, 0, 0, 0.6)) drop-shadow(0 2px 8px rgba(249, 115, 22, 0.75)) drop-shadow(0 0 18px rgba(249, 115, 22, 0.55)) !important;
   transform: scale(0.92) !important;
 }

@@ -7,38 +7,18 @@ interface AgentStatusGlowProps {
 }
 
 export const AgentStatusGlow: React.FC<AgentStatusGlowProps> = ({ status }) => {
-  const getStatusColor = () => {
-    switch (status) {
-      case 'idle':
-        return 'var(--color-primary)';
-      case 'thinking':
-        return 'var(--color-success-glow)';
-      case 'acting':
-        return 'var(--color-recording-red)';
-      case 'error':
-        return 'red';
-      default:
-        return 'var(--color-primary)';
-    }
-  };
+  const isActive = status === 'thinking' || status === 'acting';
+  const isError  = status === 'error';
 
-  const getStatusText = () => {
-    switch (status) {
-      case 'idle': return 'Agent is Idle';
-      case 'thinking': return 'Vision Fallback Processing...';
-      case 'acting': return 'Executing Actions...';
-      case 'error': return 'Error / Hardware Limit Reached';
-      default: return 'Idle';
-    }
-  };
+  const label = isActive ? 'Agent Live' : 'Agent Idle';
 
   return (
-    <div className="agent-status-container" aria-live="polite">
-      <div 
-        className={`status-glow ${status}`} 
-        style={{ backgroundColor: getStatusColor() }}
-      />
-      <span className="status-text">{getStatusText()}</span>
+    <div
+      className={`agent-status-container ${isActive ? 'status-active' : ''} ${isError ? 'status-error' : ''}`}
+      aria-live="polite"
+    >
+      <div className={`status-dot ${isActive ? 'dot-live' : isError ? 'dot-error' : 'dot-idle'}`} />
+      <span className="status-label">{label}</span>
     </div>
   );
 };

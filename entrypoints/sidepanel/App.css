@@ -98,56 +98,112 @@ body {
   color: var(--color-text-primary);
 }
 
+/* ── History Button ─────────────────────────────────────────── */
+.history-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 13px;
+  border-radius: 9999px;
+  border: 1px solid rgba(249, 115, 22, 0.22);
+  background: rgba(249, 115, 22, 0.07);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #fb923c;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+}
+
+.history-toggle-btn:hover {
+  background: rgba(249, 115, 22, 0.15);
+  border-color: rgba(249, 115, 22, 0.45);
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.18);
+  color: #fdba74;
+}
+
+.history-toggle-btn:active {
+  background: rgba(249, 115, 22, 0.22);
+  box-shadow: none;
+}
+
 /* Agent Status Glow (Shadcn style badge) */
+/* ── Agent Status Pill ──────────────────────────────────────── */
 .agent-status-container {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: var(--color-surface);
+  gap: 7px;
+  background: rgba(10, 6, 3, 0.7);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  padding: 6px 14px;
+  padding: 5px 13px;
   border-radius: 9999px;
-  border: 1px solid var(--color-border);
+  border: 1px solid rgba(249, 115, 22, 0.2);
   font-size: 12px;
   font-weight: 600;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
-.status-glow {
-  width: 8px;
-  height: 8px;
+/* Error — subtle red tint */
+.agent-status-container.status-error {
+  border-color: rgba(220, 38, 38, 0.35);
+}
+
+/* ── Status Dot ─────────────────────────────────────────────── */
+.status-dot {
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  transition: all 0.3s ease;
-  background-color: var(--color-text-secondary);
+  flex-shrink: 0;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.status-glow.idle {
-  background-color: var(--color-text-secondary);
+.status-dot.dot-idle {
+  background-color: #525252;
 }
 
-.status-glow.thinking {
-  background-color: var(--color-primary);
-  box-shadow: 0 0 8px var(--color-primary);
-  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+.status-dot.dot-error {
+  background-color: #dc2626;
+  box-shadow: 0 0 5px rgba(220, 38, 38, 0.5);
 }
 
-.status-glow.acting {
-  background-color: var(--color-success);
-  box-shadow: 0 0 8px var(--color-success);
+.status-dot.dot-live {
+  background-color: #fbbf24;
+  box-shadow:
+    0 0 6px  rgba(251, 191, 36, 1),
+    0 0 14px rgba(251, 191, 36, 0.7),
+    0 0 24px rgba(251, 191, 36, 0.4);
+  animation: dot-pulse 2s ease-in-out infinite;
 }
 
-.status-glow.error {
-  background-color: var(--color-destructive);
+@keyframes dot-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 5px  rgba(251, 191, 36, 0.9),
+      0 0 12px rgba(251, 191, 36, 0.55),
+      0 0 22px rgba(251, 191, 36, 0.25);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow:
+      0 0 8px  rgba(251, 191, 36, 1),
+      0 0 20px rgba(251, 191, 36, 0.85),
+      0 0 38px rgba(251, 191, 36, 0.5),
+      0 0 55px rgba(251, 191, 36, 0.2);
+    transform: scale(1.3);
+  }
 }
 
-.status-text {
+/* ── Status Label ───────────────────────────────────────────── */
+.status-label {
   color: var(--color-text-secondary);
+  transition: color 0.3s ease;
 }
 
-@keyframes pulse-ring {
-  0% { transform: scale(0.8); opacity: 1; }
-  50% { transform: scale(1.2); opacity: 0.5; }
-  100% { transform: scale(0.8); opacity: 1; }
+.agent-status-container.status-active .status-label {
+  color: #fb923c;
 }
 
 /* Chat UI Area */
@@ -198,7 +254,7 @@ body {
 }
 
 .ai-bubble-content {
-  background: rgba(10, 10, 10, 0.4);
+  background: rgba(30, 15, 8, 0.55);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid var(--color-border);
@@ -553,12 +609,12 @@ body {
   display: table;
   table-layout: fixed;
   border-radius: 8px;
-  border: 1px solid rgba(249, 115, 22, 0.18);
+  border: 1px solid rgba(249, 115, 22, 0.35);
   overflow: hidden;
 }
 
 .markdown-body thead tr {
-  background: rgba(249, 115, 22, 0.12);
+  background: rgba(249, 115, 22, 0.28);
 }
 
 .markdown-body th {
@@ -591,11 +647,11 @@ body {
 }
 
 .markdown-body tbody tr:nth-child(even) td {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .markdown-body tbody tr:hover td {
-  background: rgba(249, 115, 22, 0.06);
+  background: rgba(249, 115, 22, 0.12);
 }
 
 /* ── Chart Blocks ───────────────────────────────────────── */

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAgent } from '../../agent/useAgent';
 import { AgentStatusGlow } from './components/AgentStatusGlow';
 import { HistoryPanel } from './components/HistoryPanel';
@@ -6,8 +6,34 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { ChartBlock } from './components/ChartBlock';
 import { storage } from '@wxt-dev/storage';
-import { Rocket, Eye, Zap, RotateCcw } from 'lucide-react';
+import {
+  RocketLaunchIcon, EyeIcon, LightningIcon, ClockCounterClockwiseIcon,
+  CheckCircleIcon, XCircleIcon, WarningIcon, InfoIcon,
+} from '@phosphor-icons/react';
 import './App.css';
+
+const EMOJI_MAP: [RegExp, React.ReactNode][] = [
+  [/✅/g, <CheckCircleIcon size={15} weight="fill" color="#22c55e" style={{ verticalAlign: 'middle', display: 'inline', marginBottom: 2 }} />],
+  [/❌/g, <XCircleIcon    size={15} weight="fill" color="#ef4444" style={{ verticalAlign: 'middle', display: 'inline', marginBottom: 2 }} />],
+  [/⚠️/g, <WarningIcon   size={15} weight="fill" color="#f97316" style={{ verticalAlign: 'middle', display: 'inline', marginBottom: 2 }} />],
+  [/ℹ️/g, <InfoIcon      size={15} weight="fill" color="#60a5fa" style={{ verticalAlign: 'middle', display: 'inline', marginBottom: 2 }} />],
+];
+
+function injectIcons(children: React.ReactNode): React.ReactNode {
+  return React.Children.map(children, child => {
+    if (typeof child !== 'string') return child;
+    let parts: (string | React.ReactNode)[] = [child];
+    for (const [regex, icon] of EMOJI_MAP) {
+      parts = parts.flatMap(part => {
+        if (typeof part !== 'string') return [part];
+        return part.split(regex).flatMap((seg, i, arr) =>
+          i < arr.length - 1 ? [seg, React.cloneElement(icon as React.ReactElement, { key: `${i}` })] : [seg]
+        );
+      });
+    }
+    return parts;
+  });
+}
 
 export default function App() {
   const [task, setTask] = useState('');
@@ -136,17 +162,12 @@ export default function App() {
           <h2 className="popup-title">Oryonix AI</h2>
         </div>
         <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
-          <button 
+          <button
             className="history-toggle-btn"
             onClick={() => setShowHistory(true)}
             title="View Search History"
-            style={{
-              background: 'transparent', border: 'none', color: '#f97316', 
-              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px',
-              fontSize: '0.85rem', fontWeight: 600
-            }}
           >
-            <RotateCcw size={16} strokeWidth={2.5} />
+            <ClockCounterClockwiseIcon size={14} weight="bold" />
             History
           </button>
           <AgentStatusGlow status={mapStatus()} />
@@ -177,21 +198,21 @@ export default function App() {
             
             <div className="landing-features">
               <div className="feature-item">
-                <span className="feature-icon"><Rocket size={20} color="#f97316" strokeWidth={1.5} /></span>
+                <span className="feature-icon"><RocketLaunchIcon size={20} color="#f97316" weight="duotone" /></span>
                 <div className="feature-text">
                   <strong>Autonomous Execution</strong>
                   <span>Give me a goal and watch me navigate.</span>
                 </div>
               </div>
               <div className="feature-item">
-                <span className="feature-icon"><Eye size={20} color="#f97316" strokeWidth={1.5} /></span>
+                <span className="feature-icon"><EyeIcon size={20} color="#f97316" weight="duotone" /></span>
                 <div className="feature-text">
                   <strong>Visual DOM Perception</strong>
                   <span>Advanced spatial understanding of web layouts.</span>
                 </div>
               </div>
               <div className="feature-item">
-                <span className="feature-icon"><Zap size={20} color="#f97316" strokeWidth={1.5} /></span>
+                <span className="feature-icon"><LightningIcon size={20} color="#f97316" weight="duotone" /></span>
                 <div className="feature-text">
                   <strong>Intelligent Summarization</strong>
                   <span>Concise insights and actionable results.</span>
@@ -232,6 +253,10 @@ export default function App() {
                     }
                     return <code className={className}>{children}</code>
                   },
+                  p({ children }) { return <p>{injectIcons(children)}</p> },
+                  li({ children }) { return <li>{injectIcons(children)}</li> },
+                  td({ children }) { return <td>{injectIcons(children)}</td> },
+                  th({ children }) { return <th>{injectIcons(children)}</th> },
                 }}
               >
                 {finalSummary}
