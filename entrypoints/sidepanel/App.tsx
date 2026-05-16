@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAgent } from '../../agent/useAgent';
+import { createGeminiFetch } from '../../agent/geminiFetch';
 import { AgentStatusGlow } from './components/AgentStatusGlow';
 import { HistoryPanel } from './components/HistoryPanel';
 import ReactMarkdown from 'react-markdown';
@@ -40,7 +41,34 @@ export default function App() {
   const [finalSummary, setFinalSummary] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [isDetached, setIsDetached] = useState(false);
-  const { status, activity, history, currentTask, execute, stop, reset } = useAgent();
+  const { status, activity, history, currentTask, execute, stop, reset, configure, config } = useAgent();
+
+  const handleModelChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const val = e.target.value;
+    if (val === 'qwen') {
+      await configure({
+        baseURL: "https://page-ag-testing-ohftxirgbn.cn-shanghai.fcapp.run",
+        model: "qwen3.5-plus",
+        apiKey: "NA"
+      });
+    } else if (val === 'gemma-local') {
+      await configure({
+        baseURL: "http://localhost:11434/v1",
+        model: "gemma4:e4b",
+        apiKey: "ollama"
+      });
+    } else if (val === 'gemma-api') {
+      const apiKey = (import.meta as any).env.VITE_GOOGLE_API_KEY as string;
+      const model = 'gemma-4-26b-a4b-it';
+      await configure({
+        baseURL: "https://generativelanguage.googleapis.com/v1beta/openai",
+        model,
+        apiKey,
+        disableNamedToolChoice: true,
+        customFetch: createGeminiFetch(apiKey, model),
+      });
+    }
+  };
 
   const saveLiveSession = async (taskText: string) => {
     try {
@@ -317,23 +345,66 @@ export default function App() {
       </div>
 
       <div className="popup-input-area">
-        <div className="popup-input-group">
+        <div className={`chat-input-wrapper ${status === 'running' ? 'is-running' : ''}`}>
           <input 
             type="text" 
             value={task}
             onChange={(e) => setTask(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') handleRun(); }}
-            placeholder="What do you want me to do?"
+            placeholder="Ask Oryonix to analyze products, crawl websites, read emails, and more..."
             disabled={status === 'running'}
-            className="popup-input"
+            className="chat-input-field"
           />
-          <button 
-            onClick={status === 'running' ? stop : handleRun} 
-            disabled={(!task && status !== 'running')}
-            className={`popup-btn ${status === 'running' ? 'popup-btn-stop' : 'popup-btn-run'}`}
-          >
-            {status === 'running' ? 'Stop' : 'Run'}
-          </button>
+          <div className="chat-input-bottom-row">
+            <div className="chat-input-actions-left">
+              <div className="chat-model-selector-wrapper" title="Select model">
+                <select 
+                  className="chat-model-selector" 
+                  onChange={handleModelChange}
+                  value={
+                    config?.model === 'qwen3.5-plus' ? 'qwen' :
+                    config?.model === 'gemma4:e4b' ? 'gemma-local' :
+                    config?.model === 'gemma-4-26b-a4b-it' ? 'gemma-api' : 'qwen'
+                  }
+                >
+                  <option value="qwen">Qwen 3.5 Plus</option>
+                  <option value="gemma-api">Gemma 4 26B (API)</option>
+                  <option value="gemma-local">Gemma 4 E4B (Local)</option>
+                </select>
+                <svg className="chat-model-caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </div>
+            </div>
+            
+            {status === 'error' && (
+               <div className="chat-input-error-msg">
+                 <WarningIcon size={14} weight="fill" color="#f97316" />
+                 <span>MCP Error</span>
+               </div>
+            )}
+
+            <div className="chat-input-actions-right">
+              <button 
+                onClick={status === 'running' ? stop : handleRun} 
+                className={`chat-submit-btn ${status === 'running' ? 'stop-mode' : (task ? 'send-mode' : 'mic-mode')}`}
+                title={status === 'running' ? 'Stop' : (task ? 'Run' : 'Voice Input')}
+              >
+                {status === 'running' ? (
+                  <div className="stop-icon-container">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                      <rect x="6" y="6" width="12" height="12" rx="1.5" />
+                      <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2" opacity="0.3" />
+                    </svg>
+                  </div>
+                ) : (
+                  task ? (
+                    <img src="/Oryonix AI 2.png" alt="Oryonix" className="chat-submit-logo-icon" />
+                  ) : (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                  )
+                )}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

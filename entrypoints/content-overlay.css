@@ -16,7 +16,7 @@
 /* ── 3. Kill Motion Canvas / rainbow overlay ─────────────────── */
 #page-agent-runtime_simulator-mask canvas,
 #page-agent-runtime_simulator-mask svg,
-#page-agent-runtime_simulator-mask>div:not([class*="_cursor_"]):not([class*="cursor"]) {
+#page-agent-runtime_simulator-mask > div:not([class*="cursor"]):not([class*="clicking"]):not([class*="scrolling"]):not([class*="typing"]):not([class*="pointing"]) {
   display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
@@ -104,7 +104,7 @@ body,
 }
 
 /* ── 9. Normal arrow cursor ───────────────────────────────────── */
-#page-agent-runtime_simulator-mask div:has(> [class*="_cursorRipple_"]) {
+#page-agent-runtime_simulator-mask div:not([class*="scrolling"]):not([class*="clicking"]):not([class*="typing"]):has(> [class*="cursorRipple"]) {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='36' height='36'%3E%3Cpath fill='%23fb923c' stroke='%23fff8f0' stroke-width='1' stroke-linejoin='round' d='M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.42c.45 0 .67-.54.35-.85L5.85 2.85a.5.5 0 0 0-.85.35Z'/%3E%3C/svg%3E") !important;
   background-size: contain !important;
   background-repeat: no-repeat !important;
@@ -112,33 +112,46 @@ body,
   height: 36px !important;
   margin-left: -5px !important;
   margin-top: -3px !important;
-  filter:
-    drop-shadow(0 0 1px rgba(0, 0, 0, 0.55)) drop-shadow(0 2px 6px rgba(249, 115, 22, 0.5)) drop-shadow(0 0 10px rgba(249, 115, 22, 0.3)) !important;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.55)) drop-shadow(0 2px 6px rgba(249, 115, 22, 0.5)) !important;
 }
 
-#page-agent-runtime_simulator-mask [class*="_cursorRipple_"]::after {
-  border-color: #f97316 !important;
-}
-
-/* ── 10. Clicking edit cursor ────────────────────────────────── */
-/* Injected dynamically in content.ts via browser.runtime.getURL('/icon/edit.svg')
-   so the extension URL is resolved at runtime. See injectCursorOverrides(). */
-
-/* ── 11. Scroll cursor ───────────────────────────────────────── */
-/*
-   Bidirectional scroll arrow (↕):
-   • Single merged path — up arrowhead + shaft + down arrowhead
-   • Hotspot: vertical center of the shaft ≈ (12, 12) in 24-unit box
-   • At 36px render: 12/24 × 36 = 18px — centered on both axes
-*/
-#page-agent-runtime_simulator-mask div[class*="_scrolling_"]:has(> [class*="_cursorRipple_"]) {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='36' height='36'%3E%3Cpath fill='%23fb923c' stroke='%23fff8f0' stroke-width='0.9' stroke-linejoin='round' stroke-linecap='round' d='M12 2 L8 7 L10.5 7 L10.5 17 L8 17 L12 22 L16 17 L13.5 17 L13.5 7 L16 7 Z'/%3E%3C/svg%3E") !important;
+/* ── 10. Hand Tool (edit.svg) ───────────────────────── */
+#page-agent-runtime_simulator-mask div[class*="clicking"]:has(> [class*="cursorRipple"]),
+#page-agent-runtime_simulator-mask div[class*="pointing"]:has(> [class*="cursorRipple"]) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='752' height='752' viewBox='0 0 752 752'%3E%3Cpath d='M0 0 C5.251 3.832 9.259 8.384 11.226 14.625 C11.534 17.781 11.537 20.927 11.545 24.096 C11.555 25.043 11.565 25.99 11.575 26.966 C11.606 30.088 11.623 33.209 11.64 36.332 C11.659 38.499 11.678 40.667 11.699 42.834 C11.750 48.534 11.790 54.234 11.827 59.933 C11.867 65.752 11.918 71.570 11.968 77.388 C12.065 88.800 12.149 100.212 12.226 111.625 C12.810 111.465 13.394 111.305 13.996 111.140 C20.703 109.590 27.117 110.575 33.226 113.625 C36.142 115.720 38.844 117.931 41.226 120.625 C41.226 121.285 41.226 121.945 41.226 122.625 C42.154 122.295 43.082 121.965 44.039 121.625 C52.269 119.351 59.523 119.872 66.996 124.066 C72.857 128.162 76.358 133.193 77.735 140.221 C78.327 144.321 78.581 148.380 78.777 152.515 C78.819 153.385 78.861 154.254 78.904 155.150 C79.378 165.888 79.425 176.627 79.414 187.375 C79.413 188.439 79.412 189.503 79.412 190.600 C79.318 252.013 79.318 252.013 68.226 272.625 C67.437 274.119 67.437 274.119 66.632 275.644 C58.003 291.236 58.003 291.236 51.226 294.625 C49.772 294.731 48.314 294.777 46.857 294.792 C45.938 294.803 45.020 294.815 44.074 294.827 C43.064 294.834 42.053 294.841 41.012 294.849 C39.950 294.860 38.889 294.872 37.794 294.884 C26.684 294.994 15.573 295.042 4.463 295.084 C-0.810 295.107 -6.084 295.149 -11.358 295.208 C-17.721 295.279 -24.083 295.315 -30.447 295.328 C-32.872 295.338 -35.297 295.360 -37.722 295.395 C-41.120 295.441 -44.515 295.443 -47.912 295.435 C-48.913 295.459 -49.913 295.482 -50.943 295.507 C-56.150 295.445 -59.035 294.963 -62.817 291.230 C-63.830 290.051 -64.819 288.851 -65.773 287.625 C-66.482 286.798 -67.192 285.971 -67.923 285.119 C-73.775 277.267 -77.780 268.859 -81.835 260 C-82.570 258.418 -83.305 256.836 -84.042 255.255 C-86.304 250.386 -88.541 245.507 -90.773 240.625 C-91.130 239.845 -91.487 239.065 -91.855 238.262 C-95.704 229.854 -99.536 221.437 -103.333 213.005 C-104.700 209.974 -106.083 206.951 -107.494 203.940 C-108.307 202.204 -108.307 202.204 -109.136 200.433 C-109.620 199.409 -110.104 198.385 -110.602 197.329 C-113.877 189.762 -113.808 181.453 -110.851 173.765 C-106.836 165.793 -99.360 160.744 -92.433 155.457 C-87.846 151.946 -83.480 148.189 -79.101 144.425 C-76.773 142.625 -76.773 142.625 -74.773 142.625 C-74.797 141.460 -74.797 141.460 -74.821 140.273 C-74.883 136.724 -74.922 133.174 -74.960 129.625 C-74.986 128.404 -75.011 127.183 -75.037 125.925 C-75.101 117.934 -74.837 111.844 -70.011 105.199 C-63.465 98.785 -58.653 96.507 -49.460 96.375 C-46.195 96.425 -43.884 96.587 -40.773 97.625 C-40.777 96.680 -40.782 95.735 -40.786 94.762 C-40.827 85.832 -40.857 76.902 -40.877 67.972 C-40.887 63.382 -40.901 58.792 -40.924 54.201 C-40.946 49.766 -40.958 45.331 -40.963 40.896 C-40.966 39.210 -40.974 37.523 -40.984 35.836 C-41.131 12.064 -41.131 12.064 -32.945 3.773 C-23.668 -4.830 -11.168 -6.403 0 0 Z' fill='%23F26510' transform='translate(392, 230) scale(0.6)'/%3E%3C/svg%3E") !important;
   background-size: contain !important;
   background-repeat: no-repeat !important;
-  width: 36px !important;
-  height: 36px !important;
-  margin-left: -18px !important;
-  margin-top: -18px !important;
-  filter:
-    drop-shadow(0 0 1px rgba(0, 0, 0, 0.55)) drop-shadow(0 2px 6px rgba(249, 115, 22, 0.5)) drop-shadow(0 0 10px rgba(249, 115, 22, 0.3)) !important;
+  width: 48px !important;
+  height: 48px !important;
+  margin-left: -15px !important;
+  margin-top: -15px !important;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.45)) drop-shadow(0 2px 10px rgba(249, 115, 22, 0.55)) !important;
+}
+
+/* ── 11. Mouse Tool (orange mouse.svg) ───────────────────────── */
+#page-agent-runtime_simulator-mask div[class*="scrolling"]:has(> [class*="cursorRipple"]) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 752 752'%3E%3Cimage href='data:image/png;base64,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') !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  width: 44px !important;
+  height: 44px !important;
+  margin-left: -22px !important;
+  margin-top: -22px !important;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.4)) drop-shadow(0 2px 10px rgba(249, 115, 22, 0.5)) !important;
+}
+
+/* ── 12. Typing cursor (I-Beam) ──────────────────────────────── */
+#page-agent-runtime_simulator-mask div[class*="typing"]:has(> [class*="cursorRipple"]) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='36' height='36'%3E%3Cpath fill='none' stroke='%23fb923c' stroke-width='3' stroke-linecap='round' d='M9 4h6M12 4v16M9 20h6'/%3E%3C/svg%3E") !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  width: 32px !important;
+  height: 32px !important;
+  margin-left: -16px !important;
+  margin-top: -16px !important;
+  filter: drop-shadow(0 0 2px rgba(249, 115, 22, 0.8)) !important;
+}
+
+#page-agent-runtime_simulator-mask [class*="cursorRipple"]::after {
+  border-color: #f97316 !important;
 }
