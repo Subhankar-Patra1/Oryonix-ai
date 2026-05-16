@@ -33,6 +33,7 @@ export interface UseAgentResult {
 	execute: (task: string) => Promise<ExecutionResult>
 	stop: () => void
 	configure: (config: ExtConfig) => Promise<void>
+	reset: () => void
 }
 
 export function useAgent(): UseAgentResult {
@@ -169,6 +170,13 @@ CRITICAL RULES:
 		[]
 	)
 
+	const reset = useCallback(() => {
+		setStatus('idle')
+		setHistory([])
+		setActivity(null)
+		setCurrentTask('')
+	}, [])
+
 	return {
 		status,
 		history,
@@ -178,5 +186,6 @@ CRITICAL RULES:
 		execute,
 		stop,
 		configure,
+		reset,
 	}
 }

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import ReactMarkdown from 'react-markdown';
 import { storage } from '@wxt-dev/storage';
 import './HistoryPanel.css';
 
@@ -10,19 +9,35 @@ export interface SearchHistoryItem {
   timestamp: number;
 }
 
+interface LiveSession {
+  id: string;
+  task: string;
+  timestamp: number;
+}
+
 interface HistoryPanelProps {
   onClose: () => void;
   onRestore: (task: string) => void;
+  onRestoreLive: () => void;
   status: string;
 }
 
-export function HistoryPanel({ onClose, onRestore, status }: HistoryPanelProps) {
+export function HistoryPanel({ onClose, onRestore, onRestoreLive, status }: HistoryPanelProps) {
   const [history, setHistory] = useState<SearchHistoryItem[]>([]);
+  const [liveSession, setLiveSession] = useState<LiveSession | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadHistory();
+    loadLiveSession();
   }, []);
+
+  const loadLiveSession = async () => {
+    try {
+      const live = await storage.getItem<LiveSession>('local:oryonix_live_session');
+      setLiveSession(live ?? null);
+    } catch {}
+  };
 
   const loadHistory = async () => {
     try {
@@ -66,14 +81,23 @@ export function HistoryPanel({ onClose, onRestore, status }: HistoryPanelProps) 
         <button className="history-close-btn" onClick={onClose}>✕</button>
       </div>
       
-      {isRunning && (
-        <div className="history-running-banner">
-          <div className="status-glow thinking" style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#f97316', boxShadow: '0 0 8px #f97316', animation: 'pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}></div>
-          <span>Agent is currently working in the background...</span>
+      {liveSession && (
+        <div className="live-session-item">
+          <div className="live-session-header">
+            <div className="live-badge">
+              <span className="live-dot" />
+              Live
+            </div>
+            <span className="live-session-date">{new Date(liveSession.timestamp).toLocaleString()}</span>
+          </div>
+          <div className="live-session-task">{liveSession.task}</div>
+          <button className="live-resume-btn" onClick={onRestoreLive}>
+            ↩ Resume Session
+          </button>
         </div>
       )}
 
-      {history.length === 0 ? (
+      {history.length === 0 && !liveSession ? (
         <div className="history-empty">
           <p>No past searches found.</p>
           <p className="history-empty-sub">Your searches are saved locally to your device for privacy.</p>

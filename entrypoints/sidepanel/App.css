@@ -5,9 +5,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --color-background: #0a0604;
-  --color-bg-secondary: #0f0907;
-  --color-surface: #1f120e;
+  --color-background: #1A1A1A;
+  --color-bg-secondary: #1A1A1A;
+  --color-surface: #242424;
   --color-border: rgba(249, 115, 22, 0.14);
   
   --color-text-primary: #fafafa;

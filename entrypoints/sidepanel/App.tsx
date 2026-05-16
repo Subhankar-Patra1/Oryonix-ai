@@ -39,7 +39,39 @@ export default function App() {
   const [task, setTask] = useState('');
   const [finalSummary, setFinalSummary] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState(false);
-  const { status, activity, history, currentTask, execute, stop } = useAgent();
+  const [isDetached, setIsDetached] = useState(false);
+  const { status, activity, history, currentTask, execute, stop, reset } = useAgent();
+
+  const saveLiveSession = async (taskText: string) => {
+    try {
+      await storage.setItem('local:oryonix_live_session', {
+        id: Date.now().toString(),
+        task: taskText,
+        timestamp: Date.now(),
+      });
+    } catch (e) {
+      console.error('Failed to save live session', e);
+    }
+  };
+
+  const clearLiveSession = async () => {
+    try { await storage.removeItem('local:oryonix_live_session'); } catch {}
+  };
+
+  const handleNewChat = () => {
+    if (status === 'running' && !isDetached) {
+      saveLiveSession(currentTask);
+      setIsDetached(true);
+      return;
+    }
+    if (status === 'running') stop();
+    reset();
+    clearLiveSession();
+    setTask('');
+    setFinalSummary(null);
+    setIsDetached(false);
+  };
+
 
   const saveToHistory = async (taskText: string, summaryText: string) => {
     try {
@@ -58,8 +90,14 @@ export default function App() {
 
   const handleRun = async () => {
     if (!task) return;
+    if (isDetached) {
+      if (status === 'running') stop();
+      clearLiveSession();
+      reset();
+      setIsDetached(false);
+    }
     const taskToRun = task;
-    setTask(''); // Clear input
+    setTask('');
     setFinalSummary(null);
     try {
       const result: any = await execute(taskToRun);
@@ -122,6 +160,7 @@ export default function App() {
           saveToHistory(currentTask, text);
         }
       }
+      clearLiveSession();
     }
   }, [status, history, finalSummary, currentTask]);
 
@@ -164,6 +203,13 @@ export default function App() {
         <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
           <button
             className="history-toggle-btn"
+            onClick={handleNewChat}
+            title="Start a new chat"
+          >
+            <span style={{ lineHeight: 1 }}>+</span> New Chat
+          </button>
+          <button
+            className="history-toggle-btn"
             onClick={() => setShowHistory(true)}
             title="View Search History"
           >
@@ -175,10 +221,14 @@ export default function App() {
       </header>
       
       {showHistory && (
-        <HistoryPanel 
-          onClose={() => setShowHistory(false)} 
+        <HistoryPanel
+          onClose={() => setShowHistory(false)}
           onRestore={(historicalTask) => {
             setTask(historicalTask);
+            setShowHistory(false);
+          }}
+          onRestoreLive={() => {
+            setIsDetached(false);
             setShowHistory(false);
           }}
           status={status}
@@ -186,7 +236,7 @@ export default function App() {
       )}
 
       <div className="popup-chat-area">
-        {!currentTask && !finalSummary && status === 'idle' && (
+        {(isDetached || (!currentTask && !finalSummary && status === 'idle')) && (
           <div className="landing-state">
             <div className="landing-hero-icon">
               <img src="/Oryonix AI 2.png" alt="Oryonix AI Logo" />
@@ -222,13 +272,13 @@ export default function App() {
           </div>
         )}
 
-        {currentTask && (
+        {!isDetached && currentTask && (
           <div className="chat-bubble user-bubble">
             {currentTask}
           </div>
         )}
 
-        {(status === 'running' || activity) && (
+        {!isDetached && (status === 'running' || activity) && (
           <div className="chat-status-bar">
             <div className="loader"></div>
             <span className="status-text">
@@ -237,7 +287,7 @@ export default function App() {
           </div>
         )}
 
-        {status !== 'running' && finalSummary && (
+        {!isDetached && status !== 'running' && finalSummary && (
           <div className="chat-bubble ai-bubble">
             <div className="ai-bubble-icon">
               <img src="/Oryonix AI 2.png" alt="AI" />
