@@ -13,6 +13,20 @@ function openAIMessagesToGemini(messages: any[]) {
 
   const contents: any[] = []
 
+  // Track the last function name called so tool responses can mirror it.
+  // OpenAI tool messages carry tool_call_id but not always `name`.
+  // Gemini requires functionResponse.name === functionCall.name exactly.
+  let lastFnName = 'tool'
+  // Build a lookup: tool_call_id → function name from assistant messages
+  const toolCallIdToName: Record<string, string> = {}
+  for (const msg of messages) {
+    if (msg.role === 'assistant' && msg.tool_calls?.length) {
+      for (const tc of msg.tool_calls) {
+        if (tc.id && tc.function?.name) toolCallIdToName[tc.id] = tc.function.name
+      }
+    }
+  }
+
   for (const msg of messages) {
     if (msg.role === 'system') continue
 
@@ -26,12 +40,15 @@ function openAIMessagesToGemini(messages: any[]) {
 
     if (msg.role === 'assistant') {
       if (msg.tool_calls?.length) {
-        const parts = msg.tool_calls.map((tc: any) => ({
-          functionCall: {
-            name: tc.function.name,
-            args: (() => { try { return JSON.parse(tc.function.arguments) } catch { return {} } })(),
-          },
-        }))
+        const parts = msg.tool_calls.map((tc: any) => {
+          lastFnName = tc.function.name
+          return {
+            functionCall: {
+              name: tc.function.name,
+              args: (() => { try { return JSON.parse(tc.function.arguments) } catch { return {} } })(),
+            },
+          }
+        })
         contents.push({ role: 'model', parts })
       } else {
         contents.push({ role: 'model', parts: [{ text: msg.content ?? '' }] })
@@ -40,16 +57,40 @@ function openAIMessagesToGemini(messages: any[]) {
     }
 
     if (msg.role === 'tool') {
+      // Resolve name: prefer id→name map, then msg.name, then lastFnName
+      const fnName = (msg.tool_call_id && toolCallIdToName[msg.tool_call_id])
+        || msg.name
+        || lastFnName
       let output: any
       try { output = JSON.parse(msg.content) } catch { output = { result: msg.content } }
       contents.push({
         role: 'user',
-        parts: [{ functionResponse: { name: msg.name ?? 'tool', response: { output } } }],
+        parts: [{ functionResponse: { name: fnName, response: { output } } }],
       })
     }
   }
 
   return { systemInstruction, contents }
+}
+
+// Gemini only accepts a strict subset of JSON Schema — strip anything it rejects
+const GEMINI_UNSUPPORTED_KEYS = new Set([
+  'additionalProperties', '$schema', '$id', '$ref', '$defs',
+  'default', 'examples', 'if', 'then', 'else', 'not',
+  'unevaluatedProperties', 'unevaluatedItems', 'contentEncoding',
+  'contentMediaType', 'readOnly', 'writeOnly', 'deprecated',
+])
+
+function sanitizeSchema(schema: any): any {
+  if (Array.isArray(schema)) return schema.map(sanitizeSchema)
+  if (typeof schema !== 'object' || schema === null) return schema
+
+  const out: any = {}
+  for (const [k, v] of Object.entries(schema)) {
+    if (GEMINI_UNSUPPORTED_KEYS.has(k)) continue
+    out[k] = sanitizeSchema(v)
+  }
+  return out
 }
 
 function openAIToolsToGemini(tools: any[]) {
@@ -58,7 +99,7 @@ function openAIToolsToGemini(tools: any[]) {
     functionDeclarations: tools.map((t: any) => ({
       name: t.function.name,
       description: t.function.description ?? '',
-      parameters: t.function.parameters,
+      parameters: sanitizeSchema(t.function.parameters),
     })),
   }]
 }
@@ -103,7 +144,7 @@ function geminiResponseToOpenAI(data: any, model: string) {
 }
 
 export function createGeminiFetch(apiKey: string, model: string): typeof fetch {
-  return async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+  return async (_input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
     const body = JSON.parse((init?.body as string) ?? '{}')
     const { messages, tools, temperature } = body
 

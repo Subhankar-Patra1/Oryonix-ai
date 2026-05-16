@@ -375,12 +375,6 @@ export default function App() {
               </div>
             </div>
             
-            {status === 'error' && (
-               <div className="chat-input-error-msg">
-                 <WarningIcon size={14} weight="fill" color="#f97316" />
-                 <span>MCP Error</span>
-               </div>
-            )}
 
             <div className="chat-input-actions-right">
               <button 
