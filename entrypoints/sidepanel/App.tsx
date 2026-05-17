@@ -254,22 +254,24 @@ export default function App() {
           <img src="/Oryonix AI 2.png" alt="Oryonix AI Logo" className="popup-logo" />
           <h2 className="popup-title">Oryonix AI</h2>
         </div>
-        <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
+        <div className="header-actions">
           <button
-            className="history-toggle-btn"
+            className="btn-header btn-header-action"
             onClick={handleNewChat}
             title="Start a new chat"
           >
-            <span style={{ lineHeight: 1 }}>+</span> New Chat
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor" aria-hidden="true"><path d="M5.625 1.25a.625.625 0 1 0-1.25 0v3.125H1.25a.625.625 0 1 0 0 1.25h3.125V8.75a.625.625 0 1 0 1.25 0V5.625H8.75a.625.625 0 1 0 0-1.25H5.625V1.25z"/></svg>
+            New Chat
           </button>
           <button
-            className="history-toggle-btn"
+            className="btn-header btn-header-ghost"
             onClick={() => setShowHistory(true)}
-            title="View Search History"
+            title="View history"
           >
-            <ClockCounterClockwiseIcon size={14} weight="bold" />
+            <ClockCounterClockwiseIcon size={13} weight="bold" />
             History
           </button>
+          <div className="header-divider" />
           <AgentStatusGlow status={mapStatus()} />
         </div>
       </header>

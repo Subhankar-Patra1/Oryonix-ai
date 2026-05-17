@@ -9,6 +9,7 @@ import type { LLMConfig } from '@page-agent/llms'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { DEMO_CONFIG, migrateLegacyEndpoint, isTestingEndpoint } from './constants'
 import { createSanitizingFetch } from './sanitizingFetch'
+import { createGeminiFetch } from './geminiFetch'
 import { MultiPageAgent } from './MultiPageAgent'
 
 interface AdvancedConfig {
@@ -56,10 +57,18 @@ export function useAgent(): UseAgentResult {
 
 			// For local models (Ollama), apply sanitizing fetch and disable named tool choice
 			const isLocalModel = llmConfig.baseURL.includes('localhost') || llmConfig.baseURL.includes('127.0.0.1')
+			const isGemini = llmConfig.baseURL.includes('generativelanguage.googleapis.com')
 			const isProxy = isTestingEndpoint(llmConfig.baseURL)
 
 			if (isLocalModel) {
 				llmConfig = { ...llmConfig, disableNamedToolChoice: true, customFetch: createSanitizingFetch() }
+			} else if (isGemini) {
+				// Route Gemma API through native generateContent endpoint for proper tool calling
+				llmConfig = {
+					...llmConfig,
+					disableNamedToolChoice: true,
+					customFetch: createGeminiFetch(llmConfig.apiKey, llmConfig.model),
+				}
 			} else if (isProxy) {
 				// For cloud testing proxies: clear apiKey so no Authorization header is sent
 				// and use a customFetch that strips any lingering auth headers

@@ -293,19 +293,18 @@ export function createSanitizingFetch(): typeof fetch {
 	return async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
 		let modifiedInit = init
 
-		// ── REQUEST PHASE: Strip tools to force plain-text JSON mode ──
+		// ── REQUEST PHASE: Pass tools through — Ollama supports native tool calling ──
 		if (init?.body && typeof init.body === 'string') {
 			try {
 				const body = JSON.parse(init.body)
 
-				// Remove OpenAI-style tool definitions — gemma4:e4b can't handle them reliably
-				if (body.tools) {
-					delete body.tools
-					delete body.tool_choice
+				// Boost temperature to match Qwen's performance level
+				if (!body.temperature || body.temperature < 1) {
+					body.temperature = 1
 				}
 
-				// Set format to JSON for Ollama
-				if (!body.response_format) {
+				// Only force json_object mode when no tools are present (they conflict)
+				if (!body.tools && !body.response_format) {
 					body.response_format = { type: 'json_object' }
 				}
 

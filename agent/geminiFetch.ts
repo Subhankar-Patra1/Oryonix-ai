@@ -155,7 +155,7 @@ export function createGeminiFetch(apiKey: string, model: string): typeof fetch {
       contents,
       ...(systemInstruction && { systemInstruction }),
       ...(geminiTools && { tools: geminiTools, toolConfig: { functionCallingConfig: { mode: 'ANY' } } }),
-      generationConfig: { temperature: temperature ?? 0.7 },
+      generationConfig: { temperature: Math.max(temperature ?? 0, 1.0) },
     }
 
     const url =
