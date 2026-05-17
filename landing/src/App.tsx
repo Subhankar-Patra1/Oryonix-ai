@@ -608,8 +608,10 @@ function Hero({ onNavClick }: { onNavClick?: (e: any, href: string) => void }) {
         ))}
       </div>
 
-      {/* Halley's Comet (Shooting Star) */}
-      <div className="hero__comet" />
+      {/* Halley's Comets (Shooting Stars) */}
+      <div className="hero__comet hero__comet--1" />
+      <div className="hero__comet hero__comet--2" />
+      <div className="hero__comet hero__comet--3" />
 
       <div className="container hero__inner">
         <motion.div className="hero__content" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}>

@@ -344,8 +344,6 @@ button:focus {
 
 .hero__comet {
   position: absolute;
-  top: 15%;
-  left: 65%;
   width: 140px;
   height: 1px;
   background: linear-gradient(90deg, rgba(249, 115, 22, 0) 0%, rgba(249, 115, 22, 0.4) 40%, rgba(255, 255, 255, 0.95) 100%);
@@ -354,7 +352,29 @@ button:focus {
   opacity: 0;
   pointer-events: none;
   z-index: 1;
-  animation: cometFall 11s ease-in-out infinite;
+}
+
+/* Comet 1: Leftmost falling path */
+.hero__comet--1 {
+  top: -50px;
+  left: 45%;
+  animation: cometFall 15s ease-in-out infinite;
+}
+
+/* Comet 2: Center falling path */
+.hero__comet--2 {
+  top: -50px;
+  left: 70%;
+  animation: cometFall 17s ease-in-out infinite;
+  animation-delay: 5s;
+}
+
+/* Comet 3: Rightmost falling path */
+.hero__comet--3 {
+  top: -50px;
+  left: 95%;
+  animation: cometFall 19s ease-in-out infinite;
+  animation-delay: 10s;
 }
 
 .hero__comet::after {
@@ -372,21 +392,22 @@ button:focus {
 
 @keyframes cometFall {
   0% {
-    transform: translate(220px, -220px) rotate(135deg);
+    transform: translate(400px, -400px) rotate(135deg);
     opacity: 0;
     width: 0px;
   }
-  3% {
+  6% {
+    transform: translate(200px, -200px) rotate(135deg);
     opacity: 1;
     width: 150px;
   }
-  9% {
-    transform: translate(-350px, 350px) rotate(135deg);
+  24% {
+    transform: translate(-400px, 400px) rotate(135deg);
     opacity: 0;
     width: 60px;
   }
   100% {
-    transform: translate(-350px, 350px) rotate(135deg);
+    transform: translate(-400px, 400px) rotate(135deg);
     opacity: 0;
     width: 0px;
   }
