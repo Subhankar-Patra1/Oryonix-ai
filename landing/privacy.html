@@ -331,7 +331,7 @@
             <!-- Privacy Policy Text -->
             <div class="privacy-body">
               <div class="privacy-intro-box">
-                <p><strong>Oryonix AI</strong> ("the Software," including the core JavaScript library and browser extension) operates under a **local-first** security model. In strict adherence to the principles of **Data Minimization**, **User Sovereignty**, and **Regulatory Compliance** (such as GDPR and the EU AI Act), we do not track or aggregate your personal data.</p>
+                <p><strong>Oryonix AI</strong> ("the Software," including the core JavaScript library and browser extension) operates under a <strong>local-first</strong> security model. In strict adherence to the principles of <strong>Data Minimization</strong>, <strong>User Sovereignty</strong>, and <strong>Regulatory Compliance</strong> (such as GDPR and the EU AI Act), we do not track or aggregate your personal data.</p>
               </div>
 
               <div class="privacy-section">
@@ -373,8 +373,8 @@
                 <h3>4. AI Prompt Routing & Security Architecture</h3>
                 <p>Oryonix AI routes data depending entirely on your configured AI provider settings:</p>
                 <ul>
-                  <li><strong>Local LLM / Ollama (Offline Mode):</strong> When configured to use Ollama (e.g., <code>http://localhost:11434</code>), Oryonix AI operates entirely offline inside your local network. 100% of your prompts, dynamic page snapshots, and action logic are processed locally on your machine.</li>
-                  <li><strong>Bring Your Own Key (BYOK) Cloud Routing:</strong> When cloud APIs (OpenAI, Gemini, Anthropic, Groq, Mistral) are selected, Oryonix AI issues direct HTTPS queries to the respective official APIs. Your credentials are saved only in local storage, and we do not log, intercept, or proxy your prompts.</li>
+                  <li><strong>Local LLM / Ollama (Offline Mode - Planned Future Feature):</strong> When configured to use Ollama in the future (e.g., <code>http://localhost:11434</code>), Oryonix AI will operate entirely offline inside your local network. 100% of your prompts, dynamic page snapshots, and action logic will be processed locally on your machine.</li>
+                  <li><strong>Bring Your Own Key (BYOK) Cloud Routing (Planned Future Feature):</strong> <strong>Once the BYOK feature is active</strong>, when cloud APIs (OpenAI, Gemini, Anthropic, Groq, Mistral) are selected, Oryonix AI will issue direct HTTPS queries to the respective official APIs. Your credentials will be saved only in local storage, and we will not log, intercept, or proxy your prompts.</li>
                   <li><strong>Public Testing API (Web Demo & Sandbox Only):</strong> In the rapid web evaluation sandbox or demo CDN scripts, Oryonix AI leverages a public testing API for research. <strong>Do not enter confidential data</strong> when using the testing API, as queries are processed on temporary instances located in Mainland China.</li>
                 </ul>
               </div>

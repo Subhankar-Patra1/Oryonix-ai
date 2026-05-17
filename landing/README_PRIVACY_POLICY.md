@@ -46,13 +46,13 @@ Because all data is stored locally on your machine, you have absolute control ov
 
 ## 4. AI Prompt Routing & Security Architecture
 
-### A. Local LLM / Ollama (Default Recommended Offline Mode)
-* **How it works:** When configured to use Ollama (e.g., `http://localhost:11434`), Oryonix AI operates entirely offline inside your local network.
-* **Privacy Impact:** Zero internet routing. 100% of your prompt prompts, dynamic page snapshots, and action logic are processed locally on your machine.
+### A. Local LLM / Ollama (Offline Mode - Planned Future Feature)
+* **How it works:** When configured to use Ollama in the future (e.g., `http://localhost:11434`), Oryonix AI will operate entirely offline inside your local network.
+* **Privacy Impact:** Zero internet routing. 100% of your prompts, dynamic page snapshots, and action logic will be processed locally on your machine.
 
-### B. Bring Your Own Key (BYOK) Cloud Routing
-* **How it works:** When cloud APIs (OpenAI, Gemini, Anthropic, Groq, Mistral) are selected, Oryonix AI issues direct HTTPS queries to the respective official APIs.
-* **Privacy Impact:** Your configured API credentials are saved only in `chrome.storage.local`. We do not log, intercept, or proxy your prompts. Prompts are subject to the third-party providers' respective data privacy policies (e.g., enterprise APIs usually exempt your prompts from training).
+### B. Bring Your Own Key (BYOK) Cloud Routing (Planned Future Feature)
+* **How it works:** **Once the BYOK feature is active**, when cloud APIs (OpenAI, Gemini, Anthropic, Groq, Mistral) are selected, Oryonix AI will issue direct HTTPS queries to the respective official APIs.
+* **Privacy Impact:** Your configured API credentials will be saved only in `chrome.storage.local`. We will not log, intercept, or proxy your prompts. Prompts will be subject to the third-party providers' respective data privacy policies (e.g., enterprise APIs usually exempt your prompts from training).
 
 ### C. Public Testing API (Web Demo & Sandbox Only)
 * **How it works:** In the rapid web evaluation sandbox or demo CDN scripts, Oryonix AI leverages a public testing API for research.
