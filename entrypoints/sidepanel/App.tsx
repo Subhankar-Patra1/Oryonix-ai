@@ -267,7 +267,7 @@ export default function App() {
     <div className="popup-container theme-dark">
       <header className="popup-header">
         <div className="popup-brand">
-          <img src="/Oryonix AI 2.png" alt="Oryonix AI Logo" className="popup-logo" />
+          <img src="/logo.svg" alt="Oryonix AI Logo" className="popup-logo" />
           <h2 className="popup-title">Oryonix AI</h2>
         </div>
         <div className="header-actions">
