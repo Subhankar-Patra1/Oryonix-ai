@@ -8,13 +8,9 @@ import {
   AppWindow, Sparkles, Lock, Rocket, Cpu, Eye, Star,
   Package, Plug, Terminal, CheckCircle, RefreshCw,
   CheckSquare, BarChart2, Lightbulb, ChevronUp, ChevronDown,
-<<<<<<< Updated upstream
-  Search, MessageSquare, Plus
-=======
   Gamepad2, Brain, Train, ScrollText, Calculator, Zap,
   Sliders, Settings, ImagePlus, Upload, Mic, Send, Image as ImageIcon,
   ArrowLeft, LayoutDashboard, Plus, Folder, Search, MessageSquare, Accessibility, Globe
->>>>>>> Stashed changes
 } from "lucide-react";
 import "./App.css";
 
@@ -497,15 +493,9 @@ const TESTIMONIALS = [
 ];
 const OS_FEATURES = ["Full multi-tab browser agent", "Local LLM support (Ollama)", "Custom LLM endpoint support", "Smart page reading & interaction", "Tab grouping & management", "MIT Licensed — forever free"];
 const FOOTER_COLS = [
-<<<<<<< Updated upstream
-  { title: "Product", links: [{ l: "Features", h: "#features" }, { l: "Demo", h: "#demo" }, { l: "How It Works", h: "#how-it-works" }, { l: "Changelog", h: "#" }] },
-  { title: "Resources", links: [{ l: "Documentation", h: "#" }, { l: "Getting Started", h: "#" }, { l: "API Reference", h: "#" }, { l: "FAQ", h: "#faq" }] },
-  { title: "Connect", links: [{ l: "GitHub", h: SITE.github }, { l: "X (Twitter)", h: "#" }, { l: "Discord", h: "#" }, { l: "Report a Bug", h: "#" }] },
-=======
   { title: "Product", links: [{ l: "Features", h: "#features" }, { l: "Demo", h: "#demo" }, { l: "How It Works", h: "#how-it-works" }] },
-  { title: "Resources", links: [{ l: "Getting Started", h: "#" }, { l: "FAQ", h: "#" }] },
+  { title: "Resources", links: [{ l: "Getting Started", h: "#" }, { l: "FAQ", h: "#faq" }] },
   { title: "Connect", links: [{ l: "GitHub", h: SITE.github }, { l: "X (Twitter)", h: "#" }, { l: "Report a Bug", h: "#" }] },
->>>>>>> Stashed changes
 ];
 
 /* ─── SVG Icons ─── */
@@ -1405,8 +1395,31 @@ function FAQ() {
 
 /* ═══════════ FOOTER ═══════════ */
 function Footer({ onNavClick }: { onNavClick?: (e: any, href: string) => void }) {
+  const footerRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: footerRef,
+    offset: ["start end", "end end"]
+  });
+
+  const glowScaleY = useTransform(scrollYProgress, [0, 1], [0.3, 1.25]);
+  const glowScaleX = useTransform(scrollYProgress, [0, 1], [0.6, 1.2]);
+  const glowOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 0.4, 0.9]);
+  const glowY = useTransform(scrollYProgress, [0, 1], [150, 0]);
+
   return (
-    <footer className="footer">
+    <footer ref={footerRef} className="footer">
+      <div className="footer__glow-container">
+        <motion.div 
+          style={{
+            scaleY: glowScaleY,
+            scaleX: glowScaleX,
+            opacity: glowOpacity,
+            y: glowY,
+            originY: 1
+          }}
+          className="footer__glow"
+        />
+      </div>
       <div className="container footer__inner">
         <div className="footer__brand">
           <a href="/" className="nav__logo">
