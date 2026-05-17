@@ -8,13 +8,9 @@ import {
   AppWindow, Sparkles, Lock, Rocket, Cpu, Eye, Star,
   Package, Plug, Terminal, CheckCircle, RefreshCw,
   CheckSquare, BarChart2, Lightbulb, ChevronUp, ChevronDown,
-<<<<<<< Updated upstream
-  Search, MessageSquare, Plus
-=======
-  Gamepad2, Brain, Train, ScrollText, Calculator, Zap,
+  Search, MessageSquare, Plus, Gamepad2, Brain, Train, ScrollText, Calculator, Zap,
   Sliders, Settings, ImagePlus, Upload, Mic, Send, Image as ImageIcon,
-  ArrowLeft, LayoutDashboard, Plus, Folder, Search, MessageSquare, Accessibility, Globe
->>>>>>> Stashed changes
+  ArrowLeft, LayoutDashboard, Folder, Accessibility, Globe
 } from "lucide-react";
 import "./App.css";
 
