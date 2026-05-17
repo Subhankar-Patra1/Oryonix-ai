@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Lenis from "lenis";
 // Added useScroll and useTransform for the stacking scroll effect
 import { motion, AnimatePresence, useMotionValue, useMotionTemplate, useScroll, useTransform } from "framer-motion";
@@ -570,12 +570,47 @@ function Navbar({ visible, activeSection, onNavClick }: { visible: boolean, acti
   );
 }
 
-/* ═══════════ HERO ═══════════ */
 function Hero({ onNavClick }: { onNavClick?: (e: any, href: string) => void }) {
+  // Generate random twinkling stars/dots in space
+  const stars = useMemo(() => {
+    return Array.from({ length: 160 }).map((_, i) => ({
+      id: i,
+      top: `${Math.random() * 100}%`, 
+      left: `${Math.random() * 100}%`,
+      size: Math.random() * 2.2 + 1.2, // 1.2px to 3.4px
+      delay: `${Math.random() * 5}s`,
+      duration: `${Math.random() * 4 + 3}s`, // 3s to 7s
+      opacity: Math.random() * 0.7 + 0.3,
+    }));
+  }, []);
+
   return (
     <section className="hero" id="hero">
       <div className="hero__glow" />
       <div className="hero__grid" />
+
+      {/* Twinkling Space Stars Background */}
+      <div className="hero__stars">
+        {stars.map((star) => (
+          <span
+            key={star.id}
+            className="hero__star"
+            style={{
+              top: star.top,
+              left: star.left,
+              width: `${star.size}px`,
+              height: `${star.size}px`,
+              animationDelay: star.delay,
+              animationDuration: star.duration,
+              opacity: star.opacity,
+            } as React.CSSProperties}
+          />
+        ))}
+      </div>
+
+      {/* Halley's Comet (Shooting Star) */}
+      <div className="hero__comet" />
+
       <div className="container hero__inner">
         <motion.div className="hero__content" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}>
           <motion.div className="hero__badge" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}>
