@@ -263,12 +263,26 @@ body {
   flex-direction: column;
   gap: 16px;
   padding-bottom: 12px;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(249, 115, 22, 0.3) transparent;
 }
 
 .popup-chat-area::-webkit-scrollbar {
-  display: none; /* Chrome/Safari */
+  width: 4px;
+}
+
+.popup-chat-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.popup-chat-area::-webkit-scrollbar-thumb {
+  background: rgba(249, 115, 22, 0.3);
+  border-radius: 4px;
+}
+
+.popup-chat-area::-webkit-scrollbar-thumb:hover {
+  background: rgba(249, 115, 22, 0.55);
 }
 
 .chat-bubble {
@@ -796,15 +810,12 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: var(--glass-bg);
-  border: var(--glass-border);
+  background: rgba(249, 115, 22, 0.04);
+  border: 1px solid rgba(249, 115, 22, 0.10);
   padding: 10px 14px;
   border-radius: 16px;
   text-align: left;
   transition: all 0.3s ease-out;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .feature-item:hover {

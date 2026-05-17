@@ -38,11 +38,13 @@ function injectIcons(children: React.ReactNode): React.ReactNode {
 
 export default function App() {
   const [task, setTask] = useState('');
-  const [finalSummary, setFinalSummary] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [isDetached, setIsDetached] = useState(false);
   const [modelDropdownOpen, setModelDropdownOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState<Array<{role: 'user' | 'ai', content: string}>>([]);
   const modelDropdownRef = useRef<HTMLDivElement>(null);
+  const chatAreaRef = useRef<HTMLDivElement>(null);
+  const aiResponseAddedRef = useRef(false);
   const { status, activity, history, currentTask, execute, stop, reset, configure, config } = useAgent();
 
   // Close dropdown on outside click
@@ -122,7 +124,8 @@ export default function App() {
     reset();
     clearLiveSession();
     setTask('');
-    setFinalSummary(null);
+    setChatMessages([]);
+    aiResponseAddedRef.current = false;
     setIsDetached(false);
   };
 
@@ -148,23 +151,29 @@ export default function App() {
       if (status === 'running') stop();
       clearLiveSession();
       reset();
+      setChatMessages([]);
       setIsDetached(false);
     }
     const taskToRun = task;
     setTask('');
-    setFinalSummary(null);
+    aiResponseAddedRef.current = false;
+    setChatMessages(prev => [...prev, { role: 'user', content: taskToRun }]);
     try {
       const result: any = await execute(taskToRun);
       const outputText = result?.message || result?.output || result?.answer || result?.content;
-      if (outputText) {
-        setFinalSummary(outputText);
+      if (outputText && !aiResponseAddedRef.current) {
+        aiResponseAddedRef.current = true;
+        setChatMessages(prev => [...prev, { role: 'ai', content: outputText }]);
         saveToHistory(taskToRun, outputText);
       }
     } catch (e: any) {
       console.error(e);
       const errorMsg = `Error: ${e?.message || 'Execution failed'}`;
-      setFinalSummary(errorMsg);
-      saveToHistory(taskToRun, errorMsg);
+      if (!aiResponseAddedRef.current) {
+        aiResponseAddedRef.current = true;
+        setChatMessages(prev => [...prev, { role: 'ai', content: errorMsg }]);
+        saveToHistory(taskToRun, errorMsg);
+      }
     }
   };
 
@@ -174,14 +183,23 @@ export default function App() {
     const prevStatus = prevStatusRef.current;
     prevStatusRef.current = status;
 
-    if (prevStatus === 'running' && (status === 'completed' || status === 'error') && currentTask && !finalSummary) {
+    if (prevStatus === 'running' && (status === 'completed' || status === 'error') && currentTask && !aiResponseAddedRef.current) {
       if (history.length === 0) {
-        setFinalSummary("Task stopped or failed before execution started.");
+        const text = "Task stopped or failed before execution started.";
+        aiResponseAddedRef.current = true;
+        setChatMessages(prev => [...prev, { role: 'ai', content: text }]);
         return;
       }
 
-      // Handle done tool action explicitly or find text payload
-      const lastMessageEvent = [...history].reverse().find(e => 
+      const addAIMessage = (text: string) => {
+        if (!aiResponseAddedRef.current) {
+          aiResponseAddedRef.current = true;
+          setChatMessages(prev => [...prev, { role: 'ai', content: text }]);
+          saveToHistory(currentTask, text);
+        }
+      };
+
+      const lastMessageEvent = [...history].reverse().find(e =>
         e.type !== 'error' && ((e as any).message || (e as any).output || (e as any).content || (e as any).text || (e as any).answer || ((e as any).action?.name === 'done' && (e as any).action?.input?.text))
       ) as any;
 
@@ -191,32 +209,30 @@ export default function App() {
       }
 
       if (foundDoneText) {
-        setFinalSummary(foundDoneText);
-        saveToHistory(currentTask, foundDoneText);
+        addAIMessage(foundDoneText);
       } else if (lastMessageEvent && (lastMessageEvent.message || lastMessageEvent.output || lastMessageEvent.content || lastMessageEvent.text || lastMessageEvent.answer)) {
-        const text = lastMessageEvent.message || lastMessageEvent.output || lastMessageEvent.content || lastMessageEvent.text || lastMessageEvent.answer || "Task executed.";
-        setFinalSummary(text);
-        saveToHistory(currentTask, text);
+        addAIMessage(lastMessageEvent.message || lastMessageEvent.output || lastMessageEvent.content || lastMessageEvent.text || lastMessageEvent.answer);
       } else {
-        // Fallback to the last reflection memory if it crashed or was stopped
         const lastStep = [...history].reverse().find(e => e.type === 'step') as any;
         if (lastStep?.reflection?.memory) {
-          const text = `**Task concluded without a formal summary.**\n\n*Last agent memory:*\n${lastStep.reflection.memory}`;
-          setFinalSummary(text);
-          saveToHistory(currentTask, text);
+          addAIMessage(`**Task concluded without a formal summary.**\n\n*Last agent memory:*\n${lastStep.reflection.memory}`);
         } else if (history[history.length - 1].type === 'error') {
-          const text = `Error: ${(history[history.length - 1] as any).error?.message || (history[history.length - 1] as any).message || 'Execution failed'}`;
-          setFinalSummary(text);
-          saveToHistory(currentTask, text);
+          addAIMessage(`Error: ${(history[history.length - 1] as any).error?.message || (history[history.length - 1] as any).message || 'Execution failed'}`);
         } else {
-          const text = "Task completed, but the AI did not format a text summary.";
-          setFinalSummary(text);
-          saveToHistory(currentTask, text);
+          addAIMessage("Task completed, but the AI did not format a text summary.");
         }
       }
       clearLiveSession();
     }
-  }, [status, history, finalSummary, currentTask]);
+  }, [status, history, currentTask]);
+
+  // Auto-scroll to bottom on new messages or while running
+  useEffect(() => {
+    if (chatAreaRef.current) {
+      chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
+    }
+  }, [chatMessages, status]);
+
 
   const mapStatus = () => {
     if (status === 'running') {
@@ -291,8 +307,8 @@ export default function App() {
         />
       )}
 
-      <div className="popup-chat-area">
-        {(isDetached || (!currentTask && !finalSummary && status === 'idle')) && (
+      <div className="popup-chat-area" ref={chatAreaRef}>
+        {chatMessages.length === 0 && status !== 'running' && (
           <div className="landing-state">
             <div className="landing-hero-icon">
               <img src="/Oryonix AI 2.png" alt="Oryonix AI Logo" />
@@ -301,7 +317,6 @@ export default function App() {
             <p className="landing-subtitle">
               Your autonomous browser copilot. I can navigate pages, analyze visual context, and execute complex workflows directly in your browser.
             </p>
-            
             <div className="landing-features">
               <div className="feature-item">
                 <span className="feature-icon"><img src="/icon/artificial.png" width={20} height={20} alt="Autonomous Execution" /></span>
@@ -328,46 +343,42 @@ export default function App() {
           </div>
         )}
 
-        {!isDetached && currentTask && (
-          <div className="chat-bubble user-bubble">
-            {currentTask}
-          </div>
+        {chatMessages.map((msg, i) =>
+          msg.role === 'user' ? (
+            <div key={i} className="chat-bubble user-bubble">{msg.content}</div>
+          ) : (
+            <div key={i} className="chat-bubble ai-bubble">
+              <div className="ai-bubble-icon">
+                <img src="/Oryonix AI 2.png" alt="AI" />
+              </div>
+              <div className="ai-bubble-content markdown-body">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    code({ className, children }) {
+                      const lang = /language-(\w+)/.exec(className || '')?.[1]
+                      if (lang === 'chart') {
+                        return <ChartBlock code={String(children).replace(/\n$/, '')} />
+                      }
+                      return <code className={className}>{children}</code>
+                    },
+                    p({ children }) { return <p>{injectIcons(children)}</p> },
+                    li({ children }) { return <li>{injectIcons(children)}</li> },
+                    td({ children }) { return <td>{injectIcons(children)}</td> },
+                    th({ children }) { return <th>{injectIcons(children)}</th> },
+                  }}
+                >
+                  {msg.content}
+                </ReactMarkdown>
+              </div>
+            </div>
+          )
         )}
 
-        {!isDetached && (status === 'running' || activity) && (
+        {status === 'running' && (
           <div className="chat-status-bar">
             <div className="loader"></div>
-            <span className="status-text">
-              {getThinkingText()}
-            </span>
-          </div>
-        )}
-
-        {!isDetached && status !== 'running' && finalSummary && (
-          <div className="chat-bubble ai-bubble">
-            <div className="ai-bubble-icon">
-              <img src="/Oryonix AI 2.png" alt="AI" />
-            </div>
-            <div className="ai-bubble-content markdown-body">
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                components={{
-                  code({ className, children }) {
-                    const lang = /language-(\w+)/.exec(className || '')?.[1]
-                    if (lang === 'chart') {
-                      return <ChartBlock code={String(children).replace(/\n$/, '')} />
-                    }
-                    return <code className={className}>{children}</code>
-                  },
-                  p({ children }) { return <p>{injectIcons(children)}</p> },
-                  li({ children }) { return <li>{injectIcons(children)}</li> },
-                  td({ children }) { return <td>{injectIcons(children)}</td> },
-                  th({ children }) { return <th>{injectIcons(children)}</th> },
-                }}
-              >
-                {finalSummary}
-              </ReactMarkdown>
-            </div>
+            <span className="status-text">{getThinkingText()}</span>
           </div>
         )}
       </div>
