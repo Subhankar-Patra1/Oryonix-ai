@@ -41,10 +41,36 @@ export default function App() {
   const [finalSummary, setFinalSummary] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [isDetached, setIsDetached] = useState(false);
+  const [modelDropdownOpen, setModelDropdownOpen] = useState(false);
+  const modelDropdownRef = useRef<HTMLDivElement>(null);
   const { status, activity, history, currentTask, execute, stop, reset, configure, config } = useAgent();
 
-  const handleModelChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const val = e.target.value;
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (modelDropdownRef.current && !modelDropdownRef.current.contains(e.target as Node)) {
+        setModelDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const MODEL_OPTIONS = [
+    { value: 'qwen', label: 'Qwen 3.5 Plus' },
+    { value: 'gemma-api', label: 'Gemma 4 26B (API)' },
+    { value: 'gemma-local', label: 'Gemma 4 E4B (Local)' },
+  ];
+
+  const currentModelValue =
+    config?.model === 'qwen3.5-plus' ? 'qwen' :
+    config?.model === 'gemma4:e4b' ? 'gemma-local' :
+    config?.model === 'gemma-4-26b-a4b-it' ? 'gemma-api' : 'qwen';
+
+  const currentModelLabel = MODEL_OPTIONS.find(o => o.value === currentModelValue)?.label || 'Qwen 3.5 Plus';
+
+  const handleModelSelect = async (val: string) => {
+    setModelDropdownOpen(false);
     if (val === 'qwen') {
       await configure({
         baseURL: "https://page-ag-testing-ohftxirgbn.cn-shanghai.fcapp.run",
@@ -357,21 +383,30 @@ export default function App() {
           />
           <div className="chat-input-bottom-row">
             <div className="chat-input-actions-left">
-              <div className="chat-model-selector-wrapper" title="Select model">
-                <select 
-                  className="chat-model-selector" 
-                  onChange={handleModelChange}
-                  value={
-                    config?.model === 'qwen3.5-plus' ? 'qwen' :
-                    config?.model === 'gemma4:e4b' ? 'gemma-local' :
-                    config?.model === 'gemma-4-26b-a4b-it' ? 'gemma-api' : 'qwen'
-                  }
+              <div className="chat-model-selector-wrapper" ref={modelDropdownRef} title="Select model">
+                <button
+                  className={`chat-model-trigger ${modelDropdownOpen ? 'is-open' : ''}`}
+                  onClick={() => setModelDropdownOpen(prev => !prev)}
+                  type="button"
                 >
-                  <option value="qwen">Qwen 3.5 Plus</option>
-                  <option value="gemma-api">Gemma 4 26B (API)</option>
-                  <option value="gemma-local">Gemma 4 E4B (Local)</option>
-                </select>
-                <svg className="chat-model-caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                  <span className="chat-model-trigger-label">{currentModelLabel}</span>
+                  <svg className={`chat-model-caret ${modelDropdownOpen ? 'caret-flip' : ''}`} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <div className={`chat-model-dropdown ${modelDropdownOpen ? 'dropdown-open' : 'dropdown-closed'}`}>
+                  {MODEL_OPTIONS.map(opt => (
+                    <button
+                      key={opt.value}
+                      className={`chat-model-option ${opt.value === currentModelValue ? 'option-active' : ''}`}
+                      onClick={() => handleModelSelect(opt.value)}
+                      type="button"
+                    >
+                      {opt.label}
+                      {opt.value === currentModelValue && (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      )}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
             
@@ -391,7 +426,7 @@ export default function App() {
                   </div>
                 ) : (
                   task ? (
-                    <img src="/Oryonix AI 2.png" alt="Oryonix" className="chat-submit-logo-icon" />
+                    <svg className="chat-submit-send-icon" width="20" height="20" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M 32.7812 52.5508 C 34.4687 52.5508 35.6640 51.0977 36.5312 48.8477 L 51.8829 8.7461 C 52.3048 7.6680 52.5626 6.7070 52.5626 5.9102 C 52.5626 4.3867 51.6016 3.4492 50.0781 3.4492 C 49.2813 3.4492 48.3203 3.6836 47.2423 4.1055 L 6.9296 19.5508 C 4.9609 20.3008 3.4374 21.4961 3.4374 23.2070 C 3.4374 25.3633 5.0780 26.0899 7.3280 26.7695 L 20.0077 30.6133 C 21.4843 31.0821 22.3280 31.0352 23.3359 30.0977 L 49.0466 6.0742 C 49.3514 5.7930 49.7032 5.8399 49.9375 6.0508 C 50.1717 6.2852 50.1952 6.6367 49.9139 6.9414 L 25.9843 32.7461 C 25.0937 33.7070 24.9999 34.5039 25.4687 36.0742 L 29.1718 48.4492 C 29.8749 50.8164 30.6015 52.5508 32.7812 52.5508 Z"/></svg>
                   ) : (
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
                   )
