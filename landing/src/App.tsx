@@ -924,25 +924,6 @@ function TryItOut() {
     await visitSection('#open-source', 'open-source', 'Open Source');
     if (abortRef.current) { endDemo(); return; }
 
-    // Simulate opening the extension — page scrolls to top, cursor glides top-right
-    scrollPageTo(0);
-    setCursorPx({ x: W - 76, y: 32 });
-    setCursorType('arrow');
-    await wait(1500);
-    if (abortRef.current) { endDemo(); return; }
-    setCursorType('hand');
-    await wait(500);
-    fireRipple(W - 76, 32);
-    setActionLog(p => [...p, '🔌 Opening Oryonix extension...']);
-    await wait(700);
-    if (abortRef.current) { endDemo(); return; }
-
-    // Summarise — cursor drifts to center, page stays at top
-    setCursorPx({ x: W * 0.5, y: H * 0.45 });
-    setActionLog(p => [...p, '📋 Summarizing page content...']);
-    await wait(1400);
-    if (abortRef.current) { endDemo(); return; }
-
     // Return home — scroll to try-it-out, cursor follows to center
     document.getElementById('try-it-out')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     setCursorPx({ x: W * 0.5, y: H * 0.5 });
