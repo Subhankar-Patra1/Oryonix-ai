@@ -493,7 +493,7 @@ const TESTIMONIALS = [
 const OS_FEATURES = ["Full multi-tab browser agent", "Local LLM support (Ollama)", "Custom LLM endpoint support", "Smart page reading & interaction", "Tab grouping & management", "MIT Licensed — forever free"];
 const FOOTER_COLS = [
   { title: "Product", links: [{ l: "Features", h: "#features" }, { l: "Demo", h: "#demo" }, { l: "How It Works", h: "#how-it-works" }] },
-  { title: "Resources", links: [{ l: "Getting Started", h: "#" }, { l: "FAQ", h: "#faq" }] },
+  { title: "Resources", links: [{ l: "Getting Started", h: "#" }, { l: "FAQ", h: "#faq" }, { l: "Terms & Conditions", h: "/terms.html" }] },
   { title: "Connect", links: [{ l: "GitHub", h: SITE.github }, { l: "X (Twitter)", h: "#" }, { l: "Report a Bug", h: "#" }] },
 ];
 
@@ -1137,7 +1137,7 @@ function TryItOut() {
             }}>
               <span>
                 Powered by free testing LLM API. By clicking Run you agree to the{' '}
-                <a href="#" style={{ textDecoration: 'underline', color: 'rgba(255,255,255,0.7)' }}>Terms of Use</a>
+                <a href="/terms.html" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', color: 'rgba(255,255,255,0.7)' }}>Terms of Use</a>
               </span>
               <span style={{ background: 'rgba(255,255,255,0.05)', padding: '4px 10px', borderRadius: '6px', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>
                 Sandbox v2.4 (Active)
