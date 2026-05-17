@@ -493,7 +493,7 @@ const TESTIMONIALS = [
 const OS_FEATURES = ["Full multi-tab browser agent", "Local LLM support (Ollama)", "Custom LLM endpoint support", "Smart page reading & interaction", "Tab grouping & management", "MIT Licensed — forever free"];
 const FOOTER_COLS = [
   { title: "Product", links: [{ l: "Features", h: "#features" }, { l: "Demo", h: "#demo" }, { l: "How It Works", h: "#how-it-works" }] },
-  { title: "Resources", links: [{ l: "Getting Started", h: "#" }, { l: "FAQ", h: "#faq" }, { l: "Terms & Conditions", h: "/terms.html" }] },
+  { title: "Resources", links: [{ l: "Getting Started", h: "#" }, { l: "FAQ", h: "#faq" }, { l: "Terms & Conditions", h: "/terms.html" }, { l: "Privacy Policy", h: "/privacy.html" }] },
   { title: "Connect", links: [{ l: "GitHub", h: SITE.github }, { l: "X (Twitter)", h: "#" }, { l: "Report a Bug", h: "#" }] },
 ];
 
