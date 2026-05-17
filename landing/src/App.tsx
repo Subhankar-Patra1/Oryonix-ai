@@ -1137,7 +1137,7 @@ function TryItOut() {
             }}>
               <span>
                 Powered by free testing LLM API. By clicking Run you agree to the{' '}
-                <a href="#" style={{ textDecoration: 'underline', color: 'rgba(255,255,255,0.7)' }}>Terms of Use</a>
+                <a href="/terms.html" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', color: 'rgba(255,255,255,0.7)' }}>Terms of Use</a>
               </span>
               <span style={{ background: 'rgba(255,255,255,0.05)', padding: '4px 10px', borderRadius: '6px', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>
                 Sandbox v2.4 (Active)
