@@ -954,6 +954,24 @@ body {
   background: rgba(249, 115, 22, 0.12);
 }
 
+/* ── Links ──────────────────────────────────────────────── */
+.markdown-body a,
+.ai-bubble-content a,
+.chat-bubble a {
+  color: #fdba74 !important;
+  text-decoration: underline;
+  text-decoration-color: rgba(253, 186, 116, 0.35) !important;
+  text-underline-offset: 2px;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+
+.markdown-body a:hover,
+.ai-bubble-content a:hover,
+.chat-bubble a:hover {
+  color: #fed7aa !important;
+  text-decoration-color: rgba(253, 186, 116, 0.65) !important;
+}
+
 /* ── Chart Blocks ───────────────────────────────────────── */
 .chart-block {
   margin: 14px 0;
