@@ -2,6 +2,7 @@ import type { AgentActivity, AgentStatus, HistoricalEvent } from '@page-agent/co
 import { MultiPageAgent } from './MultiPageAgent'
 import type { AgentState, BackgroundUpdateMessage, ExtConfig, UICommandMessage } from './types'
 import { createSanitizingFetch } from './sanitizingFetch'
+import { createGeminiFetch } from './geminiFetch'
 
 export class BackgroundAgentManager {
 	private agent: MultiPageAgent | null = null
@@ -87,7 +88,9 @@ export class BackgroundAgentManager {
 			const { systemInstruction, ...agentConfig } = config
 			this.agent = new MultiPageAgent({
 				...agentConfig,
-				customFetch: createSanitizingFetch(), // Re-apply customFetch here!
+				customFetch: (config.baseURL ?? '').includes('generativelanguage.googleapis.com')
+					? createGeminiFetch(config.apiKey ?? '', config.model ?? '')
+					: createSanitizingFetch(),
 				instructions: systemInstruction ? { system: systemInstruction } : undefined,
 			})
 

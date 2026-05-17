@@ -24,7 +24,7 @@
   
   --ring: #fb923c;
   
-  --gradient-hero: linear-gradient(135deg, #f97316 0%, #fb923c 50%, #fdba74 100%);
+  --gradient-hero: linear-gradient(135deg, #c2410c 0%, #f97316 35%, #fb923c 65%, #fcd34d 100%);
   --glass-bg: linear-gradient(145deg, rgba(249, 115, 22, 0.06) 0%, rgba(249, 115, 22, 0.015) 100%);
   --glass-border: 1px solid rgba(249, 115, 22, 0.14);
   
@@ -109,7 +109,10 @@ body {
   font-weight: 800;
   letter-spacing: -0.02em;
   margin: 0;
-  color: var(--color-text-primary);
+  background: var(--gradient-hero);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* ── Header Actions ─────────────────────────────────────────── */
@@ -410,6 +413,25 @@ body {
 .chat-input-wrapper.is-running {
   border-color: rgba(249, 115, 22, 0.6);
   box-shadow: 0 0 15px rgba(249, 115, 22, 0.15);
+}
+
+.chat-disclaimer {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  padding: 5px 4px 0 4px;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.chat-disclaimer a {
+  color: rgba(249, 115, 22, 0.6);
+  text-decoration: none;
+}
+
+.chat-disclaimer a:hover {
+  color: rgba(249, 115, 22, 0.9);
 }
 
 .chat-input-field {
