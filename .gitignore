@@ -25,4 +25,10 @@ web-ext.config.ts
 *.sln
 *.sw?
 AI_COWORKER/
+fara/
+daemon/
 
+# Environment files
+.env
+.env.local
+.env.*.local

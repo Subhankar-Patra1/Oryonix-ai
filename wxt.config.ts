@@ -15,7 +15,10 @@ export default defineConfig({
     },
   }),
   manifest: {
-    permissions: ['tabs', 'storage', 'activeTab', 'scripting', 'sidePanel', 'tabGroups'],
+    name: 'Oryonix AI',
+    short_name: 'Oryonix',
+    description: 'Your autonomous browser copilot.',
+    permissions: ['tabs', 'storage', 'activeTab', 'scripting', 'sidePanel', 'tabGroups', 'alarms'],
     host_permissions: ['<all_urls>'],
     side_panel: {
       default_path: 'sidepanel/index.html'

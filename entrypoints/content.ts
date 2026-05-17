@@ -1,4 +1,5 @@
 import { initPageController } from '../agent/RemotePageController.content';
+import './content-overlay.css';
 
 export default defineContentScript({
   matches: ['<all_urls>'],
@@ -9,3 +10,4 @@ export default defineContentScript({
     initPageController();
   },
 });
+

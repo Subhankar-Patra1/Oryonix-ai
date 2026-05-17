@@ -220,7 +220,7 @@ export class TabsController {
 			payload: {
 				groupId: this.tabGroupId,
 				properties: {
-					title: `PageAgent(${this.task})`,
+					title: `OryonixAI(${this.task})`,
 					color: randomColor(),
 					collapsed: false,
 				},
@@ -272,7 +272,7 @@ export class TabsController {
 			)
 		}
 		if (!this.tabs.length) {
-			summaries.push('\nNo tabs available. Open a tab if needed.')
+			summaries.push('\nNo tabs available. YOU MUST USE open_new_tab ACTION NOW TO START THE TASK. NEVER CALL done.')
 		}
 
 		return summaries.join('\n')

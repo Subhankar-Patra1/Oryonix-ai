@@ -26,7 +26,10 @@ export class MultiPageAgent extends PageAgentCore {
 		// multi page controller
 		const tabsController = new TabsController()
 		const pageController = new RemotePageController(tabsController)
-		const customTools = createTabTools(tabsController)
+		const customTools = createTabTools(
+			tabsController,
+			(script: string) => pageController.executeJavascript(script),
+		)
 
 		// system prompt - auto-detect language if not specified
 		const language = config.language ?? detectLanguage()
@@ -57,11 +60,11 @@ export class MultiPageAgent extends PageAgentCore {
 			onBeforeTask: async (agent) => {
 				await tabsController.init(agent.task, { includeInitialTab, experimentalIncludeAllTabs })
 
-				heartBeatInterval = window.setInterval(() => {
+				heartBeatInterval = setInterval(() => {
 					chrome.storage.local.set({
 						agentHeartbeat: Date.now(),
 					})
-				}, 1_000)
+				}, 1_000) as any
 
 				await chrome.storage.local.set({
 					isAgentRunning: true,
@@ -70,7 +73,7 @@ export class MultiPageAgent extends PageAgentCore {
 
 			onAfterTask: async () => {
 				if (heartBeatInterval) {
-					window.clearInterval(heartBeatInterval)
+					clearInterval(heartBeatInterval)
 					heartBeatInterval = null
 				}
 
@@ -87,7 +90,7 @@ export class MultiPageAgent extends PageAgentCore {
 
 			onDispose: () => {
 				if (heartBeatInterval) {
-					window.clearInterval(heartBeatInterval)
+					clearInterval(heartBeatInterval)
 					heartBeatInterval = null
 				}
 
