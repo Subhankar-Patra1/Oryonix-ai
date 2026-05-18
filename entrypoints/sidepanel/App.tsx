@@ -36,6 +36,25 @@ function injectIcons(children: React.ReactNode): React.ReactNode {
   });
 }
 
+const CopyButton = ({ text, isUser }: { text: string, isUser: boolean }) => {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = () => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  return (
+    <button className={`bubble-copy-btn ${isUser ? 'user' : 'ai'}`} onClick={handleCopy} title="Copy message">
+      {copied ? (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      ) : (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+      )}
+      <span style={{ fontSize: '10px', marginLeft: '4px' }}>{copied ? 'Copied' : 'Copy'}</span>
+    </button>
+  );
+};
+
 export default function App() {
   const [task, setTask] = useState('');
   const [showHistory, setShowHistory] = useState(false);
@@ -229,7 +248,11 @@ export default function App() {
   // Auto-scroll to bottom on new messages or while running
   useEffect(() => {
     if (chatAreaRef.current) {
-      chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
+      if (chatMessages.length === 0) {
+        chatAreaRef.current.scrollTop = 0;
+      } else {
+        chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
+      }
     }
   }, [chatMessages, status]);
 
@@ -292,22 +315,8 @@ export default function App() {
         </div>
       </header>
       
-      {showHistory && (
-        <HistoryPanel
-          onClose={() => setShowHistory(false)}
-          onRestore={(historicalTask) => {
-            setTask(historicalTask);
-            setShowHistory(false);
-          }}
-          onRestoreLive={() => {
-            setIsDetached(false);
-            setShowHistory(false);
-          }}
-          status={status}
-        />
-      )}
 
-      <div className="popup-chat-area" ref={chatAreaRef}>
+      <div className={`popup-chat-area ${chatMessages.length === 0 ? 'is-landing' : ''}`} ref={chatAreaRef}>
         {chatMessages.length === 0 && status !== 'running' && (
           <div className="landing-state">
             <div className="landing-hero-icon">
@@ -345,31 +354,41 @@ export default function App() {
 
         {chatMessages.map((msg, i) =>
           msg.role === 'user' ? (
-            <div key={i} className="chat-bubble user-bubble">{msg.content}</div>
-          ) : (
-            <div key={i} className="chat-bubble ai-bubble">
-              <div className="ai-bubble-icon">
-                <img src="/Oryonix AI 2.png" alt="AI" />
+            <div key={i} className="chat-message-container user-container">
+              <div className="chat-bubble user-bubble">{msg.content}</div>
+              <div className="chat-action-row user-action-row">
+                <CopyButton text={msg.content} isUser={true} />
               </div>
-              <div className="ai-bubble-content markdown-body">
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  components={{
-                    code({ className, children }) {
-                      const lang = /language-(\w+)/.exec(className || '')?.[1]
-                      if (lang === 'chart') {
-                        return <ChartBlock code={String(children).replace(/\n$/, '')} />
-                      }
-                      return <code className={className}>{children}</code>
-                    },
-                    p({ children }) { return <p>{injectIcons(children)}</p> },
-                    li({ children }) { return <li>{injectIcons(children)}</li> },
-                    td({ children }) { return <td>{injectIcons(children)}</td> },
-                    th({ children }) { return <th>{injectIcons(children)}</th> },
-                  }}
-                >
-                  {msg.content}
-                </ReactMarkdown>
+            </div>
+          ) : (
+            <div key={i} className="chat-message-container ai-container">
+              <div className="chat-bubble ai-bubble">
+                <div className="ai-bubble-icon">
+                  <img src="/Oryonix AI 2.png" alt="AI" />
+                </div>
+                <div className="ai-bubble-content markdown-body">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      code({ className, children }) {
+                        const lang = /language-(\w+)/.exec(className || '')?.[1]
+                        if (lang === 'chart') {
+                          return <ChartBlock code={String(children).replace(/\n$/, '')} />
+                        }
+                        return <code className={className}>{children}</code>
+                      },
+                      p({ children }) { return <p>{injectIcons(children)}</p> },
+                      li({ children }) { return <li>{injectIcons(children)}</li> },
+                      td({ children }) { return <td>{injectIcons(children)}</td> },
+                      th({ children }) { return <th>{injectIcons(children)}</th> },
+                    }}
+                  >
+                    {msg.content}
+                  </ReactMarkdown>
+                </div>
+              </div>
+              <div className="chat-action-row ai-action-row">
+                <CopyButton text={msg.content} isUser={false} />
               </div>
             </div>
           )
@@ -453,6 +472,25 @@ export default function App() {
           <span>AI can make mistakes and some models use third party test APIs. You agree to our <a href="https://oryonix-ai.vercel.app/terms.html" target="_blank" rel="noreferrer">terms & conditions</a> by clicking send.</span>
         </div>
       </div>
+
+      {showHistory && (
+        <HistoryPanel
+          onClose={() => setShowHistory(false)}
+          onRestore={(item) => {
+            setChatMessages([
+              { role: 'user', content: item.task },
+              { role: 'ai', content: item.summary }
+            ]);
+            setTask(item.task);
+            setShowHistory(false);
+          }}
+          onRestoreLive={() => {
+            setIsDetached(false);
+            setShowHistory(false);
+          }}
+          status={status}
+        />
+      )}
     </div>
   );
 }

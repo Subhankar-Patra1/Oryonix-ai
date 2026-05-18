@@ -17,7 +17,7 @@ interface LiveSession {
 
 interface HistoryPanelProps {
   onClose: () => void;
-  onRestore: (task: string) => void;
+  onRestore: (item: SearchHistoryItem) => void;
   onRestoreLive: () => void;
   status: string;
 }
@@ -105,15 +105,25 @@ export function HistoryPanel({ onClose, onRestore, onRestoreLive, status }: Hist
       ) : (
         <div className="history-list">
           {history.map((item) => (
-            <div key={item.id} className="history-item">
+            <div 
+              key={item.id} 
+              className={`history-item ${isRunning ? 'disabled' : 'clickable'}`}
+              onClick={() => {
+                if (!isRunning) onRestore(item);
+              }}
+              style={{ cursor: isRunning ? 'not-allowed' : 'pointer', opacity: isRunning ? 0.7 : 1 }}
+              title={isRunning ? "" : "Click to restore this task"}
+            >
               <div className="history-item-header">
                 <span className="history-item-date">{new Date(item.timestamp).toLocaleString()}</span>
                 <button 
                   className="history-run-again-btn" 
-                  onClick={() => onRestore(item.task)}
-                  title="Run this search again"
                   disabled={isRunning}
                   style={{ opacity: isRunning ? 0.5 : 1, cursor: isRunning ? 'not-allowed' : 'pointer' }}
+                  onClick={(e) => {
+                    e.stopPropagation(); // prevent double firing
+                    if (!isRunning) onRestore(item);
+                  }}
                 >
                   ↻ Run Again
                 </button>

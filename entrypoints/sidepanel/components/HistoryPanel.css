@@ -5,7 +5,8 @@
   right: 0;
   bottom: 0;
   background-color: var(--color-background, #1A1A1A);
-  z-index: 100;
+  z-index: 99999 !important;
+  pointer-events: auto !important;
   display: flex;
   flex-direction: column;
   overflow: hidden;
