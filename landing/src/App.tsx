@@ -1457,14 +1457,16 @@ function Demo() {
         </div>
         <motion.div className="demo" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}>
           <div className="demo__player">
-            <div className="demo__overlay"><button className="demo__play" aria-label="Play demo"><Play size={32} fill="currentColor" /></button><p className="demo__play-text">Watch 60s Demo</p></div>
-            <div className="demo__terminal">
-              <div className="term__line"><span className="term__prompt">$</span> Tell the agent: "Compare prices for AirPods on Amazon and Best Buy"</div>
-              <div className="term__line term__out"><CheckSquare size={16} strokeWidth={2} className="text-success" style={{ display: 'inline', marginRight: '8px', verticalAlign: 'text-bottom' }} /> Opened Amazon.com — searching for AirPods Pro...</div>
-              <div className="term__line term__out"><CheckSquare size={16} strokeWidth={2} className="text-success" style={{ display: 'inline', marginRight: '8px', verticalAlign: 'text-bottom' }} /> Opened BestBuy.com — searching for AirPods Pro...</div>
-              <div className="term__line term__out"><BarChart2 size={16} strokeWidth={2} className="text-accent" style={{ display: 'inline', marginRight: '8px', verticalAlign: 'text-bottom' }} /> Amazon: $199.99 | Best Buy: $189.99</div>
-              <div className="term__line term__result"><Lightbulb size={16} strokeWidth={2} className="text-accent" style={{ display: 'inline', marginRight: '8px', verticalAlign: 'text-bottom' }} /> Best Buy is $10 cheaper. Task complete.</div>
-            </div>
+            <video 
+              src="/demo-video.mp4" 
+              controls
+              autoPlay
+              muted
+              loop
+              style={{ width: '100%', display: 'block', borderRadius: 'inherit' }}
+            >
+              Your browser does not support the video tag.
+            </video>
           </div>
           <div className="demo__tags">
             {["Compare prices", "Fill forms", "Research topics", "Test workflows"].map(t => <span key={t} className="tag">{t}</span>)}
