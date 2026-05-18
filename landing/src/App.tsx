@@ -7,7 +7,7 @@ import {
   Menu, X, Download, ArrowRight, Play, Check,
   AppWindow, Sparkles, Lock, Rocket, Cpu, Eye, Star,
   Package, Plug, Terminal, CheckCircle, RefreshCw,
-  CheckSquare, BarChart2, Lightbulb, ChevronUp, ChevronDown,
+  BarChart2, ChevronUp, ChevronDown,
   Brain, Zap, Sliders, Settings,
   ArrowLeft, LayoutDashboard, Plus, Folder, Search, MessageSquare, Accessibility
 } from "lucide-react";
