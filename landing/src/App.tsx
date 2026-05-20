@@ -832,7 +832,7 @@ const FeatureCard = ({ f, i, progress, range, targetScale }: { f: any, i: number
 
 /* ═══════════ TRY IT OUT ═══════════ */
 function TryItOut() {
-  const [promptText, setPromptText] = useState("Goto docs in navigation bar, find Quick-Start section, and summarize in markdown");
+  const promptText = "Goto docs in navigation bar, find Quick-Start section, and summarize in markdown";
   const [isRunning, setIsRunning] = useState(false);
   const [runStatus, setRunStatus] = useState<string | null>(null);
 
