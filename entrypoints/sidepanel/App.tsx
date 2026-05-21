@@ -409,7 +409,7 @@ export default function App() {
             value={task}
             onChange={(e) => setTask(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') handleRun(); }}
-            placeholder="Ask Oryonix to analyze products, crawl websites, read emails, and more..."
+            placeholder="Ask Oryonix anything..."
             disabled={status === 'running'}
             className="chat-input-field"
           />

@@ -572,10 +572,16 @@ body {
     0 1px 0 rgba(255, 255, 255, 0.06) inset;
   z-index: 100;
   transform-origin: bottom left;
-  pointer-events: auto;
+  /* Hidden by default to prevent flash on initial render */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .chat-model-dropdown.dropdown-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
   animation: dropdown-enter 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
