@@ -1684,8 +1684,9 @@ button:focus {
   .mobile-dock__div {
     width: 1px;
     height: 24px;
-    background: rgba(255, 255, 255, 0.1);
-    margin: 0 4px;
+    background: rgba(255, 255, 255, 0.25);
+    margin: 0 6px;
+    flex-shrink: 0;
   }
 
   .mobile-dock__cta {
@@ -1950,8 +1951,9 @@ button:focus {
   .mobile-dock__div {
     width: 1px;
     height: 24px;
-    background: rgba(255, 255, 255, 0.1);
-    margin: 0 4px;
+    background: rgba(255, 255, 255, 0.25);
+    margin: 0 6px;
+    flex-shrink: 0;
   }
 
   .mobile-dock__cta {
