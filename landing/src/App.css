@@ -1957,11 +1957,11 @@ button:focus {
   }
 
   .mobile-dock__cta {
-    height: 40px;
-    padding: 0 14px !important;
-    font-size: 0.72rem !important;
+    height: 36px;
+    padding: 0 12px !important;
+    font-size: 0.68rem !important;
     font-weight: 600 !important;
-    gap: 6px !important;
+    gap: 4px !important;
     border-radius: 999px !important;
     flex-shrink: 0;
     transform: none !important;
