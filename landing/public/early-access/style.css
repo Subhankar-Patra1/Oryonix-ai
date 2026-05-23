@@ -184,6 +184,15 @@ textarea {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+.radio-label::selection,
+.radio-label *::selection,
+.checkbox-label::selection,
+.checkbox-label *::selection {
+    background: transparent !important;
+    color: inherit !important;
 }
 
 .radio-label:hover, .checkbox-label:hover {
