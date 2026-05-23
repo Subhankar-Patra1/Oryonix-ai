@@ -176,6 +176,8 @@ textarea {
     margin: 0;
     transition: color 0.2s ease;
     gap: 12px;  /* Add consistent spacing */
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .radio-label:hover, .checkbox-label:hover {
@@ -184,10 +186,16 @@ textarea {
 
 .radio-label input, .checkbox-label input {
     position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
     opacity: 0;
     cursor: pointer;
-    height: 0;
-    width: 0;
 }
 
 .radio-custom, .checkbox-custom {
@@ -285,6 +293,8 @@ textarea {
     font-size: 0.95rem !important;
     transition: border-color 0.2s ease !important;
     box-shadow: none !important;
+    user-select: text !important;
+    -webkit-user-select: text !important;
 }
 
 .other-input:focus {
