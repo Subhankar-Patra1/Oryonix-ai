@@ -1690,8 +1690,8 @@ button:focus {
 
   .mobile-dock__cta {
     height: 34px;
-    padding: 0 10px !important;
-    font-size: 0.7rem !important;
+    padding: 0 8px !important;
+    font-size: 0.68rem !important;
     font-weight: 600 !important;
     gap: 4px !important;
     border-radius: 999px !important;
@@ -1956,8 +1956,8 @@ button:focus {
 
   .mobile-dock__cta {
     height: 38px;
-    padding: 0 14px !important;
-    font-size: 0.78rem !important;
+    padding: 0 10px !important;
+    font-size: 0.72rem !important;
     font-weight: 600 !important;
     gap: 6px !important;
     border-radius: 999px !important;
