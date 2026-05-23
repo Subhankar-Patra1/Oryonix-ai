@@ -1699,11 +1699,15 @@ button:focus {
     transform: none !important;
     white-space: nowrap;
     box-sizing: border-box;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: none !important;
   }
 
-  .mobile-dock__cta:active {
+  .mobile-dock__cta:hover {
     transform: none !important;
-    opacity: 0.8;
+    box-shadow: none !important;
   }
 
   .skel--h {
@@ -1898,6 +1902,7 @@ button:focus {
     align-items: center;
     justify-content: center;
     gap: 2px;
+    height: 100%;
   }
 
   .mobile-dock__item {
@@ -1950,27 +1955,30 @@ button:focus {
   }
 
   .mobile-dock__cta {
-    height: 40px;
-    padding: 0 16px !important;
-    font-size: 0.8rem !important;
+    height: 38px;
+    padding: 0 14px !important;
+    font-size: 0.78rem !important;
     font-weight: 600 !important;
     gap: 6px !important;
     border-radius: 999px !important;
     flex-shrink: 0;
     transform: none !important;
     box-sizing: border-box;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: none !important;
+  }
+
+  .mobile-dock__cta:hover {
+    transform: none !important;
+    box-shadow: none !important;
   }
 
   .mobile-dock__cta:active {
     transform: none !important;
     opacity: 0.8;
-  }
-
-  .mobile-dock__inner {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    box-shadow: none !important;
   }
 
   /* Stabilized Top Navbar - Locked */
