@@ -220,6 +220,10 @@ button:focus {
   transform: none !important;
 }
 
+.run-btn:hover:not(:disabled) {
+  box-shadow: 0 6px 28px rgba(249, 115, 22, 0.55), 0 0 40px rgba(249, 115, 22, 0.25) !important;
+}
+
 .nav__cta {
   background: transparent !important;
   border: 1px solid rgba(249, 115, 22, 0.4);
@@ -305,7 +309,8 @@ button:focus {
 
 .hero__stars {
   position: absolute;
-  inset: -30%; /* Extended to prevent clipping of stars during rotation */
+  inset: -30%;
+  /* Extended to prevent clipping of stars during rotation */
   overflow: hidden;
   pointer-events: none;
   z-index: 0;
@@ -314,7 +319,7 @@ button:focus {
 }
 
 .hero__star {
-  position: absolute; 
+  position: absolute;
   background-color: #ffffff;
   border-radius: 50%;
   box-shadow: 0 0 3px rgba(255, 255, 255, 0.9), 0 0 7px rgba(249, 115, 22, 0.55);
@@ -323,10 +328,13 @@ button:focus {
 }
 
 @keyframes heroTwinkle {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(0.7);
     opacity: 0.15;
   }
+
   50% {
     transform: scale(1.3);
     opacity: 0.95;
@@ -337,6 +345,7 @@ button:focus {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -396,16 +405,19 @@ button:focus {
     opacity: 0;
     width: 0px;
   }
+
   6% {
     transform: translate(200px, -200px) rotate(135deg);
     opacity: 1;
     width: 150px;
   }
+
   24% {
     transform: translate(-400px, 400px) rotate(135deg);
     opacity: 0;
     width: 60px;
   }
+
   100% {
     transform: translate(-400px, 400px) rotate(135deg);
     opacity: 0;
@@ -810,7 +822,7 @@ button:focus {
 .faq-card--active {
   background: var(--glass-bg-hover) !important;
   border-color: rgba(249, 115, 22, 0.3) !important;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(249, 115, 22, 0.1) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(249, 115, 22, 0.1) !important;
   transform: translateY(-4px);
 }
 
@@ -1286,14 +1298,12 @@ button:focus {
   left: 8%;
   right: 8%;
   height: 1px;
-  background: linear-gradient(
-    90deg, 
-    transparent 0%, 
-    rgba(255, 255, 255, 0.04) 20%, 
-    rgba(249, 115, 22, 0.25) 50%, 
-    rgba(255, 255, 255, 0.04) 80%, 
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.04) 20%,
+      rgba(249, 115, 22, 0.25) 50%,
+      rgba(255, 255, 255, 0.04) 80%,
+      transparent 100%);
   z-index: 1;
 }
 
@@ -1314,7 +1324,7 @@ button:focus {
   left: -20%;
   right: -20%;
   height: 700px;
-  background: 
+  background:
     /* 1. Deep Rich Dark Orange Core (pure premium burnt orange) */
     radial-gradient(circle at 50% 100%, rgba(234, 88, 12, 0.55) 0%, rgba(154, 52, 18, 0.25) 45%, transparent 75%),
     /* 2. Extremely Subtle Deep Indigo/Purple Base (adds color depth without clashing) */
@@ -1601,6 +1611,99 @@ button:focus {
     min-height: auto;
   }
 
+  .mobile-dock {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: fit-content;
+    min-width: 280px;
+    max-width: calc(100% - 24px);
+    background: rgba(15, 12, 10, 0.75);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    height: 52px;
+    padding: 0 8px;
+    z-index: 2000;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  }
+
+  .mobile-dock__inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    height: 100%;
+  }
+
+  .mobile-dock__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    color: var(--color-text-tertiary);
+    text-decoration: none;
+    padding: 6px;
+    transition: all 0.2s;
+  }
+
+  .mobile-dock__item span {
+    font-size: 0.5rem;
+    font-weight: 500;
+    opacity: 0.8;
+  }
+
+  .mobile-dock__item svg,
+  .mobile-dock__logo {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+  }
+
+  .mobile-dock__item:active {
+    opacity: 0.7;
+  }
+
+  .mobile-dock__item--active {
+    color: var(--color-accent-primary) !important;
+    opacity: 1 !important;
+  }
+
+  .mobile-dock__item--active span {
+    opacity: 1 !important;
+    font-weight: 600 !important;
+  }
+
+  .mobile-dock__item--active svg {
+    filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.4));
+  }
+
+  .mobile-dock__div {
+    width: 1px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 0 4px;
+  }
+
+  .mobile-dock__cta {
+    height: 34px;
+    padding: 0 10px !important;
+    font-size: 0.7rem !important;
+    font-weight: 600 !important;
+    gap: 4px !important;
+    border-radius: 999px !important;
+    flex-shrink: 0;
+    transform: none !important;
+    white-space: nowrap;
+  }
+
+  .mobile-dock__cta:active {
+    transform: none !important;
+    opacity: 0.8;
+  }
+
   .skel--h {
     margin-bottom: 8px;
     height: 16px;
@@ -1867,14 +1970,14 @@ button:focus {
   }
 
   /* Stabilized Top Navbar - Locked */
-  .nav { 
+  .nav {
     position: fixed !important;
-    padding: 0 20px !important; 
-    width: fit-content !important; 
-    left: 0 !important; 
+    padding: 0 20px !important;
+    width: fit-content !important;
+    left: 0 !important;
     right: 0 !important;
     margin: 0 auto !important;
-    border-radius: 999px !important; 
+    border-radius: 999px !important;
     top: -100px !important;
     height: 48px !important;
     display: flex !important;
@@ -1885,7 +1988,7 @@ button:focus {
     -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
     border: 1px solid rgba(255, 255, 255, 0.12) !important;
     transition: all 0.3s var(--ease-out-expo) !important;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
     pointer-events: none !important;
   }
 
@@ -1973,8 +2076,10 @@ button:focus {
 
   .stack-card-right {
     padding: 16px 16px 0 16px !important;
-    flex: 1 !important; /* Take remaining space */
-    min-height: 0 !important; /* Allow the visual flexbox to shrink instead of overflowing */
+    flex: 1 !important;
+    /* Take remaining space */
+    min-height: 0 !important;
+    /* Allow the visual flexbox to shrink instead of overflowing */
     border-top-left-radius: 0 !important;
     border-top-right-radius: 24px !important;
     border-bottom-left-radius: 24px !important;
@@ -1991,9 +2096,11 @@ button:focus {
     margin: 0 16px !important;
     max-width: calc(100% - 32px) !important;
   }
+
   .try-it-now-content {
     padding: 24px 16px !important;
   }
+
   .try-it-now-input-wrapper {
     padding: 8px 8px 8px 16px !important;
     gap: 12px !important;
@@ -2003,7 +2110,8 @@ button:focus {
   .scroll-top {
     bottom: 85px;
     right: 16px;
-    display: none; /* Hide scroll-top on mobile to prevent overlap */
+    display: none;
+    /* Hide scroll-top on mobile to prevent overlap */
   }
 
   /* FAQ Mobile Optimizations */
@@ -2089,11 +2197,15 @@ button:focus {
 }
 
 @media (max-width: 1024px) {
-  .faq-card-grid { column-count: 2; }
+  .faq-card-grid {
+    column-count: 2;
+  }
 }
 
 @media (max-width: 640px) {
-  .faq-card-grid { column-count: 1; }
+  .faq-card-grid {
+    column-count: 1;
+  }
 }
 
 .faq-modern-card {
@@ -2239,5 +2351,9 @@ button:focus {
     margin: 64px 16px 0 !important;
     max-width: calc(100% - 32px);
   }
-  .faq-footer-cta__text { flex-direction: column; gap: 12px; }
+
+  .faq-footer-cta__text {
+    flex-direction: column;
+    gap: 12px;
+  }
 }

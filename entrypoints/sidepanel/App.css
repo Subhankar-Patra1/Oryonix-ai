@@ -103,6 +103,7 @@ body {
   object-fit: contain;
   border-radius: 4px;
   mix-blend-mode: screen; /* Drops out the black background */
+  margin-top: -2px;
 }
 
 .popup-title {
@@ -786,6 +787,32 @@ body {
   100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
 }
 
+/* State 4: Listening/Recording (Voice Input Active) */
+.chat-submit-btn.listening-mode {
+  background: rgba(249, 115, 22, 0.18);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(249, 115, 22, 0.6) !important;
+  color: #f97316;
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
+  animation: listening-glow-pulse 1.5s infinite ease-in-out;
+}
+
+.chat-submit-btn.listening-mode:hover {
+  background: rgba(249, 115, 22, 0.28);
+  border-color: rgba(249, 115, 22, 0.8) !important;
+  color: #fdba74;
+}
+
+@keyframes listening-glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(249, 115, 22, 0.2), 0 0 0 0px rgba(249, 115, 22, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(249, 115, 22, 0.55), 0 0 0 6px rgba(249, 115, 22, 0);
+  }
+}
+
 /* Custom Scrollbars */
 /* Global scrollbar — ultra-thin, auto-hide */
 ::-webkit-scrollbar {
@@ -1173,3 +1200,219 @@ body {
   color: rgba(255, 255, 255, 0.8);
   background: rgba(255, 255, 255, 0.1);
 }
+
+/* ── Microphone Permission Page ─────────────────────────────── */
+.permission-tab-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  background-color: #121212;
+  background-image: radial-gradient(circle at top right, rgba(249, 115, 22, 0.08), transparent 40%),
+                    radial-gradient(circle at bottom left, rgba(249, 115, 22, 0.03), transparent 50%);
+  font-family: var(--font-family);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.permission-card {
+  background: rgba(30, 30, 30, 0.6);
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  border: 1px solid rgba(249, 115, 22, 0.18);
+  border-radius: 24px;
+  padding: 40px;
+  max-width: 480px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(249, 115, 22, 0.05);
+  animation: card-appear 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes card-appear {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.permission-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(249, 115, 22, 0.12);
+  border: 1px solid rgba(249, 115, 22, 0.3);
+  color: #f97316;
+  margin-bottom: 24px;
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.15);
+}
+
+.permission-mic-icon {
+  filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.4));
+  animation: mic-float 3s ease-in-out infinite;
+}
+
+@keyframes mic-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.permission-title {
+  font-size: 22px;
+  font-weight: 800;
+  margin: 0 0 12px 0;
+  background: var(--gradient-hero);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.permission-description {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 32px 0;
+}
+
+.permission-instruction {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 16px 20px;
+  border-radius: 16px;
+  font-size: 13.5px;
+  color: var(--color-text-primary);
+  margin-bottom: 24px;
+}
+
+.pulse-circle {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #fb923c;
+  box-shadow: 0 0 10px rgba(251, 146, 96, 0.8);
+  animation: circle-pulse-glow 1.5s infinite;
+  flex-shrink: 0;
+}
+
+@keyframes circle-pulse-glow {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0px rgba(251, 146, 96, 0.4);
+  }
+  50% {
+    transform: scale(1.2);
+    box-shadow: 0 0 0 8px rgba(251, 146, 96, 0);
+  }
+}
+
+.permission-footer {
+  font-size: 11.5px;
+  color: var(--color-text-tertiary);
+  margin: 0;
+}
+
+/* ── Voice Error Banner ─────────────────────────────────────── */
+.voice-error-banner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgba(249, 115, 22, 0.08);
+  border: 1px solid rgba(249, 115, 22, 0.22);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: #fdba74;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.02);
+  animation: banner-slide-down 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes banner-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.voice-error-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  flex: 1;
+}
+
+.voice-error-icon {
+  color: #f97316;
+  flex-shrink: 0;
+  margin-top: 2px;
+  filter: drop-shadow(0 0 4px rgba(249, 115, 22, 0.3));
+}
+
+.voice-error-close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: transparent;
+  border: none !important;
+  outline: none !important;
+  color: rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  margin-top: 1px;
+}
+
+.voice-error-close-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-primary);
+}
+
+.voice-error-banner.exiting {
+  animation: banner-slide-up-fade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes banner-slide-up-fade {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    height: 0;
+    overflow: hidden;
+    border-top-width: 0;
+    border-bottom-width: 0;
+  }
+}
+
+

@@ -66,6 +66,165 @@ export default function App() {
   const aiResponseAddedRef = useRef(false);
   const { status, activity, history, currentTask, execute, stop, reset, configure, config } = useAgent();
 
+  const [isRequestingMicTab, setIsRequestingMicTab] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [voiceError, setVoiceError] = useState<string | null>(null);
+  const [isErrorExiting, setIsErrorExiting] = useState(false);
+  const errorTimeoutRef = useRef<any>(null);
+  const errorExitTimeoutRef = useRef<any>(null);
+
+  // Auto-dismiss voiceError after 6 seconds with a vanish animation
+  useEffect(() => {
+    if (voiceError) {
+      setIsErrorExiting(false);
+      
+      // Clear any previous timers
+      if (errorTimeoutRef.current) clearTimeout(errorTimeoutRef.current);
+      if (errorExitTimeoutRef.current) clearTimeout(errorExitTimeoutRef.current);
+
+      errorTimeoutRef.current = setTimeout(() => {
+        setIsErrorExiting(true);
+        errorExitTimeoutRef.current = setTimeout(() => {
+          setVoiceError(null);
+          setIsErrorExiting(false);
+        }, 300); // 300ms matches the transition/animation duration
+      }, 6000); // Show for 6 seconds
+    }
+
+    return () => {
+      if (errorTimeoutRef.current) clearTimeout(errorTimeoutRef.current);
+      if (errorExitTimeoutRef.current) clearTimeout(errorExitTimeoutRef.current);
+    };
+  }, [voiceError]);
+
+  const handleDismissError = () => {
+    setIsErrorExiting(true);
+    if (errorTimeoutRef.current) clearTimeout(errorTimeoutRef.current);
+    if (errorExitTimeoutRef.current) clearTimeout(errorExitTimeoutRef.current);
+    
+    errorExitTimeoutRef.current = setTimeout(() => {
+      setVoiceError(null);
+      setIsErrorExiting(false);
+    }, 300);
+  };
+
+  const recognitionRef = useRef<any>(null);
+  const initialTextRef = useRef('');
+
+  // Check if this page is opened in a tab specifically to request microphone permissions
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('request-mic') === 'true') {
+      setIsRequestingMicTab(true);
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then((stream) => {
+          // Permission granted! Stop the stream to release the mic
+          stream.getTracks().forEach(track => track.stop());
+          // Close this temporary tab automatically
+          window.close();
+        })
+        .catch((err) => {
+          console.error('Failed to get mic permission in tab', err);
+        });
+    }
+  }, []);
+
+  // Initialize Speech Recognition lazily on demand
+  const initSpeechRecognition = () => {
+    if (recognitionRef.current) return recognitionRef.current;
+
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) return null;
+
+    const rec = new SpeechRecognition();
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.lang = 'en-US';
+
+    rec.onstart = () => {
+      setIsListening(true);
+      setVoiceError(null);
+    };
+
+    rec.onend = () => {
+      setIsListening(false);
+    };
+
+    rec.onerror = (event: any) => {
+      console.error('Speech recognition error', event.error, event);
+      setIsListening(false);
+      if (event.error === 'not-allowed') {
+        chrome.tabs.create({
+          url: chrome.runtime.getURL('sidepanel.html?request-mic=true')
+        });
+      } else if (event.error === 'network') {
+        const isBrave = !!(navigator as any).brave;
+        if (isBrave) {
+          setVoiceError(
+            'Brave blocks Google Voice by default. Click this input and press Windows Key + H (Windows) or double-press Control (macOS) to dictate natively!'
+          );
+        } else {
+          setVoiceError('Speech Recognition requires a connection or is blocked by browser settings.');
+        }
+      } else if (event.error === 'no-speech') {
+        console.warn('No speech detected.');
+      } else if (event.error === 'aborted') {
+        console.log('Speech recognition aborted by user.');
+      } else {
+        setVoiceError(`Voice input error: ${event.error}`);
+      }
+    };
+
+    rec.onresult = (event: any) => {
+      let speechText = '';
+      for (let i = 0; i < event.results.length; i++) {
+        speechText += event.results[i][0].transcript;
+      }
+      const prefix = initialTextRef.current ? (initialTextRef.current + (initialTextRef.current.endsWith(' ') ? '' : ' ')) : '';
+      setTask(prefix + speechText);
+    };
+
+    recognitionRef.current = rec;
+    return rec;
+  };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.abort();
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    };
+  }, []);
+
+  const startListening = () => {
+    setVoiceError(null);
+    const rec = initSpeechRecognition();
+    if (!rec) {
+      setVoiceError('Speech Recognition is not supported in this browser.');
+      return;
+    }
+    initialTextRef.current = task;
+    try {
+      rec.start();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const stopListening = () => {
+    try {
+      recognitionRef.current?.abort();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+
   // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -165,6 +324,7 @@ export default function App() {
   };
 
   const handleRun = async () => {
+    stopListening();
     if (!task) return;
     if (isDetached) {
       if (status === 'running') stop();
@@ -286,6 +446,27 @@ export default function App() {
     return 'Thinking...';
   };
 
+  if (isRequestingMicTab) {
+    return (
+      <div className="permission-tab-container theme-dark">
+        <div className="permission-card">
+          <div className="permission-icon-wrapper">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="permission-mic-icon"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+          </div>
+          <h1 className="permission-title">Microphone Access Required</h1>
+          <p className="permission-description">
+            Oryonix AI uses your microphone to let you dictate browser commands and chat messages with your voice.
+          </p>
+          <div className="permission-instruction">
+            <div className="pulse-circle"></div>
+            <span>Please click <strong>Allow</strong> in the browser prompt at the top of the screen.</span>
+          </div>
+          <p className="permission-footer">This tab will close automatically once microphone access is granted.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="popup-container theme-dark">
       <header className="popup-header">
@@ -403,6 +584,17 @@ export default function App() {
       </div>
 
       <div className="popup-input-area">
+        {(voiceError || isErrorExiting) && (
+          <div className={`voice-error-banner ${isErrorExiting ? 'exiting' : ''}`}>
+            <div className="voice-error-content">
+              <svg className="voice-error-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span>{voiceError}</span>
+            </div>
+            <button className="voice-error-close-btn" onClick={handleDismissError} title="Dismiss">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><path d="M1.25 1.25a.625.625 0 0 1 .884 0L5 4.116 7.866 1.25a.625.625 0 1 1 .884.884L5.884 5l2.866 2.866a.625.625 0 1 1-.884.884L5 5.884 2.134 8.75a.625.625 0 1 1-.884-.884L4.116 5 1.25 2.134a.625.625 0 0 1 0-.884z"/></svg>
+            </button>
+          </div>
+        )}
         <div className={`chat-input-wrapper ${status === 'running' ? 'is-running' : ''}`}>
           <input 
             type="text" 
@@ -445,9 +637,21 @@ export default function App() {
 
             <div className="chat-input-actions-right">
               <button 
-                onClick={status === 'running' ? stop : handleRun} 
-                className={`chat-submit-btn ${status === 'running' ? 'stop-mode' : (task ? 'send-mode' : 'mic-mode')}`}
-                title={status === 'running' ? 'Stop' : (task ? 'Run' : 'Voice Input')}
+                onClick={
+                  status === 'running' ? stop :
+                  isListening ? stopListening :
+                  task ? handleRun : startListening
+                } 
+                className={`chat-submit-btn ${
+                  status === 'running' ? 'stop-mode' :
+                  isListening ? 'listening-mode' :
+                  task ? 'send-mode' : 'mic-mode'
+                }`}
+                title={
+                  status === 'running' ? 'Stop' :
+                  isListening ? 'Stop Listening' :
+                  task ? 'Run' : 'Voice Input'
+                }
               >
                 {status === 'running' ? (
                   <div className="stop-icon-container">
@@ -456,12 +660,16 @@ export default function App() {
                       <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2" opacity="0.3" />
                     </svg>
                   </div>
+                ) : isListening ? (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <rect x="6" y="4" width="4" height="16" rx="1" />
+                    <rect x="14" y="4" width="4" height="16" rx="1" />
+                  </svg>
+
+                ) : task ? (
+                  <svg className="chat-submit-send-icon" width="20" height="20" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M 32.7812 52.5508 C 34.4687 52.5508 35.6640 51.0977 36.5312 48.8477 L 51.8829 8.7461 C 52.3048 7.6680 52.5626 6.7070 52.5626 5.9102 C 52.5626 4.3867 51.6016 3.4492 50.0781 3.4492 C 49.2813 3.4492 48.3203 3.6836 47.2423 4.1055 L 6.9296 19.5508 C 4.9609 20.3008 3.4374 21.4961 3.4374 23.2070 C 3.4374 25.3633 5.0780 26.0899 7.3280 26.7695 L 20.0077 30.6133 C 21.4843 31.0821 22.3280 31.0352 23.3359 30.0977 L 49.0466 6.0742 C 49.3514 5.7930 49.7032 5.8399 49.9375 6.0508 C 50.1717 6.2852 50.1952 6.6367 49.9139 6.9414 L 25.9843 32.7461 C 25.0937 33.7070 24.9999 34.5039 25.4687 36.0742 L 29.1718 48.4492 C 29.8749 50.8164 30.6015 52.5508 32.7812 52.5508 Z"/></svg>
                 ) : (
-                  task ? (
-                    <svg className="chat-submit-send-icon" width="20" height="20" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M 32.7812 52.5508 C 34.4687 52.5508 35.6640 51.0977 36.5312 48.8477 L 51.8829 8.7461 C 52.3048 7.6680 52.5626 6.7070 52.5626 5.9102 C 52.5626 4.3867 51.6016 3.4492 50.0781 3.4492 C 49.2813 3.4492 48.3203 3.6836 47.2423 4.1055 L 6.9296 19.5508 C 4.9609 20.3008 3.4374 21.4961 3.4374 23.2070 C 3.4374 25.3633 5.0780 26.0899 7.3280 26.7695 L 20.0077 30.6133 C 21.4843 31.0821 22.3280 31.0352 23.3359 30.0977 L 49.0466 6.0742 C 49.3514 5.7930 49.7032 5.8399 49.9375 6.0508 C 50.1717 6.2852 50.1952 6.6367 49.9139 6.9414 L 25.9843 32.7461 C 25.0937 33.7070 24.9999 34.5039 25.4687 36.0742 L 29.1718 48.4492 C 29.8749 50.8164 30.6015 52.5508 32.7812 52.5508 Z"/></svg>
-                  ) : (
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
-                  )
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
                 )}
               </button>
             </div>
