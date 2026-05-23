@@ -163,6 +163,10 @@ textarea {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 .radio-label, .checkbox-label {
@@ -178,6 +182,8 @@ textarea {
     gap: 12px;  /* Add consistent spacing */
     user-select: none;
     -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 .radio-label:hover, .checkbox-label:hover {
