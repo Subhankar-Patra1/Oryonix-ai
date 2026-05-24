@@ -458,9 +458,13 @@ body {
   font-size: 14px;
   color: var(--color-text-primary);
   font-family: inherit;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
+  resize: none;
+  min-height: 42px;
+  max-height: 160px;
+  line-height: 1.5;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(249, 115, 22, 0.3) transparent;
 }
 
 .chat-input-field:focus {
@@ -469,16 +473,27 @@ body {
 
 .chat-input-field::-webkit-input-placeholder {
   color: #737373;
-  text-overflow: ellipsis !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
 }
 
 .chat-input-field::placeholder {
   color: #737373;
-  text-overflow: ellipsis !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
+}
+
+.chat-input-field::-webkit-scrollbar {
+  width: 4px;
+}
+
+.chat-input-field::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-input-field::-webkit-scrollbar-thumb {
+  background: rgba(249, 115, 22, 0.3);
+  border-radius: 4px;
+}
+
+.chat-input-field::-webkit-scrollbar-thumb:hover {
+  background: rgba(249, 115, 22, 0.55);
 }
 
 .chat-input-field:disabled {

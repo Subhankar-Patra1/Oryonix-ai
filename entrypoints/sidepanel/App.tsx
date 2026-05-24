@@ -64,6 +64,19 @@ export default function App() {
   const modelDropdownRef = useRef<HTMLDivElement>(null);
   const chatAreaRef = useRef<HTMLDivElement>(null);
   const aiResponseAddedRef = useRef(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-resize textarea height as content changes
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+    
+    // Reset height to auto to get the correct scrollHeight
+    textarea.style.height = 'auto';
+    
+    // Set height to scrollHeight
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  }, [task]);
   const { status, activity, history, currentTask, execute, stop, reset, configure, config } = useAgent();
 
   const [isRequestingMicTab, setIsRequestingMicTab] = useState(false);
@@ -596,13 +609,19 @@ export default function App() {
           </div>
         )}
         <div className={`chat-input-wrapper ${status === 'running' ? 'is-running' : ''}`}>
-          <input 
-            type="text" 
+          <textarea 
+            ref={textareaRef}
             value={task}
             onChange={(e) => setTask(e.target.value)}
-            onKeyDown={(e) => { if (e.key === 'Enter') handleRun(); }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleRun();
+              }
+            }}
             placeholder="Ask Oryonix anything..."
             disabled={status === 'running'}
+            rows={1}
             className="chat-input-field"
           />
           <div className="chat-input-bottom-row">
