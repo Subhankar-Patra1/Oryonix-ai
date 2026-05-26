@@ -320,11 +320,13 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Create success message element
             const successHtml = `
-                <div class="success-message glass-panel" style="display: block; margin-top: 40px;">
-                    <h3>🎉 Application Submitted!</h3>
-                    <p>Thank you for requesting early access to the Oryonix AI beta extension. We will review your application and send build details to your email shortly.</p>
-                    <br>
-                    <button class="btn btn-secondary" onclick="location.reload()">Submit another request</button>
+                <div class="success-message glass-panel" style="display: block; margin-top: 40px; text-align: center;">
+                    <h3 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 16px; background: linear-gradient(135deg, #f97316, #fb923c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; justify-content: center; gap: 8px;">🎉 Application Submitted!</h3>
+                    <p style="color: var(--color-text-secondary); font-size: 1.05rem; line-height: 1.6; max-width: 480px; margin: 0 auto 24px auto;">Thank you for requesting early access to the Oryonix AI beta extension. We will review your application and send build details to your email shortly.</p>
+                    <div class="success-actions">
+                        <button class="success-btn success-btn--glass" onclick="location.reload()">Submit another request</button>
+                        <a href="/" class="success-btn success-btn--home">Go to Home</a>
+                    </div>
                 </div>
             `;
             

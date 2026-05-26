@@ -562,7 +562,7 @@ function Navbar({ visible, activeSection, onNavClick, onInstallClick }: { visibl
             {open && (
               <motion.div className="nav__mobile" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
                 {NAV.map(n => <a key={n.href} href={n.href} className="nav__mobile-link" onClick={(e) => { onNavClick(e, n.href); setOpen(false); }}>{n.label}</a>)}
-                <a href="/early-access/index.html" className="btn btn--primary">
+                <a href="/early-access/form.html" className="btn btn--primary">
                   <KeyIcon size={16} weight="fill" style={{ transform: 'translateY(1.5px)' }} />
                   Apply for Early Access
                 </a>
@@ -626,7 +626,7 @@ function Hero({ onNavClick }: { onNavClick?: (e: any, href: string) => void }) {
           <h1 className="hero__title">Your AI Co-pilot<br /><span className="accent-text">for the Browser</span></h1>
           <p className="hero__sub">Tell it what to do. Watch it work.<br className="hide-mobile" /> Open source & privacy-first.</p>
           <div className="hero__actions">
-            <a href="/early-access/index.html" className="btn btn--primary btn--lg"><KeyIcon size={18} weight="fill" style={{ transform: 'translateY(1.5px)' }} />Apply for Early Access</a>
+            <a href="/early-access/form.html" className="btn btn--primary btn--lg"><KeyIcon size={18} weight="fill" style={{ transform: 'translateY(1.5px)' }} />Apply for Early Access</a>
             <a href="#demo" className="btn btn--glass btn--lg" onClick={(e) => onNavClick?.(e, '#demo')}>Watch Demo<ArrowRight size={16} /></a>
           </div>
         </motion.div>
@@ -1533,7 +1533,7 @@ function OpenSource() {
           </div>
           <div className="os-card__actions">
             <a href={SITE.github} className="btn btn--glass btn--lg" target="_blank" rel="noopener noreferrer"><GithubIcon size={20} />Star on GitHub</a>
-            <a href="/early-access/index.html" className="btn btn--primary btn--lg"><KeyIcon size={18} weight="fill" style={{ transform: 'translateY(1.5px)' }} />Apply for Early Access</a>
+            <a href="/early-access/form.html" className="btn btn--primary btn--lg"><KeyIcon size={18} weight="fill" style={{ transform: 'translateY(1.5px)' }} />Apply for Early Access</a>
           </div>
           <div className="os-card__stats">
             <div className="os-card__stat"><span className="os-card__stat-val">MIT</span><span className="os-card__stat-label">License</span></div>
@@ -1583,7 +1583,7 @@ function CTA() {
           <h2>Ready to put your browser on <span className="accent-text">autopilot?</span></h2>
           <p>Install in seconds. Start automating immediately. No account required.</p>
           <div className="cta-card__actions">
-            <a href="/early-access/index.html" className="btn btn--primary btn--lg"><KeyIcon size={18} weight="fill" style={{ transform: 'translateY(1.5px)' }} />Apply for Early Access</a>
+            <a href="/early-access/form.html" className="btn btn--primary btn--lg"><KeyIcon size={18} weight="fill" style={{ transform: 'translateY(1.5px)' }} />Apply for Early Access</a>
             <a href={SITE.github} className="btn btn--glass btn--lg" target="_blank" rel="noopener noreferrer"><GithubIcon size={18} />Star on GitHub</a>
           </div>
         </motion.div>
@@ -1962,7 +1962,7 @@ export default function App() {
                 <span>Github</span>
               </a>
               <div className="mobile-dock__div"></div>
-              <a href="/early-access/index.html" className="mobile-dock__cta btn btn--primary btn--sm">
+              <a href="/early-access/form.html" className="mobile-dock__cta btn btn--primary btn--sm">
                 <KeyIcon size={16} weight="fill" style={{ transform: 'translateY(1.5px)' }} />
                 <span>Early Access</span>
               </a>
@@ -2092,7 +2092,7 @@ export default function App() {
               
               <div style={{ display: 'flex', gap: '12px', width: '100%', marginTop: '12px', flexDirection: 'column' }}>
                 <a 
-                  href="/early-access/index.html" 
+                  href="/early-access/form.html" 
                   className="btn btn--primary btn--lg" 
                   style={{ width: '100%', justifyContent: 'center' }}
                   onClick={() => setShowInstallNotice(false)}
