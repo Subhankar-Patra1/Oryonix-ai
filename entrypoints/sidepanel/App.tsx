@@ -514,7 +514,7 @@ export default function App() {
         {chatMessages.length === 0 && status !== 'running' && (
           <div className="landing-state">
             <div className="landing-hero-icon">
-              <img src="/Oryonix AI 2.png" alt="Oryonix AI Logo" />
+              <img src="/logo.svg" alt="Oryonix AI Logo" />
             </div>
             <h1 className="landing-title accent-text">Oryonix AI</h1>
             <p className="landing-subtitle">
@@ -558,7 +558,7 @@ export default function App() {
             <div key={i} className="chat-message-container ai-container">
               <div className="chat-bubble ai-bubble">
                 <div className="ai-bubble-icon">
-                  <img src="/Oryonix AI 2.png" alt="AI" />
+                  <img src="/logo.svg" alt="AI" />
                 </div>
                 <div className="ai-bubble-content markdown-body">
                   <ReactMarkdown
