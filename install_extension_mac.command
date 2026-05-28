@@ -40,20 +40,60 @@ if [[ "$BUNDLE_ID" == *"chrome"* || "$BUNDLE_ID" == *"edge"* || "$BUNDLE_ID" == 
 fi
 
 if [ -n "$BUNDLE_ID" ] && [ "$IS_CHROMIUM" = true ]; then
+    BROWSER_NAME="Google Chrome"
+    if [[ "$BUNDLE_ID" == *"edge"* ]]; then
+        BROWSER_NAME="Microsoft Edge"
+    elif [[ "$BUNDLE_ID" == *"brave"* ]]; then
+        BROWSER_NAME="Brave Browser"
+    fi
+
+    if pgrep -x "$BROWSER_NAME" >/dev/null; then
+        echo ""
+        echo "[!] WARNING: $BROWSER_NAME is currently running."
+        echo "    To load the extension into your default profile, please CLOSE all windows of $BROWSER_NAME."
+        echo "    Otherwise, press [Enter] to launch in a separate clean browser session with the extension..."
+        echo ""
+        read -r
+    fi
+
     echo "[+] Using default browser: $BUNDLE_ID"
-    # We pass a URL to bypass the Chrome Profile Picker
-    open -b "$BUNDLE_ID" --args --load-extension="$INSTALL_DIR" "https://google.com"
+    # Check if still running
+    if pgrep -x "$BROWSER_NAME" >/dev/null; then
+        echo "[*] Launching browser with a temporary profile (default is currently in use)..."
+        open -n -b "$BUNDLE_ID" --args --load-extension="$INSTALL_DIR" --user-data-dir="$INSTALL_DIR/Profile" --no-first-run --no-default-browser-check "https://google.com"
+    else
+        echo "[*] Launching browser with default profile..."
+        open -b "$BUNDLE_ID" --args --load-extension="$INSTALL_DIR" "https://google.com"
+    fi
 else
     # 2. Fallback to Chromium browsers if default is Safari/Firefox or unknown
+    FALLBACK_BROWSER=""
     if [ -d "/Applications/Google Chrome.app" ] || [ -d "$HOME/Applications/Google Chrome.app" ]; then
-        echo "[+] Using fallback browser: Google Chrome"
-        open -a "Google Chrome" --args --load-extension="$INSTALL_DIR" "https://google.com"
+        FALLBACK_BROWSER="Google Chrome"
     elif [ -d "/Applications/Microsoft Edge.app" ] || [ -d "$HOME/Applications/Microsoft Edge.app" ]; then
-        echo "[+] Using fallback browser: Microsoft Edge"
-        open -a "Microsoft Edge" --args --load-extension="$INSTALL_DIR" "https://google.com"
+        FALLBACK_BROWSER="Microsoft Edge"
     elif [ -d "/Applications/Brave Browser.app" ] || [ -d "$HOME/Applications/Brave Browser.app" ]; then
-        echo "[+] Using fallback browser: Brave Browser"
-        open -a "Brave Browser" --args --load-extension="$INSTALL_DIR" "https://google.com"
+        FALLBACK_BROWSER="Brave Browser"
+    fi
+
+    if [ -n "$FALLBACK_BROWSER" ]; then
+        if pgrep -x "$FALLBACK_BROWSER" >/dev/null; then
+            echo ""
+            echo "[!] WARNING: $FALLBACK_BROWSER is currently running."
+            echo "    To load the extension into your default profile, please CLOSE all windows of $FALLBACK_BROWSER."
+            echo "    Otherwise, press [Enter] to launch in a separate clean browser session with the extension..."
+            echo ""
+            read -r
+        fi
+        echo "[+] Using fallback browser: $FALLBACK_BROWSER"
+        # Check if still running
+        if pgrep -x "$FALLBACK_BROWSER" >/dev/null; then
+            echo "[*] Launching browser with a temporary profile (default is currently in use)..."
+            open -n -a "$FALLBACK_BROWSER" --args --load-extension="$INSTALL_DIR" --user-data-dir="$INSTALL_DIR/Profile" --no-first-run --no-default-browser-check "https://google.com"
+        else
+            echo "[*] Launching browser with default profile..."
+            open -a "$FALLBACK_BROWSER" --args --load-extension="$INSTALL_DIR" "https://google.com"
+        fi
     else
         echo "[!] No Chromium-based browser found!"
         echo "[!] Please install Google Chrome, Edge, or Brave to use this extension."
@@ -62,21 +102,16 @@ fi
 
 echo ""
 echo "======================================================================"
-echo "[!] Installation complete! Your browser should open automatically."
+echo "[!] Installation complete! Your browser should open shortly."
 echo "[!] The extension files are saved permanently in: $INSTALL_DIR"
 echo ""
-echo "[i] Want to load it in a different browser manually?"
-echo "    Copy and paste one of these commands into your terminal:"
-echo ""
-echo "    Edge:   open -a \"Microsoft Edge\" --args --load-extension=\"$INSTALL_DIR\" \"https://google.com\""
-echo "    Brave:  open -a \"Brave Browser\" --args --load-extension=\"$INSTALL_DIR\" \"https://google.com\""
-echo "    Chrome: open -a \"Google Chrome\" --args --load-extension=\"$INSTALL_DIR\" \"https://google.com\""
-echo ""
-echo "    Or, load it manually through the browser interface:"
-echo "    1. Type chrome://extensions in your URL bar (or edge://extensions / brave://extensions)."
+echo "[i] IMPORTANT SECURITY NOTE: Terminal-launched extensions are TEMPORARY"
+echo "    and will disappear whenever you close the browser window. To install"
+echo "    it PERMANENTLY so it remains in your browser profile:"
+echo "    1. Open your browser and go to chrome://extensions (or edge://extensions / brave://extensions)."
 echo "    2. Toggle \"Developer mode\" in the top right to ON."
 echo "    3. Click the \"Load unpacked\" button in the top left."
-echo "    4. Select the installation folder: $INSTALL_DIR"
+echo "    4. Select the permanent folder path: $INSTALL_DIR"
 echo "======================================================================"
 echo ""
 echo "[!] You can now safely close this window."

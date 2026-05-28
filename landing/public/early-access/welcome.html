@@ -464,6 +464,93 @@
             color: #ffffff;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
+
+        /* Options layout for Automated Script tab */
+        .install-option-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            text-align: left;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .install-option-card:hover {
+            border-color: rgba(249, 115, 22, 0.15);
+            box-shadow: 0 6px 24px rgba(249, 115, 22, 0.03);
+        }
+
+        .install-option-badge {
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            display: inline-flex;
+            align-items: center;
+            background: rgba(249, 115, 22, 0.1);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            color: var(--color-accent);
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .install-option-header h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0 0 6px 0;
+        }
+
+        .install-option-header p {
+            font-size: 0.88rem;
+            color: var(--color-text-secondary);
+            margin: 0;
+            line-height: 1.4;
+            max-width: 80%;
+        }
+
+        .install-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 28px 0;
+            color: var(--color-text-tertiary);
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .install-divider::before,
+        .install-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1.5px dashed rgba(255, 255, 255, 0.08);
+        }
+
+        .install-divider::before {
+            margin-right: 16px;
+        }
+
+        .install-divider::after {
+            margin-left: 16px;
+        }
+        
+        .install-divider span {
+            background: rgba(249, 115, 22, 0.1);
+            border: 1.5px solid rgba(249, 115, 22, 0.25);
+            padding: 6px 16px;
+            border-radius: 100px;
+            color: var(--color-accent);
+            font-size: 0.8rem;
+            box-shadow: 0 0 10px rgba(249, 115, 22, 0.05);
+        }
     </style>
 </head>
 
@@ -824,103 +911,128 @@
 
             <!-- TAB 2: AUTOMATED SCRIPT INSTALL -->
             <div id="automated-script" class="tab-pane">
-                <p style="text-align: left; margin-bottom: 20px;">For a fully automated setup, download the lightweight
-                    installer bundle directly. The script will automatically fetch the official extension package,
-                    unpack it, and launch your browser with Oryonix AI ready to go.</p>
+                <p style="text-align: left; margin-bottom: 24px; color: var(--color-text-secondary); line-height: 1.5;">
+                    Please choose <strong>either</strong> Option A (One-Click Command) <strong>or</strong> Option B (Manual ZIP Download) to install the extension automatically. <strong>You do not need to do both.</strong>
+                </p>
 
-                <div class="download-box">
-                    <a href="https://oryonix-ai-downloads.s3.us-east-1.amazonaws.com/oryonix-ai-extension-installer.zip"
-                        class="download-btn download-btn--primary">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2.5">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
-                        </svg>
-                        Download Oryonix AI Extension Installer (.zip)
-                    </a>
+                <!-- Option A: One-Click Terminal Install -->
+                <div class="install-option-card">
+                    <div class="install-option-badge">Option A</div>
+                    <div class="install-option-header">
+                        <h3>One-Click Terminal Command</h3>
+                        <p>The fastest setup. Copy and run the command in your terminal to automatically install the extension and launch your browser.</p>
+                    </div>
+
+                    <!-- One-Click Terminal Install Command -->
+                    <div class="terminal-card" style="margin-top: 20px; margin-bottom: 0;">
+                        <div class="terminal-header">
+                            <div class="terminal-dots">
+                                <div class="terminal-dot red"></div>
+                                <div class="terminal-dot yellow"></div>
+                                <div class="terminal-dot green"></div>
+                            </div>
+                            <div class="terminal-os-switcher">
+                                <button type="button" class="terminal-os-btn active" data-os="mac" onclick="switchTerminalOS('mac')">macOS / Linux</button>
+                                <button type="button" class="terminal-os-btn" data-os="win" onclick="switchTerminalOS('win')">Windows (PowerShell)</button>
+                            </div>
+                            <div class="terminal-title">One-Click Install</div>
+                        </div>
+                        <div class="terminal-body">
+                            <div class="terminal-code" id="terminalCode">curl -sSL https://oryonix-ai-downloads.s3.us-east-1.amazonaws.com/install.sh | bash</div>
+                            <button type="button" class="terminal-copy-btn" onclick="copyTerminalCommand(event)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                <span>Copy Command</span>
+                            </button>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.82rem; color: rgba(255, 255, 255, 0.4); margin-top: 16px; line-height: 1.5; text-align: left; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 12px 16px; border-radius: 8px;">
+                        ⚠️ <strong>Security Note:</strong> Browsers treat command-line loaded extensions as <strong>temporary</strong>. It will disappear when you close the browser. To make it permanent, follow the <strong>Developer Mode > Load Unpacked</strong> steps in Option B below.
+                    </p>
                 </div>
 
-                <!-- One-Click Terminal Install Command -->
-                <div class="terminal-card" style="margin-top: 10px; margin-bottom: 28px;">
-                    <div class="terminal-header">
-                        <div class="terminal-dots">
-                            <div class="terminal-dot red"></div>
-                            <div class="terminal-dot yellow"></div>
-                            <div class="terminal-dot green"></div>
-                        </div>
-                        <div class="terminal-os-switcher">
-                            <button type="button" class="terminal-os-btn active" data-os="mac" onclick="switchTerminalOS('mac')">macOS / Linux</button>
-                            <button type="button" class="terminal-os-btn" data-os="win" onclick="switchTerminalOS('win')">Windows (PowerShell)</button>
-                        </div>
-                        <div class="terminal-title">One-Click Install</div>
+                <!-- OR Divider -->
+                <div class="install-divider">
+                    <span>OR</span>
+                </div>
+
+                <!-- Option B: ZIP Bundle Installer -->
+                <div class="install-option-card">
+                    <div class="install-option-badge" style="background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.15); color: var(--color-text-secondary);">Option B</div>
+                    <div class="install-option-header">
+                        <h3>Download ZIP Installer Bundle</h3>
+                        <p>Prefer a visual setup? Download the lightweight ZIP package, unzip it, and run the launcher script manually.</p>
                     </div>
-                    <div class="terminal-body">
-                        <div class="terminal-code" id="terminalCode">curl -sSL https://oryonix-ai-downloads.s3.us-east-1.amazonaws.com/install.sh | bash</div>
-                        <button type="button" class="terminal-copy-btn" onclick="copyTerminalCommand(event)">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+
+                    <div class="download-box" style="margin-top: 20px; margin-bottom: 24px;">
+                        <a href="https://oryonix-ai-downloads.s3.us-east-1.amazonaws.com/oryonix-ai-extension-installer.zip"
+                            class="download-btn download-btn--primary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
                             </svg>
-                            <span>Copy Command</span>
-                        </button>
+                            Download Oryonix AI Extension Installer (.zip)
+                        </a>
                     </div>
-                </div>
 
-                <div class="onboarding-steps">
-                    <div class="step-card">
-                        <div class="step-number">1</div>
-                        <div class="step-content">
-                            <h4>Extract the Onboarding Bundle</h4>
-                            <p>Download the installer bundle using the button above and extract the contents to a folder
-                                on your computer.</p>
+                    <div class="onboarding-steps" style="margin-top: 16px; margin-bottom: 0;">
+                        <div class="step-card">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4>Extract the Onboarding Bundle</h4>
+                                <p>Unzip the downloaded file (`oryonix-ai-extension-installer.zip`) to a folder on your computer.</p>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="step-card">
-                        <div class="step-number">2</div>
-                        <div class="step-content">
-                            <h4>Run the Installer Script</h4>
-                            <p>Open the extracted folder and run the appropriate script for your system:</p>
-                            <ul
-                                style="color: var(--color-text-secondary); margin-left: 20px; margin-top: 8px; font-size: 0.9rem; line-height: 1.6;">
-                                <li><strong>Windows:</strong> Double-click <code
-                                        style="color: #ff9d5c;">install_extension_windows.bat</code></li>
-                                <li><strong>macOS:</strong> Double-click <code
-                                        style="color: #ff9d5c;">install_extension_mac.command</code></li>
-                                <li><strong>Linux:</strong> Run <code
-                                        style="color: #ff9d5c;">bash install_extension_linux.sh</code> in terminal</li>
-                            </ul>
+                        <div class="step-card">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4>Run the Installer Script</h4>
+                                <p>Open the extracted folder and run the appropriate script for your system:</p>
+                                <ul
+                                    style="color: var(--color-text-secondary); margin-left: 20px; margin-top: 8px; font-size: 0.9rem; line-height: 1.6;">
+                                    <li><strong>Windows:</strong> Double-click <code
+                                            style="color: #ff9d5c;">install_extension_windows.bat</code></li>
+                                    <li><strong>macOS:</strong> Double-click <code
+                                            style="color: #ff9d5c;">install_extension_mac.command</code></li>
+                                    <li><strong>Linux:</strong> Run <code
+                                            style="color: #ff9d5c;">bash install_extension_linux.sh</code> in terminal</li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="step-card">
-                        <div class="step-number">3</div>
-                        <div class="step-content">
-                            <h4>Watch it Work!</h4>
-                            <p>The script will automatically fetch the official extension package, set it up, and launch
-                                your browser with the Oryonix AI extension preloaded. Look for the <img
-                                    src="../logo.svg" alt="Oryonix AI"
-                                    style="width: 22px; height: 22px; vertical-align: middle; display: inline-block; margin: 0 4px; transform: translateY(-1.5px); filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.25));">
-                                Oryonix AI logo in your toolbar!</p>
+                        <div class="step-card">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4>Watch it Work!</h4>
+                                <p>The script will automatically fetch the official extension package, set it up, and launch
+                                    your browser with the Oryonix AI extension preloaded. Look for the <img
+                                        src="../logo.svg" alt="Oryonix AI"
+                                        style="width: 22px; height: 22px; vertical-align: middle; display: inline-block; margin: 0 4px; transform: translateY(-1.5px); filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.25));">
+                                    Oryonix AI logo in your toolbar!</p>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="step-card">
-                        <div class="step-number">4</div>
-                        <div class="step-content">
-                            <h4>Pin for Easy Access 📌</h4>
-                            <p>Browsers hide newly loaded extensions by default. Click the
-                                <strong>Extensions</strong><svg viewBox="0 0 18.035334 17.500378"
-                                    style="width: 22px; height: 22px; fill: #ff9d5c; vertical-align: middle; display: inline-block; margin: 0 0 0 4px; transform: translateY(-2px);">
-                                    <g transform="translate(-0.99262638,-1.174181)">
-                                        <path style="fill:#ff9d5c;fill-opacity:1;stroke-width:0.46185368"
-                                            d="m 14.269566,9.6934441 -0.692781,0 0,-1.847416 c 0,-0.5080383 -0.415668,-0.9237063 -0.923706,-0.9237063 l -1.847416,0 0,-0.69278 c 0,-0.637359 -0.517275,-1.154636 -1.1546334,-1.154636 -0.6373578,0 -1.1546338,0.517277 -1.1546338,1.154636 l 0,0.69278 -1.847416,0 c -0.508038,0 -0.919089,0.415668 -0.919089,0.9237063 l 0,1.755045 0.688164,0 c 0.688161,0 1.247005,0.5588429 1.247005,1.2470049 0,0.688162 -0.558844,1.247005 -1.247005,1.247005 l -0.692781,0 0,1.755045 c 0,0.508038 0.415668,0.923706 0.923706,0.923706 l 1.755045,0 0,-0.692781 c 0,-0.688161 0.558843,-1.247005 1.2470048,-1.247005 0.6881624,0 1.2470044,0.558844 1.2470044,1.247005 l 0,0.692781 1.755045,0 c 0.508038,0 0.923706,-0.415668 0.923706,-0.923706 l 0,-1.847416 0.692781,0 c 0.637358,0 1.154635,-0.517276 1.154635,-1.154634 0,-0.637358 -0.517277,-1.1546339 -1.154635,-1.1546339 z"
-                                            id="path7415" />
-                                    </g>
-                                </svg> in your browser toolbar, find <img src="../logo.svg" alt="Oryonix AI"
-                                    style="width: 22px; height: 22px; vertical-align: middle; display: inline-block; margin: 0 4px; transform: translateY(-1.5px); filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.25));">
-                                <strong>Oryonix AI</strong>, and click the <strong>Pin</strong> (pin-shaped) icon to
-                                keep your copilot always visible.</p>
+                        <div class="step-card">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h4>Pin for Easy Access 📌</h4>
+                                <p>Browsers hide newly loaded extensions by default. Click the
+                                    <strong>Extensions</strong><svg viewBox="0 0 18.035334 17.500378"
+                                        style="width: 22px; height: 22px; fill: #ff9d5c; vertical-align: middle; display: inline-block; margin: 0 0 0 4px; transform: translateY(-2px);">
+                                        <g transform="translate(-0.99262638,-1.174181)">
+                                            <path style="fill:#ff9d5c;fill-opacity:1;stroke-width:0.46185368"
+                                                d="m 14.269566,9.6934441 -0.692781,0 0,-1.847416 c 0,-0.5080383 -0.415668,-0.9237063 -0.923706,-0.9237063 l -1.847416,0 0,-0.69278 c 0,-0.637359 -0.517275,-1.154636 -1.1546334,-1.154636 -0.6373578,0 -1.1546338,0.517277 -1.1546338,1.154636 l 0,0.69278 -1.847416,0 c -0.508038,0 -0.919089,0.415668 -0.919089,0.9237063 l 0,1.755045 0.688164,0 c 0.688161,0 1.247005,0.5588429 1.247005,1.2470049 0,0.688162 -0.558844,1.247005 -1.247005,1.247005 l -0.692781,0 0,1.755045 c 0,0.508038 0.415668,0.923706 0.923706,0.923706 l 1.755045,0 0,-0.692781 c 0,-0.688161 0.558843,-1.247005 1.2470048,-1.247005 0.6881624,0 1.2470044,0.558844 1.2470044,1.247005 l 0,0.692781 1.755045,0 c 0.508038,0 0.923706,-0.415668 0.923706,-0.923706 l 0,-1.847416 0.692781,0 c 0.637358,0 1.154635,-0.517276 1.154635,-1.154634 0,-0.637358 -0.517277,-1.1546339 -1.154635,-1.1546339 z"
+                                                id="path7415" />
+                                        </g>
+                                    </svg> in your browser toolbar, find <img src="../logo.svg" alt="Oryonix AI"
+                                        style="width: 22px; height: 22px; vertical-align: middle; display: inline-block; margin: 0 4px; transform: translateY(-1.5px); filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.25));">
+                                    <strong>Oryonix AI</strong>, and click the <strong>Pin</strong> (pin-shaped) icon to
+                                    keep your copilot always visible.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
