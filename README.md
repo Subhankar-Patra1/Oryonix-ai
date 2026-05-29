@@ -203,7 +203,7 @@ The production build goes to `.output/chrome-mv3/`.
 
 If you're not a developer, you can download the pre-built extension directly:
 
-1. Visit our [Early Access Welcome Page](https://oryonix.vercel.app/early-access/welcome.html)
+1. Visit our [Early Access Welcome Page](https://oryonix-ai.vercel.app/early-access/welcome.html)
 2. Download the `.zip` extension bundle
 3. Extract it to a permanent folder (e.g., `Documents/Oryonix AI`)
 4. Open `chrome://extensions` → Enable **Developer Mode** → Click **Load unpacked** → Select the extracted folder
