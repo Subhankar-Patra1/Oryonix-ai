@@ -22,7 +22,7 @@ export default defineConfig({
     name: 'Oryonix AI',
     short_name: 'Oryonix',
     description: 'Your autonomous browser copilot.',
-    permissions: ['tabs', 'storage', 'activeTab', 'sidePanel', 'tabGroups', 'alarms', 'audioCapture'],
+    permissions: ['tabs', 'storage', 'sidePanel', 'tabGroups'],
     host_permissions: ['<all_urls>'],
     side_panel: {
       default_path: 'sidepanel/index.html'

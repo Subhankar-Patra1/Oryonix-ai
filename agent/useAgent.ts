@@ -7,7 +7,7 @@ import type {
 } from '@page-agent/core'
 import type { LLMConfig } from '@page-agent/llms'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { DEMO_CONFIG, migrateLegacyEndpoint, isTestingEndpoint } from './constants'
+import { DEMO_CONFIG, isTestingEndpoint } from './constants'
 import { createSanitizingFetch } from './sanitizingFetch'
 import { createGeminiFetch } from './geminiFetch'
 import { MultiPageAgent } from './MultiPageAgent'
@@ -109,7 +109,7 @@ CRITICAL RULES:
 		})
 		agentRef.current = agent
 
-		const handleStatusChange = (e: Event) => {
+		const handleStatusChange = (_e: Event) => {
 			const newStatus = agent.status as AgentStatus
 			setStatus(newStatus)
 			if (newStatus === 'idle' || newStatus === 'completed' || newStatus === 'error') {
@@ -117,7 +117,7 @@ CRITICAL RULES:
 			}
 		}
 
-		const handleHistoryChange = (e: Event) => {
+		const handleHistoryChange = (_e: Event) => {
 			setHistory([...agent.history])
 		}
 

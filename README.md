@@ -282,7 +282,6 @@ VITE_LLM_API_KEY=your-api-key
 Oryonix-ai/
 ├── agent/                          # Core AI agent logic
 │   ├── MultiPageAgent.ts           # Main agent orchestrator
-│   ├── BackgroundAgentManager.ts   # Background service worker agent manager
 │   ├── TabsController.ts           # Tab lifecycle management
 │   ├── TabsController.background.ts# Background-side tab operations
 │   ├── RemotePageController.ts     # Agent-side page controller
@@ -291,12 +290,9 @@ Oryonix-ai/
 │   ├── tabTools.ts                 # Custom tool definitions for the agent
 │   ├── useAgent.ts                 # React hook for side panel integration
 │   ├── constants.ts                # LLM configuration & endpoints
-│   ├── types.ts                    # TypeScript type definitions
-│   ├── system_prompt.md            # Agent behavior instructions (260 lines)
+│   ├── system_prompt.md            # Agent behavior instructions
 │   ├── sanitizingFetch.ts          # Fetch wrapper for local models (Ollama)
-│   ├── geminiFetch.ts              # Fetch wrapper for Google Gemini API
-│   ├── resolveCustomFetch.ts       # Fetch strategy resolver
-│   └── forgivingTools.ts           # Graceful tool schema handling
+│   └── geminiFetch.ts              # Fetch wrapper for Google Gemini API
 │
 ├── entrypoints/                    # Chrome extension entry points
 │   ├── background.ts              # Service worker (message routing)
