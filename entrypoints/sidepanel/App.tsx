@@ -81,6 +81,8 @@ export default function App() {
 
   const [isRequestingMicTab, setIsRequestingMicTab] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [interimText, setInterimText] = useState('');
+  const [isRefining, setIsRefining] = useState(false);
   const [voiceError, setVoiceError] = useState<string | null>(null);
   const [isErrorExiting, setIsErrorExiting] = useState(false);
   const errorTimeoutRef = useRef<any>(null);
@@ -123,6 +125,12 @@ export default function App() {
 
   const recognitionRef = useRef<any>(null);
   const initialTextRef = useRef('');
+  const finalTranscriptRef = useRef('');
+  const shouldBeListeningRef = useRef(false);
+  const silenceTimerRef = useRef<any>(null);
+  const refineOnStopRef = useRef(false);
+  // Always points to latest refineVoiceText — lets onend call it without stale closure
+  const refineVoiceTextRef = useRef<((text: string) => void) | null>(null);
 
   // Check if this page is opened in a tab specifically to request microphone permissions
   useEffect(() => {
@@ -131,9 +139,7 @@ export default function App() {
       setIsRequestingMicTab(true);
       navigator.mediaDevices.getUserMedia({ audio: true })
         .then((stream) => {
-          // Permission granted! Stop the stream to release the mic
           stream.getTracks().forEach(track => track.stop());
-          // Close this temporary tab automatically
           window.close();
         })
         .catch((err) => {
@@ -142,101 +148,182 @@ export default function App() {
     }
   }, []);
 
-  // Initialize Speech Recognition lazily on demand
-  const initSpeechRecognition = () => {
-    if (recognitionRef.current) return recognitionRef.current;
+  const resetSilenceTimer = () => {
+    if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+    silenceTimerRef.current = setTimeout(() => {
+      if (shouldBeListeningRef.current) {
+        shouldBeListeningRef.current = false;
+        setIsListening(false);
+        setInterimText('');
+        try { recognitionRef.current?.stop(); } catch {}
+      }
+    }, 10_000);
+  };
 
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) return null;
+  // Always creates a fresh instance — avoids stale state after errors/aborts
+  const createRecognition = () => {
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SR) return null;
 
-    const rec = new SpeechRecognition();
+    const rec = new SR();
     rec.continuous = true;
     rec.interimResults = true;
-    rec.lang = 'en-US';
+    rec.lang = navigator.language || 'en-US';
+    rec.maxAlternatives = 1;
 
     rec.onstart = () => {
       setIsListening(true);
       setVoiceError(null);
+      resetSilenceTimer();
     };
 
     rec.onend = () => {
+      if (shouldBeListeningRef.current) {
+        // Unexpected stop (silence gap, network blip) — restart with a fresh instance
+        const newRec = createRecognition();
+        if (newRec) {
+          recognitionRef.current = newRec;
+          try { newRec.start(); return; } catch {}
+        }
+      }
+      if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
       setIsListening(false);
+      setInterimText('');
+
+      // User explicitly tapped stop — refine the final transcript with LLM
+      if (refineOnStopRef.current) {
+        refineOnStopRef.current = false;
+        const prefix = initialTextRef.current
+          ? (initialTextRef.current + (initialTextRef.current.endsWith(' ') ? '' : ' '))
+          : '';
+        const fullText = (prefix + finalTranscriptRef.current).trim();
+        if (fullText) refineVoiceTextRef.current?.(fullText);
+      }
     };
 
     rec.onerror = (event: any) => {
-      console.error('Speech recognition error', event.error, event);
+      // no-speech and aborted are non-fatal — let onend handle restart
+      if (event.error === 'no-speech' || event.error === 'aborted') return;
+
+      console.error('Speech recognition error', event.error);
+      shouldBeListeningRef.current = false;
+      if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
       setIsListening(false);
+      setInterimText('');
+
       if (event.error === 'not-allowed') {
-        chrome.tabs.create({
-          url: chrome.runtime.getURL('sidepanel.html?request-mic=true')
-        });
+        chrome.tabs.create({ url: chrome.runtime.getURL('sidepanel.html?request-mic=true') });
       } else if (event.error === 'network') {
         const isBrave = !!(navigator as any).brave;
-        if (isBrave) {
-          setVoiceError(
-            'Brave blocks Google Voice by default. Click this input and press Windows Key + H (Windows) or double-press Control (macOS) to dictate natively!'
-          );
-        } else {
-          setVoiceError('Speech Recognition requires a connection or is blocked by browser settings.');
-        }
-      } else if (event.error === 'no-speech') {
-        console.warn('No speech detected.');
-      } else if (event.error === 'aborted') {
-        console.log('Speech recognition aborted by user.');
+        setVoiceError(isBrave
+          ? 'Brave blocks Google Voice by default. Use Windows Key + H (Windows) or double-press Control (macOS) to dictate natively!'
+          : 'Speech Recognition requires a connection or is blocked by browser settings.'
+        );
       } else {
         setVoiceError(`Voice input error: ${event.error}`);
       }
     };
 
     rec.onresult = (event: any) => {
-      let speechText = '';
-      for (let i = 0; i < event.results.length; i++) {
-        speechText += event.results[i][0].transcript;
+      resetSilenceTimer();
+      let interimTranscript = '';
+
+      // Only process NEW results from this event — event.resultIndex is the start offset
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const result = event.results[i];
+        const transcript = result[0].transcript;
+        const confidence: number = result[0].confidence;
+
+        if (result.isFinal) {
+          // confidence === 0 means the API didn't provide a score — accept it
+          if (confidence === 0 || confidence >= 0.45) {
+            finalTranscriptRef.current += transcript;
+          }
+        } else {
+          interimTranscript += transcript;
+        }
       }
-      const prefix = initialTextRef.current ? (initialTextRef.current + (initialTextRef.current.endsWith(' ') ? '' : ' ')) : '';
-      setTask(prefix + speechText);
+
+      setInterimText(interimTranscript);
+      const prefix = initialTextRef.current
+        ? (initialTextRef.current + (initialTextRef.current.endsWith(' ') ? '' : ' '))
+        : '';
+      setTask(prefix + finalTranscriptRef.current + interimTranscript);
     };
 
-    recognitionRef.current = rec;
     return rec;
   };
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (recognitionRef.current) {
-        try {
-          recognitionRef.current.abort();
-        } catch (e) {
-          console.error(e);
-        }
-      }
+      shouldBeListeningRef.current = false;
+      if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+      try { recognitionRef.current?.abort(); } catch {}
     };
   }, []);
 
   const startListening = () => {
-    setVoiceError(null);
-    const rec = initSpeechRecognition();
-    if (!rec) {
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SR) {
       setVoiceError('Speech Recognition is not supported in this browser.');
       return;
     }
+    setVoiceError(null);
     initialTextRef.current = task;
-    try {
-      rec.start();
-    } catch (e) {
-      console.error(e);
-    }
+    finalTranscriptRef.current = '';
+    shouldBeListeningRef.current = true;
+
+    const rec = createRecognition();
+    if (!rec) return;
+    recognitionRef.current = rec;
+    try { rec.start(); } catch (e) { console.error(e); }
   };
 
   const stopListening = () => {
+    shouldBeListeningRef.current = false;
+    refineOnStopRef.current = true;
+    setInterimText('');
+    if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+    // stop() (not abort()) lets the engine commit any remaining audio before onend fires
+    try { recognitionRef.current?.stop(); } catch {}
+  };
+
+  const refineVoiceText = async (rawText: string) => {
+    if (!config || !rawText.trim()) return;
+    setIsRefining(true);
     try {
-      recognitionRef.current?.abort();
-    } catch (e) {
-      console.error(e);
+      const fetchFn: typeof fetch = (config as any).customFetch ?? fetch;
+      const response = await fetchFn(`${config.baseURL}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(config.apiKey && config.apiKey !== 'NA'
+            ? { Authorization: `Bearer ${config.apiKey}` }
+            : {}),
+        },
+        body: JSON.stringify({
+          model: config.model,
+          messages: [{
+            role: 'user',
+            content: `You are a speech-to-text correction assistant. The following text was produced by voice recognition and may contain mishearing errors (wrong words that sound similar to the intended ones). Fix ONLY those errors. Do not rephrase, summarize, or add anything. Return ONLY the corrected text with no explanation:\n\n${rawText}`,
+          }],
+          max_tokens: 300,
+          temperature: 0,
+        }),
+      });
+      const data = await response.json();
+      const refined = data.choices?.[0]?.message?.content?.trim();
+      if (refined) setTask(refined);
+    } catch {
+      // Silent fail — original transcription stays as-is
+    } finally {
+      setIsRefining(false);
     }
   };
 
+  // Keep the ref pointing at the latest refineVoiceText so onend can call it
+  refineVoiceTextRef.current = refineVoiceText;
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -608,8 +695,14 @@ export default function App() {
             </button>
           </div>
         )}
+        {isListening && interimText && (
+          <div className="voice-interim-banner">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style={{flexShrink: 0, opacity: 0.7}}><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2" fill="none" stroke="currentColor" strokeWidth="2"/></svg>
+            <span className="voice-interim-text">{interimText}</span>
+          </div>
+        )}
         <div className={`chat-input-wrapper ${status === 'running' ? 'is-running' : ''}`}>
-          <textarea 
+          <textarea
             ref={textareaRef}
             value={task}
             onChange={(e) => setTask(e.target.value)}
@@ -620,7 +713,7 @@ export default function App() {
               }
             }}
             placeholder="Ask Oryonix anything..."
-            disabled={status === 'running'}
+            disabled={status === 'running' || isRefining}
             rows={1}
             className="chat-input-field"
           />
@@ -655,24 +748,32 @@ export default function App() {
             
 
             <div className="chat-input-actions-right">
-              <button 
+              <button
                 onClick={
+                  isRefining ? undefined :
                   status === 'running' ? stop :
                   isListening ? stopListening :
                   task ? handleRun : startListening
-                } 
+                }
+                disabled={isRefining}
                 className={`chat-submit-btn ${
+                  isRefining ? 'refining-mode' :
                   status === 'running' ? 'stop-mode' :
                   isListening ? 'listening-mode' :
                   task ? 'send-mode' : 'mic-mode'
                 }`}
                 title={
+                  isRefining ? 'Refining with AI...' :
                   status === 'running' ? 'Stop' :
                   isListening ? 'Stop Listening' :
                   task ? 'Run' : 'Voice Input'
                 }
               >
-                {status === 'running' ? (
+                {isRefining ? (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="spin-icon">
+                    <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                  </svg>
+                ) : status === 'running' ? (
                   <div className="stop-icon-container">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                       <rect x="6" y="6" width="12" height="12" rx="1.5" />
@@ -684,7 +785,6 @@ export default function App() {
                     <rect x="6" y="4" width="4" height="16" rx="1" />
                     <rect x="14" y="4" width="4" height="16" rx="1" />
                   </svg>
-
                 ) : task ? (
                   <svg className="chat-submit-send-icon" width="20" height="20" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M 32.7812 52.5508 C 34.4687 52.5508 35.6640 51.0977 36.5312 48.8477 L 51.8829 8.7461 C 52.3048 7.6680 52.5626 6.7070 52.5626 5.9102 C 52.5626 4.3867 51.6016 3.4492 50.0781 3.4492 C 49.2813 3.4492 48.3203 3.6836 47.2423 4.1055 L 6.9296 19.5508 C 4.9609 20.3008 3.4374 21.4961 3.4374 23.2070 C 3.4374 25.3633 5.0780 26.0899 7.3280 26.7695 L 20.0077 30.6133 C 21.4843 31.0821 22.3280 31.0352 23.3359 30.0977 L 49.0466 6.0742 C 49.3514 5.7930 49.7032 5.8399 49.9375 6.0508 C 50.1717 6.2852 50.1952 6.6367 49.9139 6.9414 L 25.9843 32.7461 C 25.0937 33.7070 24.9999 34.5039 25.4687 36.0742 L 29.1718 48.4492 C 29.8749 50.8164 30.6015 52.5508 32.7812 52.5508 Z"/></svg>
                 ) : (

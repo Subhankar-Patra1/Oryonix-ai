@@ -101,7 +101,7 @@ Oryonix AI is built as a **Chrome Extension** using the [WXT framework](https://
 │  │  useAgent()  │◄─┤              ├─►│ DOM Parsing   │  │
 │  │  Chat UI     │  │  Tab Control │  │ Click/Type    │  │
 │  │  History     │  │  Routing     │  │ Scroll/Read   │  │
-│  │  Settings    │  │  Keep-Alive  │  │ JS Execution  |  │
+│  │  Settings    │  │  Port Events │  │ JS Execution  |  │
 │  └──────┬───────┘  └──────┬───────┘  └───────────────┘  │
 │         │                 │                             │
 │         └─────────┬───────┘                             │
@@ -150,9 +150,8 @@ Oryonix AI is built as a **Chrome Extension** using the [WXT framework](https://
 ### Key Design Decisions
 
 - **Heartbeat Mechanism**: The agent sets a heartbeat via `chrome.storage.local` every second to detect if the side panel was closed during execution, preventing orphaned background tasks.
-- **Keep-Alive Alarm**: A periodic alarm (`chrome.alarms`) wakes the service worker every 24 seconds during long tasks to prevent Chrome from killing it.
-- **Forgiving Tool Schema**: The agent uses a "forgiving" tool schema system that gracefully handles LLM output variations and self-corrects malformed responses.
-- **Tab Grouping**: All agent-managed tabs are automatically organized into a color-coded Chrome tab group, keeping the user's other tabs untouched.
+- **Tab Event Ports**: The background service worker broadcasts tab lifecycle events (created, updated, removed) to the side panel via persistent `chrome.runtime.Port` connections, enabling real-time multi-tab awareness.
+- **Tab Grouping**: All agent-managed tabs are automatically organized into a color-coded Chrome tab group labeled `OryonixAI(task)`, keeping the user's other tabs untouched.
 
 ---
 
@@ -374,14 +373,11 @@ The extension requests these Chrome permissions:
 
 | Permission | Why It's Needed |
 |-----------|----------------|
-| `tabs` | Open, close, switch, and query browser tabs |
-| `activeTab` | Interact with the currently active tab |
+| `tabs` | Open, close, switch, query, and group browser tabs |
+| `storage` | Save LLM config, agent state, history, and preferences locally |
 | `sidePanel` | Display the agent UI in Chrome's side panel |
-| `storage` | Save LLM config, agent state, and preferences locally |
-| `tabGroups` | Organize agent-managed tabs into color-coded groups |
-| `alarms` | Keep-alive mechanism to prevent service worker death during long tasks |
-| `audioCapture` | Enables microphone access via the Web Speech API for voice command input directly within the extension panel |
-| `<all_urls>` | Content script needs access to any website the user navigates to |
+| `tabGroups` | Organize agent-managed tabs into color-coded labeled groups |
+| `<all_urls>` | Content script must run on any website the user navigates to |
 
 ---
 

@@ -14,12 +14,12 @@ Oryonix AI is an open-source, autonomous browser copilot that perceives web stru
 
 ---
 
-### 2. Core Operational Principles & Future BYOK Support
-The Software operates strictly as a client-side tool. By default, all browser perception, DOM analysis, and agentic workflows are executed locally on your machine. 
+### 2. Core Operational Principles & BYOK Support
 
-In a future update, we will introduce a **"Bring Your Own Key" (BYOK)** architecture to let you configure custom third-party LLM API credentials directly. 
-* **Once the BYOK feature is active**, when configuring cloud LLM providers (e.g., OpenAI, Anthropic, Gemini, Groq, Mistral), your API credentials will be stored securely in your browser's local storage (`chrome.storage.local`).
-* You will be solely responsible for all bandwidth, token usage, and billing costs generated through your configured keys.
+The Software operates strictly as a client-side tool. All browser perception, DOM analysis, and agentic workflows are executed locally in your browser. You can configure your preferred LLM provider — local (Ollama) or cloud (OpenAI, Anthropic, Gemini, Groq, Mistral, or any OpenAI-compatible endpoint) — directly from the side panel.
+
+* When configuring cloud LLM providers, your API credentials are stored securely in your browser's local storage (`chrome.storage.local`).
+* You are solely responsible for all bandwidth, token usage, and billing costs generated through your configured keys.
 
 ---
 

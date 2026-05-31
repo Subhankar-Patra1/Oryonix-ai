@@ -15,13 +15,12 @@ We believe your browsing data and search queries are yours alone. The Software i
 ---
 
 ### 2. Chrome Extension Permissions & Data Access Audit
-To provide autonomous multi-tab browser automation, the extension requires specific Chromium permissions. Here is exactly what data is accessed and why:
+To provide autonomous multi-tab browser automation, the extension requests only the minimum permissions necessary. Here is exactly what data is accessed and why:
 * **`storage`:** Persists your settings, session history, configured LLM endpoints, and API credentials securely inside `chrome.storage.local`.
-* **`tabs` & `tabGroups`:** Allows the agent to open new tabs, switch active tabs, group tabs, and navigate URLs to fulfill tasks.
-* **`activeTab`:** Allows the agent to perceive the current web structure, click elements, and enter text *only* on the page you trigger it on.
+* **`tabs` & `tabGroups`:** Allows the agent to open new tabs, switch active tabs, group related tabs under a labeled Chrome tab group, and navigate URLs to fulfill tasks.
 * **`sidePanel`:** Displays the extension panel interface where you type commands, read active execution logs, and manage history.
-* **`alarms`:** Coordinates minor heartbeat events and periodic task checking.
-* **`audioCapture`:** Enables microphone access via the Web Speech API for voice command input directly within the extension panel.
+
+Voice input uses the browser's built-in Web Speech API — a standard web platform feature that requires no additional extension permission. Microphone access is granted at runtime through Chrome's standard permission prompt, and no audio data is transmitted to Oryonix AI servers.
 
 ---
 
@@ -37,10 +36,11 @@ Oryonix AI stores all task records and AI configs directly in your browser's pri
 ---
 
 ### 4. AI Prompt Routing & Security Architecture
-Oryonix AI routes data depending entirely on your configured AI provider settings:
-* **Local LLM / Ollama (Offline Mode - Planned Future Feature):** When configured to use Ollama in the future (e.g., `http://localhost:11434`), Oryonix AI will operate entirely offline inside your local network. 100% of your prompts, dynamic page snapshots, and action logic will be processed locally on your machine.
-* **Bring Your Own Key (BYOK) Cloud Routing (Planned Future Feature):** **Once the BYOK feature is active**, when cloud APIs (OpenAI, Gemini, Anthropic, Groq, Mistral) are selected, Oryonix AI will issue direct HTTPS queries to the respective official APIs. Your credentials will be saved only in local storage, and we will not log, intercept, or proxy your prompts.
-* **Public Testing API (Web Demo & Sandbox Only):** In the rapid web evaluation sandbox or demo CDN scripts, Oryonix AI leverages a public testing API for research. **Do not enter confidential data** when using the testing API, as queries are processed on temporary instances located in Mainland China.
+Oryonix AI routes data depending entirely on your configured AI provider. All three modes are fully available:
+
+* **Local LLM / Ollama (Fully Offline Mode):** When configured to use a local Ollama instance (e.g., `http://localhost:11434`), Oryonix AI operates entirely offline inside your local network. 100% of your prompts, dynamic page snapshots, and action logic are processed locally on your machine. Nothing leaves your device.
+* **Bring Your Own Key (BYOK) Cloud Routing:** When cloud APIs (OpenAI, Gemini, Anthropic, Groq, Mistral, or any OpenAI-compatible endpoint) are configured, Oryonix AI issues direct HTTPS queries to the respective official API endpoints. Your credentials are saved only in `chrome.storage.local` — we do not log, intercept, or proxy your prompts.
+* **Public Testing API (Default Demo Mode):** The default configuration uses a public testing API to allow evaluation without requiring an API key. **Do not enter confidential data** when using the default testing API, as queries are processed on temporary instances located in Mainland China.
 
 ---
 

@@ -360,13 +360,13 @@
                 <p>Oryonix AI is an open-source, autonomous browser copilot that perceives web structures, executes multi-tab workflows, and interacts with web pages using natural language. The project is open source under the MIT License and can be audited at: <a href="https://github.com/Subhankar-Patra1/Oryonix-ai" target="_blank" rel="noopener noreferrer" style="color: var(--color-accent-primary); text-decoration: underline;">GitHub</a>.</p>
               </div>
               <div class="terms-section">
-                <h3>2. Core Operational Principles & Future BYOK Support</h3>
-                <p>The Software operates strictly as a client-side tool. By default, all browser perception, DOM analysis, and agentic workflows are executed locally on your machine. In a future update, we will introduce a "Bring Your Own Key" (BYOK) architecture to let you configure custom third-party LLM API credentials directly.</p>
-                <p><strong>Once the BYOK feature is active</strong>, when configuring cloud LLM providers (e.g., OpenAI, Anthropic, Gemini, Groq, Mistral), your API credentials will be stored securely in your browser's local storage (<code>chrome.storage.local</code>), and you will be solely responsible for all bandwidth, token usage, and billing costs generated through your configured keys.</p>
+                <h3>2. Core Operational Principles & BYOK Support</h3>
+                <p>The Software operates strictly as a client-side tool. All browser perception, DOM analysis, and agentic workflows are executed locally in your browser. You can configure your preferred LLM provider — local (Ollama) or cloud (OpenAI, Anthropic, Gemini, Groq, Mistral, or any OpenAI-compatible endpoint) — directly from the side panel.</p>
+                <p>When configuring cloud LLM providers, your API credentials are stored securely in your browser's local storage (<code>chrome.storage.local</code>). You are solely responsible for all bandwidth, token usage, and billing costs generated through your configured keys.</p>
               </div>
               <div class="terms-section">
                 <h3>3. Testing API and Demo Disclaimer & Terms of Use</h3>
-                <p>To facilitate rapid technical evaluation and testing, we provide a free testing LLM API. By utilizing this API (configured by default in our demo and CDN bundles), you agree to the following terms:</p>
+                <p>To facilitate rapid technical evaluation, the default configuration uses a free testing LLM API requiring no API key. By using this default API, you agree to the following terms:</p>
                 <ul>
                   <li><strong>Permitted R&D Use Only:</strong> This API is provided strictly for technical evaluation and research purposes. You must not deploy it in any production environment, integrate it into commercial services, or use it for automated web scraping at scale.</li>
                   <li><strong>Sensitive Data Prohibition:</strong> You are strictly prohibited from submitting Personal Identifiable Information (PII), confidential business data, financial records, medical records, or running the agent on web pages containing such sensitive info.</li>

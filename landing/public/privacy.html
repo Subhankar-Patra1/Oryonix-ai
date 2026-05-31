@@ -404,15 +404,13 @@
 
               <div class="privacy-section">
                 <h3>2. Chrome Extension Permissions & Data Access Audit</h3>
-                <p>To provide autonomous multi-tab browser automation, the extension requires specific Chromium permissions. Here is exactly what data is accessed and why:</p>
+                <p>To provide autonomous multi-tab browser automation, the extension requests only the minimum permissions necessary. Here is exactly what data is accessed and why:</p>
                 <ul>
                   <li><strong><code>storage</code>:</strong> Persists your settings, session history, configured LLM endpoints, and API credentials securely inside <code>chrome.storage.local</code>.</li>
-                  <li><strong><code>tabs</code> & <code>tabGroups</code>:</strong> Allows the agent to open new tabs, switch active tabs, group tabs, and navigate URLs to fulfill tasks.</li>
-                  <li><strong><code>activeTab</code>:</strong> Allows the agent to perceive the current web structure, click elements, and enter text <em>only</em> on the page you trigger it on.</li>
+                  <li><strong><code>tabs</code> & <code>tabGroups</code>:</strong> Allows the agent to open new tabs, switch active tabs, group related tabs under a labeled Chrome tab group, and navigate URLs to fulfill tasks.</li>
                   <li><strong><code>sidePanel</code>:</strong> Displays the extension panel interface where you type commands, read active execution logs, and manage history.</li>
-                  <li><strong><code>alarms</code>:</strong> Coordinates minor heartbeat events and periodic task checking.</li>
-                  <li><strong><code>audioCapture</code>:</strong> Enables microphone access via the Web Speech API for voice command input directly within the extension panel.</li>
                 </ul>
+                <p>Voice input uses the browser's built-in Web Speech API — a standard web platform feature that requires no additional extension permission. Microphone access is granted at runtime through Chrome's standard permission prompt, and no audio data is transmitted to Oryonix AI servers.</p>
               </div>
 
               <div class="privacy-section">
@@ -429,11 +427,11 @@
 
               <div class="privacy-section">
                 <h3>4. AI Prompt Routing & Security Architecture</h3>
-                <p>Oryonix AI routes data depending entirely on your configured AI provider settings:</p>
+                <p>Oryonix AI routes data depending entirely on your configured AI provider. All three modes are fully available now:</p>
                 <ul>
-                  <li><strong>Local LLM / Ollama (Offline Mode - Planned Future Feature):</strong> When configured to use Ollama in the future (e.g., <code>http://localhost:11434</code>), Oryonix AI will operate entirely offline inside your local network. 100% of your prompts, dynamic page snapshots, and action logic will be processed locally on your machine.</li>
-                  <li><strong>Bring Your Own Key (BYOK) Cloud Routing (Planned Future Feature):</strong> <strong>Once the BYOK feature is active</strong>, when cloud APIs (OpenAI, Gemini, Anthropic, Groq, Mistral) are selected, Oryonix AI will issue direct HTTPS queries to the respective official APIs. Your credentials will be saved only in local storage, and we will not log, intercept, or proxy your prompts.</li>
-                  <li><strong>Public Testing API (Web Demo & Sandbox Only):</strong> In the rapid web evaluation sandbox or demo CDN scripts, Oryonix AI leverages a public testing API for research. <strong>Do not enter confidential data</strong> when using the testing API, as queries are processed on temporary instances located in Mainland China.</li>
+                  <li><strong>Local LLM / Ollama (Fully Offline Mode):</strong> When configured to use a local Ollama instance (e.g., <code>http://localhost:11434</code>), Oryonix AI operates entirely offline inside your local network. 100% of your prompts, dynamic page snapshots, and action logic are processed locally on your machine. Nothing leaves your device.</li>
+                  <li><strong>Bring Your Own Key (BYOK) Cloud Routing:</strong> When cloud APIs (OpenAI, Gemini, Anthropic, Groq, Mistral, or any OpenAI-compatible endpoint) are configured, Oryonix AI issues direct HTTPS queries to the respective official API endpoints. Your credentials are saved only in <code>chrome.storage.local</code> — we do not log, intercept, or proxy your prompts.</li>
+                  <li><strong>Public Testing API (Default Demo Mode):</strong> The default configuration uses a public testing API to allow evaluation without requiring an API key. <strong>Do not enter confidential data</strong> when using the default testing API, as queries are processed on temporary instances located in Mainland China.</li>
                 </ul>
               </div>
 
