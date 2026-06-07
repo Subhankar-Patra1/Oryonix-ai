@@ -796,7 +796,7 @@ export default function App() {
         </div>
         <div className="chat-disclaimer">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink: 0, marginTop: '1px'}}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <span>AI can make mistakes and some models use third party test APIs. You agree to our <a href="https://oryonix-ai.vercel.app/terms.html" target="_blank" rel="noreferrer">terms & conditions</a> by clicking send.</span>
+          <span>AI can make mistakes. Some models route requests through third-party AI providers. See our <a href="https://oryonix-ai.vercel.app/privacy.html" target="_blank" rel="noreferrer">privacy policy</a> and <a href="https://oryonix-ai.vercel.app/terms.html" target="_blank" rel="noreferrer">terms</a>.</span>
         </div>
       </div>
 

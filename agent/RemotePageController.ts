@@ -133,8 +133,8 @@ export class RemotePageController {
 		return this.remoteCallDomAction('scroll_horizontally', args)
 	}
 
-	async executeJavascript(...args: any[]): Promise<DomActionReturn> {
-		return this.remoteCallDomAction('execute_javascript', args)
+	async fallbackScroll(pixels: number): Promise<DomActionReturn> {
+		return this.remoteCallDomAction('fallback_scroll', [pixels])
 	}
 
 	/** @note Managed by content script via storage polling. */

@@ -7,7 +7,7 @@ import type {
 } from '@page-agent/core'
 import type { LLMConfig } from '@page-agent/llms'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { DEMO_CONFIG, isTestingEndpoint } from './constants'
+import { DEFAULT_CONFIG, isProxyEndpoint } from './constants'
 import { createSanitizingFetch } from './sanitizingFetch'
 import { createGeminiFetch } from './geminiFetch'
 import { MultiPageAgent } from './MultiPageAgent'
@@ -47,8 +47,8 @@ export function useAgent(): UseAgentResult {
 
 	useEffect(() => {
 		chrome.storage.local.get(['language', 'advancedConfig']).then((result) => {
-			// Always use env-based config (DEMO_CONFIG) as the source of truth
-			let llmConfig: LLMConfig = { ...DEMO_CONFIG }
+			// Always use env-based config (DEFAULT_CONFIG) as the source of truth
+			let llmConfig: LLMConfig = { ...DEFAULT_CONFIG }
 			const language = (result.language as SupportedLanguage) || undefined
 			const advancedConfig = (result.advancedConfig as AdvancedConfig) ?? {}
 
@@ -58,7 +58,7 @@ export function useAgent(): UseAgentResult {
 			// For local models (Ollama), apply sanitizing fetch and disable named tool choice
 			const isLocalModel = llmConfig.baseURL.includes('localhost') || llmConfig.baseURL.includes('127.0.0.1')
 			const isGemini = llmConfig.baseURL.includes('generativelanguage.googleapis.com')
-			const isProxy = isTestingEndpoint(llmConfig.baseURL)
+			const isProxy = isProxyEndpoint(llmConfig.baseURL)
 
 			if (isLocalModel) {
 				llmConfig = { ...llmConfig, disableNamedToolChoice: true, customFetch: createSanitizingFetch() }

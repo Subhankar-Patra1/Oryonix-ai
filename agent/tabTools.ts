@@ -18,8 +18,8 @@ interface TabTool {
 	execute: (input: unknown) => Promise<string>
 }
 
-/** Callback that executes a JavaScript string in the current tab's page context */
-type ExecuteJsFn = (script: string) => Promise<{ success: boolean; message: string }>
+/** Callback that scrolls the current tab's page by the given pixel amount */
+type ScrollFn = (pixels: number) => Promise<{ success: boolean; message: string }>
 
 /**
  * Create tab control tools bound to a TabsManager instance.
@@ -27,7 +27,7 @@ type ExecuteJsFn = (script: string) => Promise<{ success: boolean; message: stri
  */
 export function createTabTools(
 	tabsController: TabsController,
-	executeJs: ExecuteJsFn,
+	scrollFn: ScrollFn,
 ): Record<string, TabTool> {
 	return {
 		open_new_tab: {
@@ -95,7 +95,7 @@ export function createTabTools(
 				const { pixels } = input as { pixels: number }
 				try {
 					const dir = pixels >= 0 ? 'down' : 'up'
-					const result = await executeJs(`window.scrollBy(0, ${pixels})`)
+					const result = await scrollFn(pixels)
 					if (result.success) {
 						return `✅ js_scroll: scrolled ${dir} by ${Math.abs(pixels)}px via JavaScript.`
 					}

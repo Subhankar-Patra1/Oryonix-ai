@@ -29,30 +29,43 @@ export function initPageController() {
 	}
 
 	intervalID = window.setInterval(async () => {
-		const agentHeartbeat = (await chrome.storage.local.get('agentHeartbeat')).agentHeartbeat
-		const now = Date.now()
-		const agentInTouch = typeof agentHeartbeat === 'number' && now - agentHeartbeat < 2_000
-
-		const isAgentRunning = (await chrome.storage.local.get('isAgentRunning')).isAgentRunning
-		const currentTabId = (await chrome.storage.local.get('currentTabId')).currentTabId
-
-		const shouldShowMask = isAgentRunning && agentInTouch && currentTabId === (await myTabIdPromise)
-
-		if (shouldShowMask) {
-			const pc = await getPCPromise()
-			pc.initMask()
-			await pc.showMask()
-		} else {
-			if (pageController) {
-				pageController.hideMask()
-				pageController.cleanUpHighlights()
-			}
+		// Extension was reloaded — stop the interval immediately to prevent
+		// "Extension context invalidated" errors flooding the console.
+		if (!chrome.runtime?.id) {
+			if (intervalID !== null) window.clearInterval(intervalID)
+			return
 		}
 
-		if (!isAgentRunning && agentInTouch) {
-			if (pageController) {
-				pageController.dispose()
-				pageController = null
+		try {
+			const agentHeartbeat = (await chrome.storage.local.get('agentHeartbeat')).agentHeartbeat
+			const now = Date.now()
+			const agentInTouch = typeof agentHeartbeat === 'number' && now - agentHeartbeat < 2_000
+
+			const isAgentRunning = (await chrome.storage.local.get('isAgentRunning')).isAgentRunning
+			const currentTabId = (await chrome.storage.local.get('currentTabId')).currentTabId
+
+			const shouldShowMask = isAgentRunning && agentInTouch && currentTabId === (await myTabIdPromise)
+
+			if (shouldShowMask) {
+				const pc = await getPCPromise()
+				pc.initMask()
+				await pc.showMask()
+			} else {
+				if (pageController) {
+					pageController.hideMask()
+					pageController.cleanUpHighlights()
+				}
+			}
+
+			if (!isAgentRunning && agentInTouch) {
+				if (pageController) {
+					pageController.dispose()
+					pageController = null
+				}
+			}
+		} catch (error) {
+			if (error instanceof Error && error.message.includes('Extension context invalidated')) {
+				if (intervalID !== null) window.clearInterval(intervalID)
 			}
 		}
 	}, 500)
@@ -75,7 +88,6 @@ export function initPageController() {
 				case 'select_option':
 				case 'scroll':
 				case 'scroll_horizontally':
-				case 'execute_javascript':
 					pc[methodName](...(payload || []))
 						.then((result: any) => sendResponse(result))
 						.catch((error: any) =>
@@ -85,6 +97,13 @@ export function initPageController() {
 							})
 						)
 					break
+
+				case 'fallback_scroll': {
+					const pixels = (payload || [])[0] ?? 0
+					window.scrollBy(0, pixels)
+					sendResponse({ success: true, message: `Scrolled by ${pixels}px` })
+					break
+				}
 
 				case 'input_text': {
 					const isGoogleSheets = window.location.hostname.includes('docs.google.com') && window.location.pathname.includes('/spreadsheets')
@@ -256,8 +275,6 @@ function getMethodName(action: string): string {
 			return 'scroll' as const
 		case 'scroll_horizontally':
 			return 'scrollHorizontally' as const
-		case 'execute_javascript':
-			return 'executeJavascript' as const
 
 		default:
 			return action

@@ -28,7 +28,7 @@ export class MultiPageAgent extends PageAgentCore {
 		const pageController = new RemotePageController(tabsController)
 		const customTools = createTabTools(
 			tabsController,
-			(script: string) => pageController.executeJavascript(script),
+			(pixels: number) => pageController.fallbackScroll(pixels),
 		)
 
 		// system prompt - auto-detect language if not specified

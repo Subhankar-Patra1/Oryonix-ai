@@ -8,10 +8,22 @@ const hasBrave = existsSync(bravePath);
 export default defineConfig({
   modules: ['@wxt-dev/module-react'],
   vite: () => ({
+    plugins: [
+      {
+        name: 'disable-eval-in-page-controller',
+        transform(code, id) {
+          if (id.includes('@page-agent') && code.includes('eval(')) {
+            return {
+              code: code.replace(/\beval\(/g, '((x) => { throw new Error("eval is disabled for CWS compliance") })('),
+              map: null,
+            }
+          }
+        },
+      },
+    ],
     build: {
       rollupOptions: {
         onwarn: function (message, handler) {
-          // Suppresses the annoying [EVAL] warning we were seeing in the terminal
           if (message.code === 'EVAL') return;
           handler(message);
         },
