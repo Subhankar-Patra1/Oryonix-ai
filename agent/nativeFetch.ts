@@ -1,13 +1,13 @@
 /**
- * Native Gemini generateContent proxy.
- * Intercepts OpenAI-format requests, translates them to Gemini's native API,
+ * Native generateContent proxy.
+ * Intercepts OpenAI-format requests, translates them to native API,
  * calls the endpoint directly, and returns a synthetic OpenAI-format response —
  * fully transparent to the LLM client.
  *
  * Separated entirely from the Qwen/sanitizingFetch path.
  */
 
-// ─── Gemma behavioral reinforcement ───────────────────────────────────────────
+// ─── Behavioral reinforcement ───────────────────────────────────────────
 // Prepended to the system instruction at the API layer.
 // Kept short (~200 tokens) to avoid context bloat that caused premature done.
 const GEMMA_BEHAVIORAL_PROMPT = `You are an ACTION-FIRST autonomous browser agent. Follow these strict execution principles:
@@ -22,16 +22,16 @@ const GEMMA_BEHAVIORAL_PROMPT = `You are an ACTION-FIRST autonomous browser agen
 
 // ─── Message translation ──────────────────────────────────────────────────────
 
-function openAIMessagesToGemini(messages: any[]) {
+function openAIMessagesToNative(messages: any[]) {
   const systemMsg = messages.find((m) => m.role === 'system')
-  // Prepend Gemma behavioral rules to the agent's system prompt
+  // Prepend behavioral rules to the agent's system prompt
   const combinedSystemText = systemMsg
     ? `${GEMMA_BEHAVIORAL_PROMPT}\n\n${systemMsg.content}`
     : GEMMA_BEHAVIORAL_PROMPT
   const systemInstruction = { parts: [{ text: combinedSystemText }] }
 
   // Build tool_call_id → function name map from assistant messages so tool
-  // responses can reference the correct function name (Gemini requires it).
+  // responses can reference the correct function name (native API requires it).
   const toolCallIdToName: Record<string, string> = {}
   for (const msg of messages) {
     if (msg.role === 'assistant' && msg.tool_calls?.length) {
@@ -92,7 +92,7 @@ function openAIMessagesToGemini(messages: any[]) {
 
 // ─── Schema sanitization ──────────────────────────────────────────────────────
 
-const GEMINI_UNSUPPORTED_KEYS = new Set([
+const UNSUPPORTED_KEYS = new Set([
   'additionalProperties',
   '$schema',
   '$id',
@@ -118,13 +118,13 @@ function sanitizeSchema(schema: any): any {
   if (typeof schema !== 'object' || schema === null) return schema
   const out: any = {}
   for (const [k, v] of Object.entries(schema)) {
-    if (GEMINI_UNSUPPORTED_KEYS.has(k)) continue
+    if (UNSUPPORTED_KEYS.has(k)) continue
     out[k] = sanitizeSchema(v)
   }
   return out
 }
 
-function openAIToolsToGemini(tools: any[]) {
+function openAIToolsToNative(tools: any[]) {
   if (!tools?.length) return undefined
   return [
     {
@@ -141,14 +141,13 @@ function openAIToolsToGemini(tools: any[]) {
 
 /**
  * Detect and truncate repetitive text degeneration.
- * Uses 4 strategies to catch patterns like "way way way..." or "facto facto..."
+ * Uses 4 strategies to catch patterns.
  * Returns cleaned text, truncated at the point repetition begins.
  */
 function truncateRepetition(text: string): string {
   if (!text || text.length < 50) return text
 
   // Strategy 1: Detect ANY exact substring (10+ chars) repeating 3+ times consecutively
-  // Catches things like "TensorFlow Lite is TensorFlow Lite is TensorFlow Lite is"
   const exactRepeatMatch = text.match(/(.{10,})\1{2,}/)
   if (exactRepeatMatch) {
     const idx = text.indexOf(exactRepeatMatch[0])
@@ -201,7 +200,7 @@ function sanitizeFunctionArgs(name: string, args: any): any {
       if (val.length > 80) {
         val = truncateRepetition(val)
       }
-      // Absolute hard limit for ANY string argument from Gemma to stop UI blowouts
+      // Absolute hard limit for ANY string argument to stop UI blowouts
       if (val.length > 400) {
         val = val.substring(0, 400) + '... [truncated]'
       }
@@ -214,7 +213,7 @@ function sanitizeFunctionArgs(name: string, args: any): any {
 
 // ─── Response translation ─────────────────────────────────────────────────────
 
-function geminiResponseToOpenAI(data: any, model: string) {
+function nativeResponseToOpenAI(data: any, model: string) {
   const candidate = data.candidates?.[0]
   const parts: any[] = candidate?.content?.parts ?? []
 
@@ -223,13 +222,13 @@ function geminiResponseToOpenAI(data: any, model: string) {
 
   let message: any
   if (functionCallParts.length > 0) {
-    // Support all function calls Gemini returns in one turn, not just the first.
+    // Support all function calls returned in one turn, not just the first.
     // Also sanitize arguments to catch repetition degeneration.
     message = {
       role: 'assistant',
       content: null,
       tool_calls: functionCallParts.map((part, i) => ({
-        id: `call_gemini_${Date.now()}_${i}`,
+        id: `call_native_${Date.now()}_${i}`,
         type: 'function',
         function: {
           name: part.functionCall.name,
@@ -246,7 +245,7 @@ function geminiResponseToOpenAI(data: any, model: string) {
   }
 
   return {
-    id: `chatcmpl-gemini-${Date.now()}`,
+    id: `chatcmpl-native-${Date.now()}`,
     object: 'chat.completion',
     created: Math.floor(Date.now() / 1000),
     model,
@@ -287,19 +286,19 @@ function safeParseJSON(value: any, fallback: any): any {
 
 // ─── Public factory ───────────────────────────────────────────────────────────
 
-export function createGeminiFetch(apiKey: string, model: string): typeof fetch {
+export function createNativeFetch(apiKey: string, model: string): typeof fetch {
   return async (_input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
     const body = safeParseJSON((init?.body as string) ?? '{}', {})
     const { messages, tools, temperature } = body
 
-    const { systemInstruction, contents } = openAIMessagesToGemini(messages ?? [])
-    const geminiTools = openAIToolsToGemini(tools)
+    const { systemInstruction, contents } = openAIMessagesToNative(messages ?? [])
+    const nativeTools = openAIToolsToNative(tools)
 
-    const geminiBody: any = {
+    const nativeBody: any = {
       contents,
       systemInstruction,
-      ...(geminiTools && {
-        tools: geminiTools,
+      ...(nativeTools && {
+        tools: nativeTools,
         toolConfig: { functionCallingConfig: { mode: 'ANY' } },
       }),
       generationConfig: {
@@ -315,17 +314,17 @@ export function createGeminiFetch(apiKey: string, model: string): typeof fetch {
       response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(geminiBody),
+        body: JSON.stringify(nativeBody),
         signal: init?.signal as AbortSignal | undefined,
       })
     } catch (err: any) {
-      console.error('[geminiFetch] Network error', err)
+      console.error('[nativeFetch] Network error', err)
       return openAIErrorResponse(503, err?.message ?? 'Network error')
     }
 
     if (!response.ok) {
       const errText = await response.text()
-      console.error('[geminiFetch] API error', response.status, errText)
+      console.error('[nativeFetch] API error', response.status, errText)
       return openAIErrorResponse(response.status, errText)
     }
 
@@ -333,16 +332,16 @@ export function createGeminiFetch(apiKey: string, model: string): typeof fetch {
     try {
       data = await response.json()
     } catch (err) {
-      return openAIErrorResponse(502, 'Invalid JSON from Gemini API')
+      return openAIErrorResponse(502, 'Invalid JSON from provider API')
     }
 
     if (!data.candidates?.length) {
       const reason = data.promptFeedback?.blockReason ?? 'no candidates'
-      console.error('[geminiFetch] Empty candidates', reason, data)
-      return openAIErrorResponse(422, `Gemini returned no candidates: ${reason}`)
+      console.error('[nativeFetch] Empty candidates', reason, data)
+      return openAIErrorResponse(422, `Provider returned no candidates: ${reason}`)
     }
 
-    return new Response(JSON.stringify(geminiResponseToOpenAI(data, model)), {
+    return new Response(JSON.stringify(nativeResponseToOpenAI(data, model)), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     })

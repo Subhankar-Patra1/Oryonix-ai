@@ -9,7 +9,7 @@ import type { LLMConfig } from '@page-agent/llms'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { DEFAULT_CONFIG, isProxyEndpoint } from './constants'
 import { createSanitizingFetch } from './sanitizingFetch'
-import { createGeminiFetch } from './geminiFetch'
+import { createNativeFetch } from './nativeFetch'
 import { MultiPageAgent } from './MultiPageAgent'
 
 interface AdvancedConfig {
@@ -67,7 +67,7 @@ export function useAgent(): UseAgentResult {
 				llmConfig = {
 					...llmConfig,
 					disableNamedToolChoice: true,
-					customFetch: createGeminiFetch(llmConfig.apiKey || '', llmConfig.model || ''),
+					customFetch: createNativeFetch(llmConfig.apiKey || '', llmConfig.model || ''),
 				}
 			} else if (isProxy) {
 				// For cloud testing proxies: clear apiKey so no Authorization header is sent

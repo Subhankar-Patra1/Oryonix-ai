@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAgent } from '../../agent/useAgent';
-import { createGeminiFetch } from '../../agent/geminiFetch';
+import { createNativeFetch } from '../../agent/nativeFetch';
 import { AgentStatusGlow } from './components/AgentStatusGlow';
 import { HistoryPanel } from './components/HistoryPanel';
 import ReactMarkdown from 'react-markdown';
@@ -371,7 +371,7 @@ export default function App() {
         model,
         apiKey,
         disableNamedToolChoice: true,
-        customFetch: createGeminiFetch(apiKey, model),
+        customFetch: createNativeFetch(apiKey, model),
       });
     }
   };
