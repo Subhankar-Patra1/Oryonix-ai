@@ -648,7 +648,7 @@ function Hero({ onNavClick }: { onNavClick?: (e: any, href: string) => void }) {
             {/*
             <a href="/early-access/form.html" className="btn btn--primary btn--lg"><KeyIcon size={18} weight="fill" style={{ transform: 'translateY(1.5px)' }} />Apply for Early Access</a>
             */}
-            <a href={SITE.chrome} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
+            <a href={SITE.chrome} target="_blank" rel="noopener noreferrer" className="hero-cta-btn-wrapper" style={{ textDecoration: 'none' }}>
               <RadialGlowButton>Add to Browser</RadialGlowButton>
             </a>
             <a href="#demo" className="btn btn--glass btn--lg" onClick={(e) => onNavClick?.(e, '#demo')}>Watch Demo<ArrowRight size={16} /></a>

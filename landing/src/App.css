@@ -496,6 +496,12 @@ button:focus-visible {
   flex-wrap: wrap;
 }
 
+.hero-cta-btn-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .hide-mobile {
   display: none;
 }
@@ -1596,8 +1602,12 @@ button:focus-visible {
     gap: 12px;
   }
 
-  .hero__actions .btn {
-    width: 100%;
+  .hero__actions .btn,
+  .hero-cta-btn-wrapper,
+  .hero-cta-btn-wrapper > div,
+  .hero-cta-btn-wrapper button {
+    width: 220px;
+    justify-content: center;
   }
 
   /* Mockup Mobile */
