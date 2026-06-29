@@ -94,12 +94,15 @@
   color: rgba(255, 255, 255, 0.6);
   transition: all 0.3s var(--ease-out-expo);
   border-radius: 9999px;
+  border: none !important;
   outline: none !important;
 }
 
 .nav__link:hover {
   color: var(--color-text-primary);
   background: rgba(255, 255, 255, 0.06);
+  border: none !important;
+  outline: none !important;
 }
 
 .nav__link--active {
@@ -183,15 +186,21 @@
 
 .btn:focus,
 .btn:active,
+.btn:focus-visible,
 .nav__link:focus,
-.nav__link:active {
-  outline: none;
-  border-color: transparent;
+.nav__link:active,
+.nav__link:focus-visible {
+  outline: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
 }
 
 a:focus,
-button:focus {
-  outline: none;
+button:focus,
+a:focus-visible,
+button:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .btn--sm {
@@ -440,16 +449,19 @@ button:focus {
 }
 
 .hero__badge {
+  position: relative;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 18px;
+  height: 36px;
+  padding: 0 18px;
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--color-accent-secondary);
   background: rgba(249, 115, 22, 0.08);
   border: 1px solid rgba(249, 115, 22, 0.15);
-  border-radius: 100px;
+  border-radius: 18px;
   margin-bottom: 24px;
 }
 
@@ -2370,4 +2382,22 @@ button:focus {
     flex-direction: column;
     gap: 12px;
   }
+}
+
+/* Custom Cursor Hiding for Desktop */
+@media (any-hover: hover) and (any-pointer: fine) {
+  html, body, *, a, button, div, span, img, input, textarea, select {
+    cursor: none !important;
+  }
+}
+
+/* Avatar stack hover overlap overlay effect */
+.avatar-stack-item {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.avatar-stack-item:hover {
+  z-index: 50 !important;
+  transform: translateY(-3px) !important;
 }

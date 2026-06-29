@@ -11,11 +11,24 @@ import {
   Brain, Zap, Sliders, Settings,
   ArrowLeft, LayoutDashboard, Plus, Folder, Search, MessageSquare, Accessibility
 } from "lucide-react";
-import { Key as KeyIcon } from "@phosphor-icons/react";
+// import { Key as KeyIcon } from "@phosphor-icons/react";
+import { RadialGlowButton } from "@/components/ui/radial-glow-button";
+import { BorderBeam } from "@/components/ui/border-beam";
+import { SmoothCursor } from "@/components/ui/smooth-cursor";
+import { SharedTooltipAvatars } from "@/components/ui/shared-tooltip-avatars";
 import "./App.css";
 
 /* ─── Data ─── */
-const SITE = { name: "Oryonix AI", chrome: "#", github: "https://github.com/Subhankar-Patra1/Oryonix-ai" };
+const SITE = { name: "Oryonix AI", chrome: "https://chromewebstore.google.com/detail/oryonix-ai/nlodkmgcicilpgbdlgndlomomnofpaeb", github: "https://github.com/Subhankar-Patra1/Oryonix-ai" };
+
+const BROWSER_AVATARS = [
+  { id: "chrome", name: "Google Chrome", image: "/early-access/icons/chrome.svg" },
+  { id: "brave", name: "Brave", image: "/early-access/icons/brave.svg" },
+  { id: "edge", name: "Microsoft Edge", image: "/early-access/icons/edge.svg" },
+  { id: "opera", name: "Opera", image: "/early-access/icons/opera.svg" },
+  { id: "helium", name: "Helium Browser", image: "/early-access/icons/helium.svg" },
+  { id: "arc", name: "Arc", image: "/early-access/icons/arc.svg" },
+];
 
 const NAV = [
   { label: "Features", href: "#features" },
@@ -299,7 +312,7 @@ const FEATURES = [
             <Folder size={14} color="#10b981" />
             <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.05em' }}>PROJECT SETTINGS</span>
           </div>
-          
+
           <div style={{ display: 'flex', gap: '10px' }}>
             <div style={{
               flex: 1,
@@ -376,9 +389,9 @@ const FEATURES = [
       <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', padding: '24px 24px 16px 24px', gap: '16px', position: 'relative', justifyContent: 'center' }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'center' }}>
           {[
-            { 
-              name: 'Ollama', 
-              color: '#fff', 
+            {
+              name: 'Ollama',
+              color: '#fff',
               bg: 'rgba(255,255,255,0.05)',
               icon: (
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
@@ -386,9 +399,9 @@ const FEATURES = [
                 </svg>
               )
             },
-            { 
-              name: 'OpenAI', 
-              color: '#10a37f', 
+            {
+              name: 'OpenAI',
+              color: '#10a37f',
               bg: 'rgba(16, 163, 127, 0.1)',
               icon: (
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
@@ -396,9 +409,9 @@ const FEATURES = [
                 </svg>
               )
             },
-            { 
-              name: 'Claude', 
-              color: '#d97757', 
+            {
+              name: 'Claude',
+              color: '#d97757',
               bg: 'rgba(217, 119, 87, 0.1)',
               icon: (
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
@@ -406,9 +419,9 @@ const FEATURES = [
                 </svg>
               )
             },
-            { 
-              name: 'Groq', 
-              color: '#f55036', 
+            {
+              name: 'Groq',
+              color: '#f55036',
               bg: 'rgba(245, 80, 54, 0.1)',
               icon: (
                 <svg viewBox="0 0 200 200" width="18" height="18" fill="currentColor">
@@ -416,9 +429,9 @@ const FEATURES = [
                 </svg>
               )
             },
-            { 
-              name: 'Mistral', 
-              color: '#fdba74', 
+            {
+              name: 'Mistral',
+              color: '#fdba74',
               bg: 'rgba(253, 186, 116, 0.1)',
               icon: (
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
@@ -426,9 +439,9 @@ const FEATURES = [
                 </svg>
               )
             },
-            { 
-              name: 'Gemini', 
-              color: '#4285f4', 
+            {
+              name: 'Gemini',
+              color: '#4285f4',
               bg: 'rgba(66, 133, 244, 0.1)',
               icon: (
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
@@ -562,9 +575,14 @@ function Navbar({ visible, activeSection, onNavClick, onInstallClick }: { visibl
             {open && (
               <motion.div className="nav__mobile" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
                 {NAV.map(n => <a key={n.href} href={n.href} className="nav__mobile-link" onClick={(e) => { onNavClick(e, n.href); setOpen(false); }}>{n.label}</a>)}
+                {/*
                 <a href="/early-access/form.html" className="btn btn--primary">
                   <KeyIcon size={16} weight="fill" style={{ transform: 'translateY(1.5px)' }} />
                   Apply for Early Access
+                </a>
+                */}
+                <a href={SITE.chrome} target="_blank" rel="noopener noreferrer" className="btn btn--primary">
+                  Add to Browser
                 </a>
               </motion.div>
             )}
@@ -580,7 +598,7 @@ function Hero({ onNavClick }: { onNavClick?: (e: any, href: string) => void }) {
   const stars = useMemo(() => {
     return Array.from({ length: 160 }).map((_, i) => ({
       id: i,
-      top: `${Math.random() * 100}%`, 
+      top: `${Math.random() * 100}%`,
       left: `${Math.random() * 100}%`,
       size: Math.random() * 2.2 + 1.2, // 1.2px to 3.4px
       delay: `${Math.random() * 5}s`,
@@ -622,11 +640,17 @@ function Hero({ onNavClick }: { onNavClick?: (e: any, href: string) => void }) {
         <motion.div className="hero__content" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}>
           <motion.div className="hero__badge" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}>
             <span className="hero__badge-dot" />Open Source & Free Forever
+            <BorderBeam size={60} duration={2.5} colorFrom="#f97316" colorTo="#fdba74" borderWidth={1.5} />
           </motion.div>
           <h1 className="hero__title">Your AI Co-pilot<br /><span className="accent-text">for the Browser</span></h1>
           <p className="hero__sub">Tell it what to do. Watch it work.<br className="hide-mobile" /> Open source & privacy-first.</p>
           <div className="hero__actions">
+            {/*
             <a href="/early-access/form.html" className="btn btn--primary btn--lg"><KeyIcon size={18} weight="fill" style={{ transform: 'translateY(1.5px)' }} />Apply for Early Access</a>
+            */}
+            <a href={SITE.chrome} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
+              <RadialGlowButton>Add to Browser</RadialGlowButton>
+            </a>
             <a href="#demo" className="btn btn--glass btn--lg" onClick={(e) => onNavClick?.(e, '#demo')}>Watch Demo<ArrowRight size={16} /></a>
           </div>
         </motion.div>
@@ -696,7 +720,7 @@ const FeatureCard = ({ f, i, progress, range, targetScale }: { f: any, i: number
         marginBottom: i === FEATURES.length - 1 ? "0" : "40vh"
       }}
     >
-      <motion.div 
+      <motion.div
         onMouseMove={handleMouseMove}
         className="card group relative overflow-hidden stack-card-sticky"
         style={{
@@ -843,12 +867,12 @@ function TryItOut() {
   const [runStatus, setRunStatus] = useState<string | null>(null);
 
   // Agent overlay state
-  const [agentActive, setAgentActive]   = useState(false);
-  const [cursorPx, setCursorPx]         = useState({ x: 0, y: 0 });
-  const [cursorType, setCursorType]     = useState<'arrow' | 'hand'>('arrow');
-  const [ripples, setRipples]           = useState<Array<{ id: number; x: number; y: number }>>([]);
-  const [actionLog, setActionLog]       = useState<string[]>([]);
-  const abortRef    = useRef(false);
+  const [agentActive, setAgentActive] = useState(false);
+  const [cursorPx, setCursorPx] = useState({ x: 0, y: 0 });
+  const [cursorType, setCursorType] = useState<'arrow' | 'hand'>('arrow');
+  const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number }>>([]);
+  const [actionLog, setActionLog] = useState<string[]>([]);
+  const abortRef = useRef(false);
   const rippleIdRef = useRef(0);
 
   const wait = (ms: number) => new Promise<void>(r => setTimeout(r, ms));
@@ -860,11 +884,11 @@ function TryItOut() {
         e.stopPropagation();
         e.stopImmediatePropagation();
       };
-      
+
       // Block manual wheel/touch scrolls in capturing phase
       window.addEventListener("wheel", preventDefault, { passive: false, capture: true });
       window.addEventListener("touchmove", preventDefault, { passive: false, capture: true });
-      
+
       // Block scroll keys in capturing phase
       const preventKeyScroll = (e: KeyboardEvent) => {
         const keys = ["ArrowUp", "ArrowDown", "Space", "PageUp", "PageDown", "Home", "End"];
@@ -946,11 +970,11 @@ function TryItOut() {
       for (let i = 0; i < FEATURES.length; i++) {
         if (abortRef.current) return;
         const cardEl = document.getElementById(`feature-card-${i}`);
-        
+
         // Log action for each card
         const cardTitle = FEATURES[i].title;
         setActionLog(p => [...p, `🔍 Scanning card: ${cardTitle}...`]);
-        
+
         if (cardEl) {
           cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
@@ -968,16 +992,16 @@ function TryItOut() {
         // ── Step 6: glow-border the card ──
         const innerCard = cardEl?.querySelector('.stack-card-sticky') as HTMLElement | null;
         if (innerCard) {
-          innerCard.style.outline      = '3px solid rgba(249,115,22,0.78)';
-          innerCard.style.boxShadow    = '0 0 0 6px rgba(249,115,22,0.10), 0 0 60px rgba(249,115,22,0.28)';
+          innerCard.style.outline = '3px solid rgba(249,115,22,0.78)';
+          innerCard.style.boxShadow = '0 0 0 6px rgba(249,115,22,0.10), 0 0 60px rgba(249,115,22,0.28)';
           innerCard.style.borderRadius = '24px';
-          innerCard.style.transition   = 'outline .35s ease, box-shadow .35s ease';
+          innerCard.style.transition = 'outline .35s ease, box-shadow .35s ease';
         }
         setActionLog(p => [...p, `✓ Card ${i + 1}: ${cardTitle}`]);
         await wait(1800);
         if (innerCard) {
-          innerCard.style.outline    = '';
-          innerCard.style.boxShadow  = '';
+          innerCard.style.outline = '';
+          innerCard.style.boxShadow = '';
           innerCard.style.transition = '';
         }
         await wait(100);
@@ -997,16 +1021,16 @@ function TryItOut() {
 
       // ── Step 6: glow-border the section ──
       if (section) {
-        section.style.outline      = '3px solid rgba(249,115,22,0.78)';
-        section.style.boxShadow    = '0 0 0 6px rgba(249,115,22,0.10), 0 0 60px rgba(249,115,22,0.28)';
+        section.style.outline = '3px solid rgba(249,115,22,0.78)';
+        section.style.boxShadow = '0 0 0 6px rgba(249,115,22,0.10), 0 0 60px rgba(249,115,22,0.28)';
         section.style.borderRadius = '12px';
-        section.style.transition   = 'outline .35s ease, box-shadow .35s ease';
+        section.style.transition = 'outline .35s ease, box-shadow .35s ease';
       }
       setActionLog(p => [...p, `✓ ${label}`]);
       await wait(2200);
       if (section) {
-        section.style.outline    = '';
-        section.style.boxShadow  = '';
+        section.style.outline = '';
+        section.style.boxShadow = '';
         section.style.transition = '';
       }
       await wait(220);
@@ -1045,10 +1069,10 @@ function TryItOut() {
     await wait(1300);
 
     // Walk through every nav section
-    await visitSection('#features',    'features',    'Features');
-    await visitSection('#demo',        'demo',        'Demo');
+    await visitSection('#features', 'features', 'Features');
+    await visitSection('#demo', 'demo', 'Demo');
     if (!isMobile) {
-      await visitSection('#how-it-works','how-it-works','How It Works');
+      await visitSection('#how-it-works', 'how-it-works', 'How It Works');
       await visitSection('#open-source', 'open-source', 'Open Source');
     }
     if (abortRef.current) { endDemo(); return; }
@@ -1064,7 +1088,7 @@ function TryItOut() {
     setAgentActive(false);
     setIsRunning(false);
     setRunStatus("Task simulated successfully!");
-    
+
     // Restore Lenis scrolling
     if ((window as any).lenis) {
       (window as any).lenis.start();
@@ -1079,7 +1103,7 @@ function TryItOut() {
     setAgentActive(false);
     setIsRunning(false);
     setRipples([]);
-    
+
     // Restore Lenis scrolling
     if ((window as any).lenis) {
       (window as any).lenis.start();
@@ -1475,8 +1499,8 @@ function Demo() {
         </div>
         <motion.div className="demo" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}>
           <div className="demo__player">
-            <video 
-              src="/demo-video.mp4" 
+            <video
+              src="/demo-video.mp4"
               controls
               loop
               style={{ width: '100%', display: 'block', borderRadius: 'inherit' }}
@@ -1533,7 +1557,12 @@ function OpenSource() {
           </div>
           <div className="os-card__actions">
             <a href={SITE.github} className="btn btn--glass btn--lg" target="_blank" rel="noopener noreferrer"><GithubIcon size={20} />Star on GitHub</a>
+            {/*
             <a href="/early-access/form.html" className="btn btn--primary btn--lg"><KeyIcon size={18} weight="fill" style={{ transform: 'translateY(1.5px)' }} />Apply for Early Access</a>
+            */}
+            <a href={SITE.chrome} target="_blank" rel="noopener noreferrer" className="btn btn--primary btn--lg">
+              Add to Browser
+            </a>
           </div>
           <div className="os-card__stats">
             <div className="os-card__stat"><span className="os-card__stat-val">MIT</span><span className="os-card__stat-label">License</span></div>
@@ -1583,7 +1612,12 @@ function CTA() {
           <h2>Ready to put your browser on <span className="accent-text">autopilot?</span></h2>
           <p>Install in seconds. Start automating immediately. No account required.</p>
           <div className="cta-card__actions">
+            {/*
             <a href="/early-access/form.html" className="btn btn--primary btn--lg"><KeyIcon size={18} weight="fill" style={{ transform: 'translateY(1.5px)' }} />Apply for Early Access</a>
+            */}
+            <a href={SITE.chrome} target="_blank" rel="noopener noreferrer" className="btn btn--primary btn--lg">
+              Add to Browser
+            </a>
             <a href={SITE.github} className="btn btn--glass btn--lg" target="_blank" rel="noopener noreferrer"><GithubIcon size={18} />Star on GitHub</a>
           </div>
         </motion.div>
@@ -1594,17 +1628,17 @@ function CTA() {
 
 /* ─── FAQ Data ─── */
 const FAQS = [
-  { 
-    question: "Is Oryonix AI free to use?", 
-    answer: <>Yes, the browser extension is completely open-source and free to install. You can check out our <a href={SITE.github} target="_blank" rel="noreferrer" style={{color: 'var(--color-accent-primary)', textDecoration: 'none'}}>GitHub repository</a>.</> 
+  {
+    question: "Is Oryonix AI free to use?",
+    answer: <>Yes, the browser extension is completely open-source and free to install. You can check out our <a href={SITE.github} target="_blank" rel="noreferrer" style={{ color: 'var(--color-accent-primary)', textDecoration: 'none' }}>GitHub repository</a>.</>
   },
-  { 
-    question: "Do I need my own API key?", 
-    answer: <>Oryonix allows you to <strong>Bring Your Own Key (BYOK)</strong> or connect to a local <a href="https://ollama.com/" target="_blank" rel="noreferrer" style={{color: 'var(--color-accent-primary)', textDecoration: 'none'}}>Ollama</a> instance, giving you complete control over your usage and privacy.</> 
+  {
+    question: "Do I need my own API key?",
+    answer: <>Oryonix allows you to <strong>Bring Your Own Key (BYOK)</strong> or connect to a local <a href="https://ollama.com/" target="_blank" rel="noreferrer" style={{ color: 'var(--color-accent-primary)', textDecoration: 'none' }}>Ollama</a> instance, giving you complete control over your usage and privacy.</>
   },
   { question: "What data does the agent collect?", answer: "Oryonix is privacy-first. It runs locally in your browser and only accesses the active tab when you explicitly trigger it." },
   { question: "Can it bypass CAPTCHAs?", answer: "While highly capable, Oryonix relies on standard web accessibility. Heavy bot protection or complex CAPTCHAs may require human intervention." },
-  { question: "How is this different from standard browser automation?", answer: <>Instead of rigid, easily broken scripts (like <code style={{background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: '4px', fontSize: '0.9em'}}>Puppeteer</code>), Oryonix uses AI to understand natural language. It 'sees' the page like a human and adapts to layout changes automatically.</> },
+  { question: "How is this different from standard browser automation?", answer: <>Instead of rigid, easily broken scripts (like <code style={{ background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: '4px', fontSize: '0.9em' }}>Puppeteer</code>), Oryonix uses AI to understand natural language. It 'sees' the page like a human and adapts to layout changes automatically.</> },
   { question: "Does it work on any website?", answer: "Yes. Oryonix is designed to interact with the DOM directly, meaning it can navigate and perform actions on virtually any website, from simple blogs to complex web apps." },
   { question: "Can I use it with multiple Chrome profiles?", answer: "Absolutely. Oryonix installs as a standard Chrome extension and maintains separate settings and history for each of your browser profiles." },
   { question: "Is it available on other browsers?", answer: "Currently, Oryonix is optimized for Chrome and Chromium-based browsers (Edge, Brave). A Firefox version is on our roadmap for future release." },
@@ -1617,7 +1651,7 @@ function FAQ() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const toggleFAQ = (index: number) => {
-    setOpenIndices(prev => 
+    setOpenIndices(prev =>
       prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]
     );
   };
@@ -1635,9 +1669,9 @@ function FAQ() {
 
       <div className="faq-search-wrapper">
         <Search size={20} style={{ color: 'var(--color-text-tertiary)', flexShrink: 0 }} />
-        <input 
-          type="text" 
-          placeholder="Search questions..." 
+        <input
+          type="text"
+          placeholder="Search questions..."
           className="faq-search-input"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -1694,7 +1728,7 @@ function FAQ() {
       )}
 
       {/* Extended Footer CTA */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -1729,7 +1763,7 @@ function Footer({ onNavClick }: { onNavClick?: (e: any, href: string) => void })
   return (
     <footer ref={footerRef} className="footer">
       <div className="footer__glow-container">
-        <motion.div 
+        <motion.div
           style={{
             scaleY: glowScaleY,
             scaleX: glowScaleX,
@@ -1905,11 +1939,12 @@ export default function App() {
   return (
     <>
       <AmbientBackground />
-      <Navbar 
-        visible={visibleDock} 
-        activeSection={activeSection} 
-        onNavClick={handleNavClick} 
-        onInstallClick={() => setShowInstallNotice(true)} 
+      <SmoothCursor />
+      <Navbar
+        visible={visibleDock}
+        activeSection={activeSection}
+        onNavClick={handleNavClick}
+        onInstallClick={() => setShowInstallNotice(true)}
       />
       <main id="main-content">
         <Hero onNavClick={handleNavClick} />
@@ -1962,9 +1997,14 @@ export default function App() {
                 <span>Github</span>
               </a>
               <div className="mobile-dock__div"></div>
+              {/*
               <a href="/early-access/form.html" className="mobile-dock__cta btn btn--primary btn--sm">
                 <KeyIcon size={16} weight="fill" style={{ transform: 'translateY(1.5px)' }} />
                 <span>Early Access</span>
+              </a>
+              */}
+              <a href={SITE.chrome} target="_blank" rel="noopener noreferrer" className="mobile-dock__cta btn btn--primary btn--sm">
+                <span>Add to Browser</span>
               </a>
             </div>
           </motion.div>
@@ -2082,15 +2122,24 @@ export default function App() {
                   <img src="/logo.svg" alt="Oryonix" style={{ width: '32px', height: '32px' }} />
                 </div>
               </div>
-              
+
+              {/*
               <h3 style={{ fontSize: '1.4rem', margin: 0, color: 'white' }}>Pending Web Store Approval</h3>
               <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.95rem', lineHeight: '1.6', margin: 0 }}>
                 Oryonix AI is currently under review by the Chrome Web Store. Once approved, automatic 1-click installation will be available here.
                 <br/><br/>
                 For now, you can download the unpacked extension and install it manually from our <a href={SITE.github} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-accent-primary)', textDecoration: 'underline' }}>GitHub repository</a>.
               </p>
-              
+              */}
+
+              <h3 style={{ fontSize: '1.4rem', margin: 0, color: 'white' }}>Install Oryonix AI</h3>
+              <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.95rem', lineHeight: '1.6', margin: 0 }}>
+                Oryonix AI is now officially approved and published on the Chrome Web Store.
+                Click below to add it to your browser instantly.
+              </p>
+
               <div style={{ display: 'flex', gap: '12px', width: '100%', marginTop: '12px', flexDirection: 'column' }}>
+                {/*
                 <a 
                   href="/early-access/form.html" 
                   className="btn btn--primary btn--lg" 
@@ -2100,20 +2149,37 @@ export default function App() {
                   <KeyIcon size={18} weight="fill" style={{ transform: 'translateY(1.5px)' }} />
                   <span style={{ marginLeft: '8px' }}>Apply for Early Access</span>
                 </a>
-                <a 
-                  href={SITE.github} 
-                  target="_blank" 
-                  rel="noreferrer" 
-                  className="btn btn--glass btn--lg" 
-                  style={{ width: '100%', justifyContent: 'center' }}
+                */}
+
+                <a
+                  href={SITE.chrome}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn--primary btn--lg"
+                  style={{ width: '100%', justifyContent: 'center', padding: '10px 30px' }}
+                  onClick={() => setShowInstallNotice(false)}
+                >
+                  <SharedTooltipAvatars
+                    items={BROWSER_AVATARS}
+                    className="mr-2"
+                  />
+                  <span style={{ marginLeft: '6px' }}>Add to Browser</span>
+                </a>
+
+                <a
+                  href={SITE.github}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn--glass btn--lg"
+                  style={{ width: '100%', justifyContent: 'center', padding: '10px 30px' }}
                   onClick={() => setShowInstallNotice(false)}
                 >
                   <GithubIcon size={18} />
                   <span style={{ marginLeft: '8px' }}>Get from GitHub</span>
                 </a>
-                <button 
-                  className="btn btn--glass btn--lg" 
-                  style={{ width: '100%', justifyContent: 'center', background: 'transparent', opacity: 0.7 }}
+                <button
+                  className="btn btn--glass btn--lg"
+                  style={{ width: '100%', justifyContent: 'center', background: 'transparent', opacity: 0.7, padding: '10px 30px' }}
                   onClick={() => setShowInstallNotice(false)}
                 >
                   Close

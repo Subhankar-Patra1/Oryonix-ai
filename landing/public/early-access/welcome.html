@@ -7,6 +7,7 @@
     <title>Welcome to Oryonix AI Early Access</title>
     <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
     <link rel="stylesheet" href="style.css?v=1.1.0">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.36/dist/lenis.min.js"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,400&display=swap"
@@ -551,6 +552,141 @@
             font-size: 0.8rem;
             box-shadow: 0 0 10px rgba(249, 115, 22, 0.05);
         }
+
+        /* ═══════════ MOBILE RESPONSIVE ADAPTATIONS ═══════════ */
+        @media (max-width: 680px) {
+            .container {
+                padding: 24px 16px !important;
+            }
+
+            header {
+                margin-bottom: 28px !important;
+            }
+
+            header p {
+                font-size: 0.95rem !important;
+                line-height: 1.5 !important;
+            }
+
+            .browser-grid {
+                gap: 8px !important;
+                margin: 16px 0 28px 0 !important;
+            }
+
+            .browser-card {
+                padding: 8px 14px !important;
+                font-size: 0.8rem !important;
+            }
+
+            .tabs-header {
+                flex-direction: column !important;
+                border-radius: 12px !important;
+                padding: 6px !important;
+                gap: 6px !important;
+            }
+
+            .tab-btn {
+                width: 100% !important;
+                padding: 12px 16px !important;
+                border-radius: 8px !important;
+                font-size: 0.82rem !important;
+                text-align: center !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+
+            .tabs-highlight {
+                display: none !important;
+            }
+
+            .tab-btn.active {
+                background: rgba(255, 255, 255, 0.08) !important;
+                border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            }
+
+            .download-box {
+                flex-direction: column !important;
+                gap: 12px !important;
+                width: 100% !important;
+            }
+
+            .download-btn {
+                width: 100% !important;
+                justify-content: center !important;
+                text-align: center !important;
+                font-size: 0.88rem !important;
+                padding: 12px 20px !important;
+            }
+
+            .step-card {
+                gap: 12px !important;
+            }
+
+            .step-number {
+                width: 32px !important;
+                height: 32px !important;
+                font-size: 0.9rem !important;
+            }
+
+            .step-content h4 {
+                font-size: 1rem !important;
+            }
+
+            .step-content p {
+                font-size: 0.88rem !important;
+            }
+
+            .extensions-sidebar {
+                display: none !important;
+            }
+
+            .ext-search-wrapper {
+                display: none !important;
+            }
+
+            .dev-mode-label {
+                display: none !important;
+            }
+
+            .extensions-top-bar {
+                padding: 0 16px !important;
+            }
+
+            .extensions-sub-bar.show {
+                max-height: none !important;
+                height: auto !important;
+                padding: 10px 16px !important;
+                flex-wrap: wrap !important;
+                gap: 8px !important;
+            }
+
+            .sub-bar-btn {
+                padding: 6px 12px !important;
+                font-size: 0.72rem !important;
+                flex: 1 1 auto !important;
+                text-align: center !important;
+            }
+
+            .extensions-main-panel {
+                padding: 16px !important;
+            }
+
+            .real-chrome-ext-card {
+                max-width: 100% !important;
+            }
+
+            .mock-chrome {
+                margin-top: 16px !important;
+            }
+
+            .toast-notification {
+                left: 16px !important;
+                right: 16px !important;
+                bottom: 16px !important;
+                justify-content: center !important;
+            }
+        }
     </style>
 </head>
 
@@ -618,23 +754,22 @@
             <h3 class="section-title">Select Installation Method</h3>
 
             <div class="tabs-header">
-                <button type="button" class="tab-btn active" onclick="switchTab(event, 'direct-download')">🚀 Direct
-                    Download (Recommended)</button>
-                <!-- HIDDEN: Automated Script Install tab - CLI-loaded extensions are temporary, disabled for now
-                <button type="button" class="tab-btn" onclick="switchTab(event, 'automated-script')">⚡ Automated Script
-                    Install</button>
-                -->
-                <button type="button" class="tab-btn" onclick="switchTab(event, 'web-store')"><svg fill="currentColor"
+                <button type="button" class="tab-btn active" onclick="switchTab(event, 'web-store')"><svg fill="currentColor"
                         role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
                         style="width: 16px; height: 16px; margin-right: 6px; vertical-align: middle; transform: translateY(-1px);">
                         <title>Chrome Web Store</title>
                         <path
                             d="M0 1.637v19.09c0 .9.736 1.636 1.636 1.636h.131a10.4 10.4 0 0 1-.13-1.636 10.3 10.3 0 0 1 1.667-5.64l4.202 7.276h1.128A3.77 3.77 0 0 1 12 16.958a3.77 3.77 0 0 1 3.366 5.406h1.048a4.7 4.7 0 0 0-1.587-5.406h6.83a10.34 10.34 0 0 1 .577 5.406h.13c.9 0 1.636-.737 1.636-1.637V1.637Zm9.273 2.181h5.454a1.09 1.09 0 1 1 0 2.182H9.273a1.09 1.09 0 1 1 0-2.182M12 10.364a10.36 10.36 0 0 1 9.233 5.652H12a4.71 4.71 0 0 0-4.677 4.149L3.91 14.25A10.34 10.34 0 0 1 12 10.364" />
-                    </svg>Chrome Web Store</button>
+                    </svg>Chrome Web Store (Recommended)</button>
+                <button type="button" class="tab-btn" onclick="switchTab(event, 'direct-download')">🚀 Direct Download</button>
+                <!-- HIDDEN: Automated Script Install tab - CLI-loaded extensions are temporary, disabled for now
+                <button type="button" class="tab-btn" onclick="switchTab(event, 'automated-script')">⚡ Automated Script
+                    Install</button>
+                -->
             </div>
 
             <!-- TAB 1: DIRECT DOWNLOAD -->
-            <div id="direct-download" class="tab-pane active">
+            <div id="direct-download" class="tab-pane">
                 <p style="text-align: left; margin-bottom: 20px;">Download the pre-compiled extension bundle directly
                     from our secure cloud server and load it instantly using Chrome's Developer Mode. No scripts or
                     complex setups required.</p>
@@ -1020,12 +1155,16 @@
 
 
             <!-- TAB 3: CHROME WEB STORE -->
-            <div id="web-store" class="tab-pane">
+            <div id="web-store" class="tab-pane active">
+                <!--
                 <p style="text-align: left; margin-bottom: 20px;">Oryonix AI is currently under review by the Chrome Web
                     Store team. Once approved, automatic one-click installation will be available here. In the meantime,
                     please use our direct download method.</p>
+                -->
+                <p style="text-align: left; margin-bottom: 20px;">Oryonix AI is now officially approved and published on the Chrome Web Store! You can install it directly with one click.</p>
 
                 <div class="download-box">
+                    <!--
                     <button type="button" onclick="openWebStoreModal(event)" class="download-btn download-btn--primary"
                         style="font-family: inherit; border: none; cursor: pointer;">
                         <svg fill="currentColor" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
@@ -1036,13 +1175,30 @@
                         </svg>
                         Get it on Chrome Web Store
                     </button>
+                    -->
+                    <a href="https://chromewebstore.google.com/detail/oryonix-ai/nlodkmgcicilpgbdlgndlomomnofpaeb" target="_blank" class="download-btn download-btn--primary"
+                        style="font-family: inherit; border: none; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+                        <svg fill="currentColor" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                            style="width: 18px; height: 18px; margin-right: 8px;">
+                            <title>Chrome Web Store</title>
+                            <path
+                                d="M0 1.637v19.09c0 .9.736 1.636 1.636 1.636h.131a10.4 10.4 0 0 1-.13-1.636 10.3 10.3 0 0 1 1.667-5.64l4.202 7.276h1.128A3.77 3.77 0 0 1 12 16.958a3.77 3.77 0 0 1 3.366 5.406h1.048a4.7 4.7 0 0 0-1.587-5.406h6.83a10.34 10.34 0 0 1 .577 5.406h.13c.9 0 1.636-.737 1.636-1.637V1.637Zm9.273 2.181h5.454a1.09 1.09 0 1 1 0 2.182H9.273a1.09 1.09 0 1 1 0-2.182M12 10.364a10.36 10.36 0 0 1 9.233 5.652H12a4.71 4.71 0 0 0-4.677 4.149L3.91 14.25A10.34 10.34 0 0 1 12 10.364" />
+                        </svg>
+                        Get it on Chrome Web Store
+                    </a>
                 </div>
 
+                <!--
                 <div class="note-card">
                     <h5>Extension Status: Under Review ⏳</h5>
                     <p>We have submitted the production build to Google. While we wait for their approval process to
                         complete, please use the <strong>Direct Download</strong> or <strong>Automated Script</strong>
                         methods to get started immediately.</p>
+                </div>
+                -->
+                <div class="note-card">
+                    <h5>Extension Status: Published & Approved 🎉</h5>
+                    <p>The Oryonix AI extension has been officially reviewed and accepted into the Chrome Web Store. We recommend installing it directly to get automatic updates.</p>
                 </div>
             </div>
             <!-- FAQ SECTION -->
@@ -1119,7 +1275,8 @@
             <a href="../terms.html">Terms of Service</a>
         </footer>
 
-        <!-- Chrome Web Store Pending Modal -->
+        <!-- Chrome Web Store Pending Modal (Hidden/Commented Out) -->
+        <!--
         <div id="webstore-modal" class="modal-backdrop" onclick="if(event.target === this) closeWebStoreModal()">
             <div class="modal-content"
                 style="max-width: 440px; border-radius: 24px; padding: 40px 32px; background: rgba(18, 14, 12, 0.96) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important;">
@@ -1171,6 +1328,7 @@
                 </div>
             </div>
         </div>
+        -->
 
         <!-- Toast Notification -->
         <div id="toast" class="toast-notification">
@@ -1204,109 +1362,42 @@
 
             // Confetti Party Popper System
             const canvas = document.getElementById('confettiCanvas');
-            const ctx = canvas.getContext('2d');
-            let animationFrameId;
 
-            function resizeCanvas() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            }
-            window.addEventListener('resize', resizeCanvas);
-            resizeCanvas();
-
-            const colors = [
-                '#f97316', // Orange
-                '#fb923c', // Soft orange
-                '#ffffff', // Clean white
-                '#fbbf24', // Gold
-                '#38bdf8', // Sky blue
-                '#a855f7', // Violet
-                '#34d399'  // Emerald
-            ];
-
-            class Particle {
-                constructor(x, y, vx, vy) {
-                    this.x = x;
-                    this.y = y;
-                    this.size = Math.random() * 8 + 5;
-                    this.color = colors[Math.floor(Math.random() * colors.length)];
-                    this.vx = vx;
-                    this.vy = vy;
-                    this.rotation = Math.random() * 360;
-                    this.rotationSpeed = Math.random() * 4 - 2;
-                    this.opacity = 1;
-                    this.gravity = 0.04; // Gentle floating gravity
-                    this.drag = 0.99;    // Minimal air drag
-                    this.shape = Math.random() > 0.5 ? 'circle' : 'rect';
-                }
-
-                update() {
-                    this.vx *= this.drag;
-                    this.vy *= this.drag;
-                    this.vy += this.gravity;
-                    this.x += this.vx;
-                    this.y += this.vy;
-                    this.rotation += this.rotationSpeed;
-                    this.opacity -= 0.0035; // Fade out slowly so they fall all the way down
-                }
-
-                draw() {
-                    ctx.save();
-                    ctx.translate(this.x, this.y);
-                    ctx.rotate((this.rotation * Math.PI) / 180);
-                    ctx.globalAlpha = this.opacity;
-                    ctx.fillStyle = this.color;
-
-                    if (this.shape === 'circle') {
-                        ctx.beginPath();
-                        ctx.arc(0, 0, this.size / 2, 0, Math.PI * 2);
-                        ctx.fill();
-                    } else {
-                        ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size / 2);
-                    }
-                    ctx.restore();
-                }
-            }
-
-            const particles = [];
+            // Trigger popper effect using canvas-confetti library
+            const myConfetti = confetti.create(canvas, {
+                resize: true,
+                useWorker: true
+            });
 
             function shootConfetti() {
-                const width = canvas.width;
+                // 2. Continuous side cannons shooting from bottom corners for 2.5 seconds
+                const duration = 2.5 * 1000;
+                const end = Date.now() + duration;
 
-                // Spawn 150 elegant floating particles falling down from the top edge
-                for (let i = 0; i < 150; i++) {
-                    const x = Math.random() * width;
-                    const y = -(Math.random() * 80 + 20); // Spawn slightly off-screen above
-                    const vx = Math.random() * 4 - 2;     // Subtle swaying side drift
-                    const vy = Math.random() * 3 + 1.5;   // Gentle falling initial speed
-                    particles.push(new Particle(x, y, vx, vy));
-                }
-            }
+                (function frame() {
+                    myConfetti({
+                        particleCount: 2,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0, y: 0.85 },
+                        colors: ['#f97316', '#fb923c', '#ffffff', '#fbbf24']
+                    });
+                    myConfetti({
+                        particleCount: 2,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1, y: 0.85 },
+                        colors: ['#f97316', '#fb923c', '#ffffff', '#fbbf24']
+                    });
 
-            function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                for (let i = particles.length - 1; i >= 0; i--) {
-                    const p = particles[i];
-                    p.update();
-                    p.draw();
-
-                    if (p.opacity <= 0 || p.y > canvas.height + 20) {
-                        particles.splice(i, 1);
+                    if (Date.now() < end) {
+                        requestAnimationFrame(frame);
                     }
-                }
-
-                if (particles.length > 0) {
-                    animationFrameId = requestAnimationFrame(animate);
-                } else {
-                    cancelAnimationFrame(animationFrameId);
-                }
+                }());
             }
 
-            // Trigger popper effect on page open
             setTimeout(() => {
                 shootConfetti();
-                animate();
             }, 300);
 
             // Sliding highlight element creation
