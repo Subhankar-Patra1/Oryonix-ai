@@ -14,12 +14,14 @@
   <a href="https://github.com/Subhankar-Patra1/Oryonix-ai/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-orange.svg" alt="MIT License" /></a>
   <a href="https://github.com/Subhankar-Patra1/Oryonix-ai/stargazers"><img src="https://img.shields.io/github/stars/Subhankar-Patra1/Oryonix-ai?style=social" alt="GitHub Stars" /></a>
   <a href="https://github.com/Subhankar-Patra1/Oryonix-ai/issues"><img src="https://img.shields.io/github/issues/Subhankar-Patra1/Oryonix-ai" alt="GitHub Issues" /></a>
-  <img src="https://img.shields.io/badge/Chrome-Extension-blue?logo=googlechrome" alt="Chrome Extension" />
+  <a href="https://chromewebstore.google.com/detail/oryonix-ai/nlodkmgcicilpgbdlgndlomomnofpaeb"><img src="https://img.shields.io/badge/Chrome-Extension-blue?logo=googlechrome" alt="Chrome Extension" /></a>
   <img src="https://img.shields.io/badge/TypeScript-5.9-blue?logo=typescript" alt="TypeScript" />
 </p>
 
 <p align="center">
   <a href="https://oryonix-ai.vercel.app">🌐 Website</a> •
+  <a href="https://chromewebstore.google.com/detail/oryonix-ai/nlodkmgcicilpgbdlgndlomomnofpaeb">🛍️ Chrome Web Store</a> •
+  <a href="https://oryonix-ai-downloads.s3.us-east-1.amazonaws.com/oryonix-ai-1.0.1-chrome.zip">📥 Download Extension (.zip)</a> •
   <a href="#-quick-start">🚀 Quick Start</a> •
   <a href="#-features">✨ Features</a> •
   <a href="#%EF%B8%8F-architecture">🏗️ Architecture</a> •
@@ -164,7 +166,14 @@ Oryonix AI is built as a **Chrome Extension** using the [WXT framework](https://
 - A **Chromium-based browser** (Chrome, Edge, Brave, Arc, Opera, Vivaldi)
 - *(Optional)* [Ollama](https://ollama.ai) installed for local LLM support
 
-### Option 1: Run from Source (Recommended for Developers)
+### Option 1: Install from Chrome Web Store (Easiest)
+
+You can install Oryonix AI directly from the Chrome Web Store:
+
+1. Visit the [Oryonix AI Chrome Web Store page](https://chromewebstore.google.com/detail/oryonix-ai/nlodkmgcicilpgbdlgndlomomnofpaeb).
+2. Click **Add to Chrome** (or the equivalent button in your browser).
+
+### Option 2: Run from Source (Recommended for Developers)
 
 ```bash
 # 1. Clone the repository
@@ -186,7 +195,7 @@ This compiles the extension to `.output/chrome-mv3/`. Now load it in your browse
 4. Select the `.output/chrome-mv3/` folder inside the project
 5. Click the **Oryonix AI** icon in your toolbar → the side panel opens
 
-### Option 2: Build for Production
+### Option 3: Build for Production
 
 ```bash
 # Build optimized extension
@@ -198,14 +207,16 @@ npm run zip
 
 The production build goes to `.output/chrome-mv3/`.
 
-### Option 3: Direct Download (For Non-Developers)
+### Option 4: Direct Download (Manual Installation)
 
-If you're not a developer, you can download the pre-built extension directly:
+If you're not a developer and don't want to use the web store, you can download the pre-built extension directly:
 
-1. Visit our [Early Access Welcome Page](https://oryonix-ai.vercel.app/early-access/welcome.html)
-2. Download the `.zip` extension bundle
-3. Extract it to a permanent folder (e.g., `Documents/Oryonix AI`)
-4. Open `chrome://extensions` → Enable **Developer Mode** → Click **Load unpacked** → Select the extracted folder
+1. Download the pre-built extension bundle: [Oryonix AI Extension Bundle (.zip)](https://oryonix-ai-downloads.s3.us-east-1.amazonaws.com/oryonix-ai-1.0.1-chrome.zip) (You can also visit our [Early Access Welcome Page](https://oryonix-ai.vercel.app/early-access/welcome.html))
+2. Extract the downloaded `.zip` file to a permanent folder on your computer (e.g., `Documents/Oryonix AI`)
+3. Open `chrome://extensions` in your browser (or `edge://extensions`, `brave://extensions`)
+4. Enable **Developer Mode** (toggle in the top-right corner)
+5. Click **"Load unpacked"** in the top-left
+6. Select the extracted folder containing the `manifest.json` file
 
 ### Firefox Support
 
